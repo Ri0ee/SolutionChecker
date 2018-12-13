@@ -11,8 +11,11 @@ bool Instance::Initialize(char file_location_[])
 	m_options_manager->SetOptionsFilePath(m_current_dir + "\\options.txt");
 	m_options_manager->GetOptions();
 
+	m_problem_manager = new ProblemManager();
+	m_problem_manager->Initialize(m_options_manager->GetProblemDir());
+
 	m_gui_ptr = new Gui();
-	if (!m_gui_ptr->Initialize(m_options_manager))
+	if (!m_gui_ptr->Initialize(m_options_manager, m_problem_manager))
 	{
 		m_gui_ptr->Shutdown();
 		delete m_gui_ptr;

@@ -10,7 +10,6 @@ struct Test
 {
 	int m_status;
 	int m_id;
-
 };
 
 class TestManager

@@ -16,9 +16,11 @@
 #include <shlobj.h>
 #include <iostream>
 #include <string>
+#include <algorithm>
 
 #include "options.h"
 #include "tester.h"
+#include "problems.h"
 
 #define SELECT_WORKING_DIRECTORY 1
 #define SELECT_PROBLEM_DIRECTORY 2
@@ -79,23 +81,25 @@ public:
 	Gui() {}
 	~Gui() {}
 
-	bool Initialize(OptionsManager* options_manager_);
+	bool Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_);
 	bool Run();
 	void Shutdown();
 
 	void SelectFile();
-	static void SelectFileCallback(Fl_Widget* w, void* f) { ((Gui*)f)->SelectFile(); }
-
 	void ButtonClick(Fl_Widget *w);
+
 	static void ButtonCallback(Fl_Widget* w, void* f) { ((Gui*)f)->ButtonClick(w); }
 
 private:
 	OptionsManager* m_options_manager;
+	ProblemManager* m_problem_manager;
 
 	Fl_Double_Window* m_main_window;
 
 	Fl_Button* m_start_test_button;
 	Fl_Button* m_settings_button;
+	Fl_Button* m_show_problem_info_button;
+	Fl_Button* m_show_problem_description_button;
 
 	Fl_Round_Button* m_first_test_selector;
 	Fl_Round_Button* m_all_test_selector;
@@ -108,4 +112,6 @@ private:
 	SettingsWindow* m_settings_window;
 
 	Fl_Hold_Browser* m_problem_browser;
+
+	std::vector<Problem> m_problem_list;
 };

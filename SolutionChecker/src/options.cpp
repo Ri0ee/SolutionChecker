@@ -4,17 +4,12 @@
 
 bool OptionsManager::GetOptions()
 {
-	if (m_path_to_options_file.empty())
-	{
-		std::cerr << "Cannot find options file, path was not set" << std::endl;
-		return false;
-	}
+	if (m_path_to_options_file.empty()) return false;
 
 	std::fstream in_file;
 	in_file.open(m_path_to_options_file, std::ios::in);
 	if (!in_file.is_open())
 	{
-		std::cerr << "Cannot open options file, setting default settings" << std::endl;
 		SetDefaults();
 		return false;
 	}
@@ -99,29 +94,21 @@ void OptionsManager::SetDefaults()
 {
 	m_window_pos_x = 100;
 	m_window_pos_y = 100;
-	m_last_exe_dir = "C:\\";
+	m_last_exe_dir = "";
 	m_last_problem = "";
-	m_problem_dir = "C:\\";
-	m_working_dir = "C:\\";
+	m_problem_dir = "";
+	m_working_dir = "";
 	m_theme = "none";
 	m_use_only_one_test = false;
 }
 
 bool OptionsManager::UpdateOptionsFile()
 {
-	if (m_path_to_options_file.empty())
-	{
-		std::cerr << "Cannot update options file, creating new one" << std::endl;
-		return false;
-	}
+	if (m_path_to_options_file.empty()) return false;
 
 	std::fstream out_file;
 	out_file.open(m_path_to_options_file, std::ios::out);
-	if (!out_file.is_open())
-	{
-		std::cerr << "Cannot open or create options file to update settings" << std::endl;
-		return false;
-	}
+	if (!out_file.is_open()) return false;
 
 	out_file << "WindowPosX:" << m_window_pos_x << "\n";
 	out_file << "WindowPosY:" << m_window_pos_y << "\n";

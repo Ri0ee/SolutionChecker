@@ -4,6 +4,7 @@
 
 #include "gui.h"
 #include "options.h"
+#include "problems.h"
 
 
 
@@ -20,6 +21,7 @@ public:
 private:
 	Gui* m_gui_ptr = nullptr;
 	OptionsManager* m_options_manager = nullptr;
+	ProblemManager* m_problem_manager = nullptr;
 
 	std::string m_current_dir;
 };

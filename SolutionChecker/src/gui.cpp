@@ -72,11 +72,43 @@ void Gui::ButtonClick(Fl_Widget* w)
 			m_settings_window->Show();
 		return;
 	}
+
+	if (button_label == "...")
+	{
+		SelectFile();
+	}
+
+	if (button_label == "Show info")
+	{	
+		if (m_problem_browser->value() == 0) return;
+
+		int id = m_problem_browser->value() - 1;
+		std::string message_buffer = "Problem caption: " + m_problem_list[id].m_caption + "\n" +
+			"Problem id: " + std::to_string(m_problem_list[id].m_id) + "\n" +
+			"Problem path: " + m_problem_list[id].m_path + "\n" +
+			"Problem input file name: " + m_problem_list[id].m_input_file_name + "\n" +
+			"Problem output file name: " + m_problem_list[id].m_output_file_name + "\n" +
+			"Problem test count: " + std::to_string(m_problem_list[id].m_test_count) + "\n" +
+			"Problem time limit: " + std::to_string(m_problem_list[id].m_time_limit) + " seconds\n" +
+			"Problem memory limit: " + std::to_string(m_problem_list[id].m_memory_limit) + " MB\n";
+		fl_alert(message_buffer.c_str());	
+		return;
+	}
+
+	if (button_label == "Show task description")
+	{
+		if (m_problem_browser->value() == 0) return;
+		m_problem_manager->ShowTaskDescription(m_problem_browser->value() - 1);
+		return;
+	}
 }
 
-bool Gui::Initialize(OptionsManager* options_manager_)
+bool Gui::Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_)
 {	
 	m_options_manager = options_manager_;
+	m_problem_manager = problem_manager_;
+
+	m_problem_list = m_problem_manager->GetProblemList();
 
 	int y = 10, h = 20;
 	Fl::scheme(m_options_manager->GetThemeName().c_str());
@@ -89,11 +121,12 @@ bool Gui::Initialize(OptionsManager* options_manager_)
 	m_exefile_selector_value = new Fl_Input(selector_spacing, y, 350, h, "Path to exe-file:");
 	m_exefile_selector_value->value(m_options_manager->GetLastExecutableDir().c_str());
 	m_exefile_selector_button = new Fl_Button(selector_spacing + 355, y, 500 - (selector_spacing + 355) - 5, h, "...");
-	m_exefile_selector_button->callback(this->SelectFileCallback, (void*)this);
+	m_exefile_selector_button->callback(this->ButtonCallback, (void*)this);
 	m_exefile_selector_button->clear_visible_focus();
 
 	m_problem_browser = new Fl_Hold_Browser(510, y, 0, 0);
-	for (int i = 0; i < 100; i++) m_problem_browser->add((std::string("problem") + std::to_string(i)).c_str());
+	for (int i = 0; i < m_problem_list.size(); i++)
+		m_problem_browser->add(std::string(m_problem_list[i].m_folder_name + ": " + m_problem_list[i].m_caption).c_str());
 	m_problem_browser->value(0);
 
 	y += h + 10;
@@ -122,7 +155,17 @@ bool Gui::Initialize(OptionsManager* options_manager_)
 	m_settings_button->callback(this->ButtonCallback, (void*)this);
 	m_settings_button->clear_visible_focus();
 
-	m_testing_progress = new Fl_Progress(220, y, 275, h, "Testing progress");
+	m_show_problem_info_button = new Fl_Button(215, y, 100, h, "Show info");
+	m_show_problem_info_button->callback(this->ButtonCallback, (void*)this);
+	m_show_problem_info_button->clear_visible_focus();
+
+	m_show_problem_description_button = new Fl_Button(320, y, 175, h, "Show task description");
+	m_show_problem_description_button->callback(this->ButtonCallback, (void*)this);
+	m_show_problem_description_button->clear_visible_focus();
+
+	y += h + 10;
+
+	m_testing_progress = new Fl_Progress(5, y, 490, h, "Testing progress");
 	m_testing_progress->deactivate();
 
 	y += h + 10;
@@ -158,14 +201,15 @@ bool SettingsWindow::Initialize(OptionsManager* options_manager_)
 	m_options_manager = options_manager_;
 
 	int y = 10, h = 20;
+	int w = 520;
 
-	m_window = new Fl_Double_Window(500, 500, "Settings");
+	m_window = new Fl_Double_Window(w, 500, "Settings");
 	
 	int selector_spacing = (int)fl_width("Working dir:") + 5;
 	m_working_dir_selector = new Fl_Input(selector_spacing, y, 295, h, "Working dir:");
 	m_working_dir_selector->value(m_options_manager->GetWorkingDir().c_str());
 
-	m_working_dir_selector_button = new Fl_Button(selector_spacing + 298, y, 117, h, "Select working dir");
+	m_working_dir_selector_button = new Fl_Button(selector_spacing + 298, y, w - selector_spacing - 298 - 10, h, "Select working dir");
 	m_working_dir_selector_button->callback(this->ButtonCallback, (void*)this);
 	m_working_dir_selector_button->clear_visible_focus();
 
@@ -174,13 +218,13 @@ bool SettingsWindow::Initialize(OptionsManager* options_manager_)
 	m_problem_dir_selector = new Fl_Input(selector_spacing, y, 295, h, "Problems:");
 	m_problem_dir_selector->value(m_options_manager->GetProblemDir().c_str());
 
-	m_problem_dir_selector_button = new Fl_Button(selector_spacing + 298, y, 117, h, "Select problem dir");
+	m_problem_dir_selector_button = new Fl_Button(selector_spacing + 298, y, w - selector_spacing - 298 - 10, h, "Select problem dir");
 	m_problem_dir_selector_button->callback(this->ButtonCallback, (void*)this);
 	m_problem_dir_selector_button->clear_visible_focus();
 
 	y += h + 10;
 
-	m_theme_choice = new Fl_Choice(selector_spacing, y, 295, h, "Themes");
+	m_theme_choice = new Fl_Choice(selector_spacing, y, 295, 22, "Themes:");
 	m_theme_choice->clear_visible_focus();
 	m_theme_choice->callback(this->ButtonCallback, (void*)this);
 	m_theme_choice->add("none");
@@ -189,7 +233,7 @@ bool SettingsWindow::Initialize(OptionsManager* options_manager_)
 	m_theme_choice->add("plastic");
 	m_theme_choice->value(m_options_manager->GetThemeId());
 
-	y += h + 10;
+	y += h + 12;
 
 	m_reset_settings_button = new Fl_Button(10, y, 100, h, "Reset settings");
 	m_reset_settings_button->callback(this->ButtonCallback, (void*)this);
@@ -197,7 +241,7 @@ bool SettingsWindow::Initialize(OptionsManager* options_manager_)
 
 	y += h + 10;
 
-	m_window->size(500, y);
+	m_window->size(w, y);
 	m_window->hide();
 	m_window->end();
 	

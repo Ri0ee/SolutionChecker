@@ -139,12 +139,14 @@
     <ClCompile Include="src\instance.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\options.cpp" />
+    <ClCompile Include="src\problems.cpp" />
     <ClCompile Include="src\tester.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\instance.h" />
     <ClInclude Include="src\options.h" />
+    <ClInclude Include="src\problems.h" />
     <ClInclude Include="src\tester.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
