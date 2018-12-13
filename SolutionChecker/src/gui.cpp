@@ -362,5 +362,14 @@ void SettingsWindow::UpdateWidgetInfo()
 {
 	m_problem_dir_selector->value(m_options_manager->GetProblemDir().c_str());
 	m_working_dir_selector->value(m_options_manager->GetWorkingDir().c_str());
-	m_theme_choice->value(0);
+
+	std::string theme_name = m_options_manager->GetTheme();
+	if (theme_name == "none")
+		m_theme_choice->value(0);
+	else if (theme_name == "gtk+")
+		m_theme_choice->value(1);
+	else if (theme_name == "gleam")
+		m_theme_choice->value(2);
+	else if (theme_name == "plastic")
+		m_theme_choice->value(3);
 }
