@@ -45,7 +45,29 @@ public:
 	bool GetUseMultipleTests() { return m_use_multiple_tests; }
 	void SetUseMultipleTests(const bool use_multiple_tests_) { m_use_multiple_tests = use_multiple_tests_; }
 
-	std::string GetTheme() { return m_theme; }
+	std::string GetThemeName(int id_) 
+	{ 
+		switch (id_)
+		{
+		case 0:		return std::string("none");
+		case 1:		return std::string("gtk+");
+		case 2:		return std::string("gleam");
+		case 3:		return std::string("plastic");
+		default:	return std::string("none");
+		}
+	}
+
+	int GetThemeId(const std::string& theme_)
+	{
+		if (theme_ == "none") return 0;
+		else if (theme_ == "gtk+") return 1;
+		else if (theme_ == "gleam") return 2;
+		else if (theme_ == "plastic") return 3;
+		else return 0;
+	}
+
+	std::string GetThemeName() { return m_theme; }
+	int GetThemeId() { return GetThemeId(m_theme); }
 	void SetTheme(const std::string& theme_) { m_theme = theme_; }
 
 private:

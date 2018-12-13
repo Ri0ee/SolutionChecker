@@ -79,7 +79,7 @@ bool Gui::Initialize(OptionsManager* options_manager_)
 	m_options_manager = options_manager_;
 
 	int y = 10, h = 20;
-	Fl::scheme(m_options_manager->GetTheme().c_str());
+	Fl::scheme(m_options_manager->GetThemeName().c_str());
 	Fl::get_system_colors();
 	fl_font(FL_HELVETICA, 16);
 
@@ -187,15 +187,7 @@ bool SettingsWindow::Initialize(OptionsManager* options_manager_)
 	m_theme_choice->add("gtk+");
 	m_theme_choice->add("gleam");
 	m_theme_choice->add("plastic");
-	std::string theme_name = m_options_manager->GetTheme();
-	if (theme_name == "none")
-		m_theme_choice->value(0);
-	else if (theme_name == "gtk+")
-		m_theme_choice->value(1);
-	else if (theme_name == "gleam")
-		m_theme_choice->value(2);
-	else if (theme_name == "plastic")
-		m_theme_choice->value(3);
+	m_theme_choice->value(m_options_manager->GetThemeId());
 
 	y += h + 10;
 
@@ -322,37 +314,7 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 
 	if (m_theme_choice->changed())
 	{
-		std::string theme_name;
-		switch (m_theme_choice->value())
-		{
-		case 0:
-		{
-			theme_name = "none";
-			break;
-		}
-
-		case 1:
-		{
-			theme_name = "gtk+";
-			break;
-		}
-
-		case 2:
-		{
-			theme_name = "gleam";
-			break;
-		}
-
-		case 3:
-		{
-			theme_name = "plastic";
-			break;
-		}
-
-		default: theme_name = "none";
-		}
-
-		m_options_manager->SetTheme(theme_name);
+		m_options_manager->SetTheme(m_options_manager->GetThemeName(m_theme_choice->value()));
 		fl_alert("Restart the tester for theme changes to apply");
 		return;
 	}
@@ -362,14 +324,5 @@ void SettingsWindow::UpdateWidgetInfo()
 {
 	m_problem_dir_selector->value(m_options_manager->GetProblemDir().c_str());
 	m_working_dir_selector->value(m_options_manager->GetWorkingDir().c_str());
-
-	std::string theme_name = m_options_manager->GetTheme();
-	if (theme_name == "none")
-		m_theme_choice->value(0);
-	else if (theme_name == "gtk+")
-		m_theme_choice->value(1);
-	else if (theme_name == "gleam")
-		m_theme_choice->value(2);
-	else if (theme_name == "plastic")
-		m_theme_choice->value(3);
+	m_theme_choice->value(m_options_manager->GetThemeId());
 }

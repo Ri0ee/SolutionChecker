@@ -108,5 +108,4 @@ private:
 	SettingsWindow* m_settings_window;
 
 	Fl_Hold_Browser* m_problem_browser;
-
 };
