@@ -79,7 +79,6 @@ bool Gui::Initialize(OptionsManager* options_manager_)
 	m_options_manager = options_manager_;
 
 	int y = 10, h = 20;
-
 	Fl::scheme(m_options_manager->GetTheme().c_str());
 	Fl::get_system_colors();
 	fl_font(FL_HELVETICA, 16);
@@ -165,15 +164,38 @@ bool SettingsWindow::Initialize(OptionsManager* options_manager_)
 	int selector_spacing = (int)fl_width("Working dir:") + 5;
 	m_working_dir_selector = new Fl_Input(selector_spacing, y, 295, h, "Working dir:");
 	m_working_dir_selector->value(m_options_manager->GetWorkingDir().c_str());
+
 	m_working_dir_selector_button = new Fl_Button(selector_spacing + 298, y, 117, h, "Select working dir");
-	m_working_dir_selector_button->callback(this->SelectDirectoryCallback, (void*)this);
+	m_working_dir_selector_button->callback(this->ButtonCallback, (void*)this);
+	m_working_dir_selector_button->clear_visible_focus();
 
 	y += h + 10;
 
 	m_problem_dir_selector = new Fl_Input(selector_spacing, y, 295, h, "Problems:");
 	m_problem_dir_selector->value(m_options_manager->GetProblemDir().c_str());
+
 	m_problem_dir_selector_button = new Fl_Button(selector_spacing + 298, y, 117, h, "Select problem dir");
-	m_problem_dir_selector_button->callback(this->SelectDirectoryCallback, (void*)this);
+	m_problem_dir_selector_button->callback(this->ButtonCallback, (void*)this);
+	m_problem_dir_selector_button->clear_visible_focus();
+
+	y += h + 10;
+
+	m_theme_choice = new Fl_Choice(selector_spacing, y, 295, h, "Themes");
+	m_theme_choice->clear_visible_focus();
+	m_theme_choice->callback(this->ButtonCallback, (void*)this);
+	m_theme_choice->add("none");
+	m_theme_choice->add("gtk+");
+	m_theme_choice->add("gleam");
+	m_theme_choice->add("plastic");
+	std::string theme_name = m_options_manager->GetTheme();
+	if (theme_name == "none")
+		m_theme_choice->value(0);
+	else if (theme_name == "gtk+")
+		m_theme_choice->value(1);
+	else if (theme_name == "gleam")
+		m_theme_choice->value(2);
+	else if (theme_name == "plastic")
+		m_theme_choice->value(3);
 
 	y += h + 10;
 
@@ -219,13 +241,26 @@ static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPAR
 void SettingsWindow::SelectDirectory(int detail_)
 {
 	TCHAR path[MAX_PATH];
-	const char* path_param = "C:\\";
+	std::string path_param("C:\\");
+	if(detail_ == SELECT_WORKING_DIRECTORY)
+		path_param = m_options_manager->GetWorkingDir();
+
+	if (detail_ == SELECT_PROBLEM_DIRECTORY)
+		path_param = m_options_manager->GetProblemDir();
 
 	BROWSEINFO bi = { 0 };
-	bi.lpszTitle = ("Browse for folder...");
+
+	if(detail_ == SELECT_WORKING_DIRECTORY)
+		bi.lpszTitle = ("Browse for working folder...");
+	else 
+	if (detail_ == SELECT_PROBLEM_DIRECTORY)
+		bi.lpszTitle = ("Browse for problem folder...");
+	else
+		bi.lpszTitle = ("Browse for folder...");
+
 	bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
 	bi.lpfn = BrowseCallbackProc;
-	bi.lParam = (LPARAM)path_param;
+	bi.lParam = (LPARAM)path_param.c_str();
 
 	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
 
@@ -242,14 +277,14 @@ void SettingsWindow::SelectDirectory(int detail_)
 			imalloc->Release();
 		}
 
-		if (detail_ == 1) // Select working dir
+		if (detail_ == SELECT_WORKING_DIRECTORY) 
 		{
 			m_options_manager->SetWorkingDir(std::string(path));
 			m_working_dir_selector->value(path);
 			return;
 		}
 
-		if (detail_ == 2) // Select problem dir
+		if (detail_ == SELECT_PROBLEM_DIRECTORY)
 		{
 			m_options_manager->SetProblemDir(std::string(path));
 			m_problem_dir_selector->value(path);
@@ -265,11 +300,61 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 	std::string button_label(w->label());
 	if (button_label == "Reset settings")
 	{
-		if (fl_ask("Do you really want to reset all settings?"))
+		if (fl_ask("Do you really want to reset settings?"))
 		{
 			m_options_manager->SetDefaults();
 			UpdateWidgetInfo();
-		}	
+		}
+		return;
+	}
+
+	if (button_label == "Select working dir")
+	{
+		SelectDirectory(SELECT_WORKING_DIRECTORY);
+		return;
+	}
+
+	if (button_label == "Select problem dir")
+	{
+		SelectDirectory(SELECT_PROBLEM_DIRECTORY);
+		return;
+	}
+
+	if (m_theme_choice->changed())
+	{
+		std::string theme_name;
+		switch (m_theme_choice->value())
+		{
+		case 0:
+		{
+			theme_name = "none";
+			break;
+		}
+
+		case 1:
+		{
+			theme_name = "gtk+";
+			break;
+		}
+
+		case 2:
+		{
+			theme_name = "gleam";
+			break;
+		}
+
+		case 3:
+		{
+			theme_name = "plastic";
+			break;
+		}
+
+		default: theme_name = "none";
+		}
+
+		m_options_manager->SetTheme(theme_name);
+		fl_alert("Restart the tester for theme changes to apply");
+		return;
 	}
 }
 
@@ -277,4 +362,5 @@ void SettingsWindow::UpdateWidgetInfo()
 {
 	m_problem_dir_selector->value(m_options_manager->GetProblemDir().c_str());
 	m_working_dir_selector->value(m_options_manager->GetWorkingDir().c_str());
+	m_theme_choice->value(0);
 }

@@ -20,6 +20,9 @@
 #include "options.h"
 #include "tester.h"
 
+#define SELECT_WORKING_DIRECTORY 1
+#define SELECT_PROBLEM_DIRECTORY 2
+
 
 
 class OutputWindow
@@ -47,24 +50,9 @@ public:
 	void Show();
 	void Hide();
 	void UpdateWidgetInfo();
+	void SelectDirectory(int detail_);
 
 	bool IsVisible() { return m_window->visible(); }
-
-	void SelectDirectory(int detail_);
-	static void SelectDirectoryCallback(Fl_Widget* w, void* f) { 
-		std::string label(w->label());
-		if (label == "Select working dir")
-		{
-			((SettingsWindow*)f)->SelectDirectory(1);
-			return;
-		}
-		
-		if (label == "Select problem dir")
-		{
-			((SettingsWindow*)f)->SelectDirectory(2);
-			return;
-		}
-	}
 
 	void ButtonClick(Fl_Widget* w);
 	static void ButtonCallback(Fl_Widget* w, void* f) { ((SettingsWindow*)f)->ButtonClick(w); }
@@ -77,6 +65,8 @@ private:
 
 	Fl_Input* m_problem_dir_selector;
 	Fl_Button* m_problem_dir_selector_button;
+
+	Fl_Choice* m_theme_choice;
 
 	Fl_Button* m_reset_settings_button;
 
