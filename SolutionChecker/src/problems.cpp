@@ -2,11 +2,6 @@
 
 
 
-void getSubdirs(std::vector<std::string>& output, const std::string& path)
-{
-
-}
-
 bool ProblemManager::Initialize(const std::string& path_to_problems_folder_)
 {
 	m_path = path_to_problems_folder_;
