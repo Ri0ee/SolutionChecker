@@ -81,7 +81,7 @@ private:
 
 	std::thread* m_testing_thread = nullptr;
 
-	unsigned int m_testing_state; // 32bit storage for TESTING_STATE flags
+	unsigned int m_testing_state; 
 	std::vector<Test> m_test_list;
 	std::atomic_int m_testing_stage;
 	std::stack<ErrorMessage> m_last_error_stack;

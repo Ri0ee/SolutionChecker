@@ -94,6 +94,7 @@ void Gui::ButtonClick(Fl_Widget* w)
 	if (button_label == "...")
 	{
 		SelectFile();
+		return;
 	}
 
 	if (button_label == "Show info")
