@@ -46,7 +46,10 @@ bool OptionsManager::GetOptions()
 
 		if (param_name == "LastProblem")
 		{
-			m_last_problem = line.substr(delim_pos + 1, line.size());
+			std::stringstream param_value(line.substr(delim_pos + 1, line.size()));
+			int last_problem = 0;
+			param_value >> last_problem;
+			m_last_problem = last_problem;
 			continue;
 		}
 
@@ -95,7 +98,7 @@ void OptionsManager::SetDefaults()
 	m_window_pos_x = 100;
 	m_window_pos_y = 100;
 	m_last_exe_dir = "";
-	m_last_problem = "";
+	m_last_problem = 0;
 	m_problem_dir = "";
 	m_working_dir = "";
 	m_theme = "none";

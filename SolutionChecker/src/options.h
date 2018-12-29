@@ -36,8 +36,8 @@ public:
 	std::string GetProblemDir() { return m_problem_dir; }
 	void SetProblemDir(const std::string& problem_dir_) { m_problem_dir = problem_dir_; }
 
-	std::string GetLastProblem() { return m_last_problem; }
-	void SetLastProblem(const std::string& last_problem_) {	m_last_problem = last_problem_; }
+	int GetLastProblem() { return m_last_problem; }
+	void SetLastProblem(int problem_id_) {	m_last_problem = problem_id_; }
 
 	bool GetUseOnlyOneTest() { return m_use_only_one_test; }
 	void SetUseOnlyOneTest(const bool use_only_one_test_) { m_use_only_one_test = use_only_one_test_; }
@@ -75,8 +75,8 @@ private:
 
 	float m_window_pos_x;
 	float m_window_pos_y;
+	int m_last_problem;
 	std::string m_working_dir;
-	std::string m_last_problem;
 	std::string m_problem_dir;
 	std::string m_last_exe_dir;
 	std::string m_theme;

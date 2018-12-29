@@ -22,6 +22,7 @@ private:
 	Gui* m_gui_ptr = nullptr;
 	OptionsManager* m_options_manager = nullptr;
 	ProblemManager* m_problem_manager = nullptr;
+	TestManager* m_test_manager = nullptr;
 
 	std::string m_current_dir;
 };

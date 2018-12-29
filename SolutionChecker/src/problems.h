@@ -35,6 +35,10 @@ public:
 	void ShowTaskDescription(int problem_id_);
 
 	std::vector<Problem> GetProblemList() { return m_problem_list; }
+	Problem GetProblem(unsigned int problem_id_) { 
+		problem_id_ = min(problem_id_, m_problem_list.size() - 1);
+		return m_problem_list[problem_id_]; 
+	}
 
 private:
 	std::string m_path;

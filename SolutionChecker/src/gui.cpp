@@ -60,6 +60,19 @@ void Gui::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "Start testing")
 	{
+		if (m_problem_browser->value() == 0) return;
+
+		Problem problem = m_problem_list[m_problem_browser->value() - 1];
+
+		w->deactivate();
+		m_problem_browser->deactivate();
+
+		m_testing_progress->activate();
+		m_testing_progress->minimum(0);
+		m_testing_progress->maximum((float)problem.m_test_count);
+		m_testing_progress->value(0);
+
+		m_test_manager->StartTesting(m_problem_browser->value() - 1, std::string(m_exefile_selector_value->value()));
 
 		return;
 	}
@@ -83,14 +96,14 @@ void Gui::ButtonClick(Fl_Widget* w)
 		if (m_problem_browser->value() == 0) return;
 
 		int id = m_problem_browser->value() - 1;
-		std::string message_buffer = "Problem caption: " + m_problem_list[id].m_caption + "\n" +
-			"Problem id: " + std::to_string(m_problem_list[id].m_id) + "\n" +
-			"Problem path: " + m_problem_list[id].m_path + "\n" +
-			"Problem input file name: " + m_problem_list[id].m_input_file_name + "\n" +
-			"Problem output file name: " + m_problem_list[id].m_output_file_name + "\n" +
-			"Problem test count: " + std::to_string(m_problem_list[id].m_test_count) + "\n" +
-			"Problem time limit: " + std::to_string(m_problem_list[id].m_time_limit) + " seconds\n" +
-			"Problem memory limit: " + std::to_string(m_problem_list[id].m_memory_limit) + " MB\n";
+		std::string message_buffer = "caption: " + m_problem_list[id].m_caption + "\n" +
+			"id: " + std::to_string(m_problem_list[id].m_id) + "\n" +
+			"path: " + m_problem_list[id].m_path + "\n" +
+			"input file name: " + m_problem_list[id].m_input_file_name + "\n" +
+			"output file name: " + m_problem_list[id].m_output_file_name + "\n" +
+			"test count: " + std::to_string(m_problem_list[id].m_test_count) + "\n" +
+			"time limit: " + std::to_string(m_problem_list[id].m_time_limit) + " seconds\n" +
+			"memory limit: " + std::to_string(m_problem_list[id].m_memory_limit) + " MB\n";
 		fl_alert(message_buffer.c_str());	
 		return;
 	}
@@ -103,10 +116,22 @@ void Gui::ButtonClick(Fl_Widget* w)
 	}
 }
 
-bool Gui::Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_)
+void Gui::WindowAction() // Close button pressed
+{
+	if (m_settings_window != nullptr)
+		if(m_settings_window->IsVisible()) 
+			m_settings_window->Hide();
+
+	m_options_manager->SetLastProblem(m_problem_browser->value());
+
+	m_main_window->hide();
+}
+
+bool Gui::Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_, TestManager* test_manager_)
 {	
 	m_options_manager = options_manager_;
 	m_problem_manager = problem_manager_;
+	m_test_manager = test_manager_;
 
 	m_problem_list = m_problem_manager->GetProblemList();
 
@@ -116,23 +141,24 @@ bool Gui::Initialize(OptionsManager* options_manager_, ProblemManager* problem_m
 	fl_font(FL_HELVETICA, 16);
 
 	m_main_window = new Fl_Double_Window(0, 0, "Solution Checker");
+	m_main_window->callback(WindowCallback, this);
 
 	int selector_spacing = (int)fl_width("Path to exe-file:") + 5;
 	m_exefile_selector_value = new Fl_Input(selector_spacing, y, 350, h, "Path to exe-file:");
 	m_exefile_selector_value->value(m_options_manager->GetLastExecutableDir().c_str());
 	m_exefile_selector_button = new Fl_Button(selector_spacing + 355, y, 500 - (selector_spacing + 355) - 5, h, "...");
-	m_exefile_selector_button->callback(this->ButtonCallback, (void*)this);
+	m_exefile_selector_button->callback(ButtonCallback, this);
 	m_exefile_selector_button->clear_visible_focus();
 
 	m_problem_browser = new Fl_Hold_Browser(510, y, 0, 0);
-	for (int i = 0; i < m_problem_list.size(); i++)
+	for (unsigned i = 0; i < m_problem_list.size(); i++)
 		m_problem_browser->add(std::string(m_problem_list[i].m_folder_name + ": " + m_problem_list[i].m_caption).c_str());
-	m_problem_browser->value(0);
+	m_problem_browser->value(m_options_manager->GetLastProblem());
 
 	y += h + 10;
 
 	m_first_test_selector = new Fl_Round_Button(5, y, 150, h, "Use only first test");
-	m_first_test_selector->callback(this->ButtonCallback, (void*)this);
+	m_first_test_selector->callback(ButtonCallback, this);
 	m_first_test_selector->clear_visible_focus();
 	if (m_options_manager->GetUseOnlyOneTest())
 		m_first_test_selector->set();
@@ -140,7 +166,7 @@ bool Gui::Initialize(OptionsManager* options_manager_, ProblemManager* problem_m
 	y += h + 10;
 
 	m_all_test_selector = new Fl_Round_Button(5, y, 150, h, "Use all tests");
-	m_all_test_selector->callback(this->ButtonCallback, (void*)this);
+	m_all_test_selector->callback(ButtonCallback, this);
 	m_all_test_selector->clear_visible_focus();
 	if(m_options_manager->GetUseMultipleTests())
 		m_all_test_selector->set();
@@ -148,19 +174,19 @@ bool Gui::Initialize(OptionsManager* options_manager_, ProblemManager* problem_m
 	y += h + 10;
 
 	m_start_test_button = new Fl_Button(5, y, 100, h, "Start testing");
-	m_start_test_button->callback(this->ButtonCallback, (void*)this);
+	m_start_test_button->callback(ButtonCallback, this);
 	m_start_test_button->clear_visible_focus();
 
 	m_settings_button = new Fl_Button(110, y, 100, h, "Settings");
-	m_settings_button->callback(this->ButtonCallback, (void*)this);
+	m_settings_button->callback(ButtonCallback, this);
 	m_settings_button->clear_visible_focus();
 
 	m_show_problem_info_button = new Fl_Button(215, y, 100, h, "Show info");
-	m_show_problem_info_button->callback(this->ButtonCallback, (void*)this);
+	m_show_problem_info_button->callback(ButtonCallback, this);
 	m_show_problem_info_button->clear_visible_focus();
 
 	m_show_problem_description_button = new Fl_Button(320, y, 175, h, "Show task description");
-	m_show_problem_description_button->callback(this->ButtonCallback, (void*)this);
+	m_show_problem_description_button->callback(ButtonCallback, this);
 	m_show_problem_description_button->clear_visible_focus();
 
 	y += h + 10;
@@ -185,13 +211,49 @@ bool Gui::Initialize(OptionsManager* options_manager_, ProblemManager* problem_m
 bool Gui::Run()
 {
 	m_main_window->show();
-	Fl::run();
+
+	while (Fl::wait() > 0)
+	{
+		if (m_test_manager->GetTestingState())
+		{
+			int testing_stage = m_test_manager->GetTestingStage();
+
+			m_testing_progress->value((float)testing_stage + 1);
+			if (testing_stage == m_problem_list[m_problem_browser->value() - 1].m_test_count - 1)
+			{
+				m_test_manager->FinishTesting();
+
+				std::vector<Test> temp_result_data;
+				std::string temp_output_buf("");
+				m_test_manager->GetResultData(temp_result_data);
+
+				for (unsigned i = 0; i < temp_result_data.size(); i++)
+				{
+					temp_output_buf = temp_output_buf + std::to_string(i + 1) + ": " + 
+						(temp_result_data[i].m_status ? "YES\n" : "NO\n");
+				}
+
+				fl_alert(temp_output_buf.c_str());
+
+				m_problem_browser->activate();
+				m_start_test_button->activate();
+				m_testing_progress->deactivate();
+				m_testing_progress->value(0);
+			}	
+		}
+	}
+
 	return true;
 }
 
 void Gui::Shutdown()
 {
-	
+	if (m_settings_window != nullptr)
+	{
+		m_settings_window->Shutdown();
+		delete m_settings_window;
+		m_settings_window = nullptr;
+	}
 }
 
 // Settings Window
@@ -286,10 +348,9 @@ void SettingsWindow::SelectDirectory(int detail_)
 
 	BROWSEINFO bi = { 0 };
 
-	if(detail_ == SELECT_WORKING_DIRECTORY)
+	if (detail_ == SELECT_WORKING_DIRECTORY)
 		bi.lpszTitle = ("Browse for working folder...");
-	else 
-	if (detail_ == SELECT_PROBLEM_DIRECTORY)
+	else if (detail_ == SELECT_PROBLEM_DIRECTORY)
 		bi.lpszTitle = ("Browse for problem folder...");
 	else
 		bi.lpszTitle = ("Browse for folder...");

@@ -52,7 +52,7 @@ void ProblemManager::SearchForProblems(const std::string& path_to_problems_folde
 		} while (FindNextFile(hFind, &findfiledata) != 0);
 	}
 
-	for (int i = 0; i < m_problem_list.size(); i++)
+	for (unsigned i = 0; i < m_problem_list.size(); i++)
 	{
 		std::fstream input_file(m_problem_list[i].m_path + "\\problem_layout.txt", std::ios::in);
 		if (input_file.is_open())
