@@ -31,8 +31,9 @@ public:
 
 	bool Initialize(const std::string& path_to_problems_folder_);
 	void Shutdown();
-	void SearchForProblems(const std::string& path_to_problems_folder_);
+	void SearchForProblems();
 	void ShowTaskDescription(int problem_id_);
+	void ChangeDir(const std::string& path_to_problems_folder_) { m_path = path_to_problems_folder_; }
 
 	std::vector<Problem> GetProblemList() { return m_problem_list; }
 	Problem GetProblem(unsigned int problem_id_) { 

@@ -66,13 +66,18 @@ void Gui::ButtonClick(Fl_Widget* w)
 
 		w->deactivate();
 		m_problem_browser->deactivate();
+		m_all_test_selector->deactivate();
+		m_first_test_selector->deactivate();
 
 		m_testing_progress->activate();
 		m_testing_progress->minimum(0);
-		m_testing_progress->maximum((float)problem.m_test_count);
+		if (m_all_test_selector->value() == true)
+			m_testing_progress->maximum((float)problem.m_test_count);
+		else
+			m_testing_progress->maximum(1);
 		m_testing_progress->value(0);
 
-		m_test_manager->StartTesting(m_problem_browser->value() - 1, std::string(m_exefile_selector_value->value()));
+		m_test_manager->StartTesting(m_problem_browser->value() - 1, std::string(m_exefile_selector_value->value()), m_all_test_selector->value());
 
 		return;
 	}
@@ -214,32 +219,61 @@ bool Gui::Run()
 
 	while (Fl::wait() > 0)
 	{
-		if (m_test_manager->GetTestingState())
+		unsigned int testing_state = m_test_manager->GetTestingState();
+		if (testing_state == TESTING_STATE_ONLINE || testing_state == TESTING_STATE_ERROR)
 		{
-			int testing_stage = m_test_manager->GetTestingStage();
-
-			m_testing_progress->value((float)testing_stage + 1);
-			if (testing_stage == m_problem_list[m_problem_browser->value() - 1].m_test_count - 1)
+			if (testing_state == TESTING_STATE_ERROR)
 			{
-				m_test_manager->FinishTesting();
-
-				std::vector<Test> temp_result_data;
-				std::string temp_output_buf("");
-				m_test_manager->GetResultData(temp_result_data);
-
-				for (unsigned i = 0; i < temp_result_data.size(); i++)
+				std::string error_message = m_test_manager->GetErrorMessage();
+				while (error_message != "No errors")
 				{
-					temp_output_buf = temp_output_buf + std::to_string(i + 1) + ": " + 
-						(temp_result_data[i].m_status ? "YES\n" : "NO\n");
+					fl_alert(error_message.c_str());
+					error_message = m_test_manager->GetErrorMessage();
 				}
+			}
+			else
+			{
+				int testing_stage = m_test_manager->GetTestingStage();
 
-				fl_alert(temp_output_buf.c_str());
+				m_testing_progress->value((float)testing_stage + 1);
+				if (testing_stage == m_problem_list[m_problem_browser->value() - 1].m_test_count - 1 || (m_all_test_selector->value() == false && testing_stage == 0))
+				{
+					m_test_manager->FinishTesting();
 
-				m_problem_browser->activate();
-				m_start_test_button->activate();
-				m_testing_progress->deactivate();
-				m_testing_progress->value(0);
-			}	
+					std::vector<Test> temp_result_data;
+					std::string temp_output_buf("");
+					m_test_manager->GetResultData(temp_result_data);
+
+					for (unsigned i = 0; i < temp_result_data.size(); i++)
+					{
+						temp_output_buf = temp_output_buf + std::to_string(i + 1) + ": " +
+							(temp_result_data[i].m_status & TEST_STATUS_OK ? "OK\n" : "FAIL\n");
+					}
+
+					fl_alert(temp_output_buf.c_str());
+
+					m_problem_browser->activate();
+					m_start_test_button->activate();
+					m_all_test_selector->activate();
+					m_first_test_selector->activate();
+
+					m_testing_progress->deactivate();
+					m_testing_progress->value(0);
+				}
+			}
+		}
+
+		if (m_settings_window->IsProblemBrowserUpdateNeeded())
+		{
+			m_problem_manager->ChangeDir(m_options_manager->GetProblemDir());
+			m_problem_manager->SearchForProblems();
+			m_problem_list = m_problem_manager->GetProblemList();
+
+			m_problem_browser->clear();
+			for (unsigned i = 0; i < m_problem_list.size(); i++)
+				m_problem_browser->add(std::string(m_problem_list[i].m_folder_name + ": " + m_problem_list[i].m_caption).c_str());
+
+			m_settings_window->SetProblemBrowserUpdateNeeded(false);
 		}
 	}
 
@@ -262,6 +296,8 @@ bool SettingsWindow::Initialize(OptionsManager* options_manager_)
 {
 	m_options_manager = options_manager_;
 
+	m_problem_browser_update_needed = false;
+
 	int y = 10, h = 20;
 	int w = 520;
 
@@ -272,7 +308,7 @@ bool SettingsWindow::Initialize(OptionsManager* options_manager_)
 	m_working_dir_selector->value(m_options_manager->GetWorkingDir().c_str());
 
 	m_working_dir_selector_button = new Fl_Button(selector_spacing + 298, y, w - selector_spacing - 298 - 10, h, "Select working dir");
-	m_working_dir_selector_button->callback(this->ButtonCallback, (void*)this);
+	m_working_dir_selector_button->callback(this->ButtonCallback, this);
 	m_working_dir_selector_button->clear_visible_focus();
 
 	y += h + 10;
@@ -281,14 +317,14 @@ bool SettingsWindow::Initialize(OptionsManager* options_manager_)
 	m_problem_dir_selector->value(m_options_manager->GetProblemDir().c_str());
 
 	m_problem_dir_selector_button = new Fl_Button(selector_spacing + 298, y, w - selector_spacing - 298 - 10, h, "Select problem dir");
-	m_problem_dir_selector_button->callback(this->ButtonCallback, (void*)this);
+	m_problem_dir_selector_button->callback(this->ButtonCallback, this);
 	m_problem_dir_selector_button->clear_visible_focus();
 
 	y += h + 10;
 
 	m_theme_choice = new Fl_Choice(selector_spacing, y, 295, 22, "Themes:");
 	m_theme_choice->clear_visible_focus();
-	m_theme_choice->callback(this->ButtonCallback, (void*)this);
+	m_theme_choice->callback(this->ButtonCallback, this);
 	m_theme_choice->add("none");
 	m_theme_choice->add("gtk+");
 	m_theme_choice->add("gleam");
@@ -298,7 +334,7 @@ bool SettingsWindow::Initialize(OptionsManager* options_manager_)
 	y += h + 12;
 
 	m_reset_settings_button = new Fl_Button(10, y, 100, h, "Reset settings");
-	m_reset_settings_button->callback(this->ButtonCallback, (void*)this);
+	m_reset_settings_button->callback(this->ButtonCallback, this);
 	m_reset_settings_button->clear_visible_focus();
 
 	y += h + 10;
@@ -414,6 +450,7 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 	if (button_label == "Select problem dir")
 	{
 		SelectDirectory(SELECT_PROBLEM_DIRECTORY);
+		m_problem_browser_update_needed = true;
 		return;
 	}
 

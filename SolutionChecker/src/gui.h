@@ -56,6 +56,8 @@ public:
 	void SelectDirectory(int detail_);
 
 	bool IsVisible() { return m_window->visible(); }
+	bool IsProblemBrowserUpdateNeeded() { return m_problem_browser_update_needed; }
+	void SetProblemBrowserUpdateNeeded(bool value_) { m_problem_browser_update_needed = value_; }
 
 	void ButtonClick(Fl_Widget* w);
 	static void ButtonCallback(Fl_Widget* w, void* f) { ((SettingsWindow*)f)->ButtonClick(w); }
@@ -73,6 +75,8 @@ private:
 	Fl_Button* m_reset_settings_button;
 
 	Fl_Choice* m_theme_choice;
+
+	bool m_problem_browser_update_needed;
 };
 
 class Gui

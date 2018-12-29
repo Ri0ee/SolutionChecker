@@ -5,7 +5,7 @@
 bool ProblemManager::Initialize(const std::string& path_to_problems_folder_)
 {
 	m_path = path_to_problems_folder_;
-	if(!m_path.empty()) SearchForProblems(m_path);
+	if(!m_path.empty()) SearchForProblems();
 
 	return true;
 }
@@ -15,7 +15,7 @@ void ProblemManager::Shutdown()
 
 }
 
-void ProblemManager::SearchForProblems(const std::string& path_to_problems_folder_)
+void ProblemManager::SearchForProblems()
 {
 	m_problem_list.clear();
 
@@ -23,7 +23,7 @@ void ProblemManager::SearchForProblems(const std::string& path_to_problems_folde
 	HANDLE hFind = INVALID_HANDLE_VALUE;
 
 	char fullpath[MAX_PATH];
-	GetFullPathName(path_to_problems_folder_.c_str(), MAX_PATH, fullpath, 0);
+	GetFullPathName(m_path.c_str(), MAX_PATH, fullpath, 0);
 	std::string fp(fullpath);
 
 	int id_counter = 0;
