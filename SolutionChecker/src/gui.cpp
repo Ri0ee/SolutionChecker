@@ -458,7 +458,9 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 	if (m_theme_choice->changed())
 	{
 		m_options_manager->SetTheme(m_options_manager->GetThemeName(m_theme_choice->value()));
-		fl_alert("Restart the tester for theme changes to apply");
+		Fl::scheme(m_options_manager->GetThemeName().c_str());
+		Fl::get_system_colors();
+		Fl::reload_scheme();
 		return;
 	}
 }
