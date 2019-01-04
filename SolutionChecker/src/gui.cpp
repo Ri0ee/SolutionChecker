@@ -70,7 +70,6 @@ void Gui::ButtonClick(Fl_Widget* w)
 		m_first_test_selector->deactivate();
 
 		m_testing_progress->activate();
-		m_testing_progress->minimum(0);
 		if (m_all_test_selector->value() == true)
 			m_testing_progress->maximum((float)problem.m_test_count);
 		else
@@ -198,6 +197,7 @@ bool Gui::Initialize(OptionsManager* options_manager_, ProblemManager* problem_m
 	y += h + 10;
 
 	m_testing_progress = new Fl_Progress(5, y, 490, h, "Testing progress");
+	m_testing_progress->minimum(0);
 	m_testing_progress->deactivate();
 
 	y += h + 10;
@@ -348,9 +348,18 @@ bool SettingsWindow::Initialize(OptionsManager* options_manager_)
 
 	y += h + 12;
 
+	m_test_memory_limit_input = new Fl_Value_Input(selector_spacing, y, 295, h, "Mem limit:");
+	m_test_memory_limit_input->value(m_options_manager->GetTestMemoryLimit());
+
+	y += h + 10;
+
 	m_reset_settings_button = new Fl_Button(10, y, 100, h, "Reset settings");
 	m_reset_settings_button->callback(this->ButtonCallback, this);
 	m_reset_settings_button->clear_visible_focus();
+
+	m_apply_settings_button = new Fl_Button(120, y, 100, h, "Apply settings");
+	m_apply_settings_button->callback(this->ButtonCallback, this);
+	m_apply_settings_button->clear_visible_focus();
 
 	y += h + 10;
 
@@ -427,14 +436,12 @@ void SettingsWindow::SelectDirectory(int detail_)
 
 		if (detail_ == SELECT_WORKING_DIRECTORY) 
 		{
-			m_options_manager->SetWorkingDir(std::string(path));
 			m_working_dir_selector->value(path);
 			return;
 		}
 
 		if (detail_ == SELECT_PROBLEM_DIRECTORY)
 		{
-			m_options_manager->SetProblemDir(std::string(path));
 			m_problem_dir_selector->value(path);
 			return;
 		}
@@ -456,6 +463,20 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 		return;
 	}
 
+	if (button_label == "Apply settings")
+	{
+		m_options_manager->SetWorkingDir(std::string(m_working_dir_selector->value()));
+		m_options_manager->SetProblemDir(std::string(m_problem_dir_selector->value()));
+		m_options_manager->SetTestMemoryLimit((int)m_test_memory_limit_input->value());
+		m_options_manager->SetTheme(m_options_manager->GetThemeName(m_theme_choice->value()));
+		m_options_manager->UpdateOptionsFile();
+
+		m_problem_browser_update_needed = true;
+		Fl::scheme(m_options_manager->GetThemeName().c_str());
+		Fl::reload_scheme();
+		return;
+	}
+
 	if (button_label == "Select working dir")
 	{
 		SelectDirectory(SELECT_WORKING_DIRECTORY);
@@ -466,14 +487,6 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 	{
 		SelectDirectory(SELECT_PROBLEM_DIRECTORY);
 		m_problem_browser_update_needed = true;
-		return;
-	}
-
-	if (m_theme_choice->changed())
-	{
-		m_options_manager->SetTheme(m_options_manager->GetThemeName(m_theme_choice->value()));
-		Fl::scheme(m_options_manager->GetThemeName().c_str());
-		Fl::reload_scheme();
 		return;
 	}
 }

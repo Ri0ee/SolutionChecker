@@ -12,7 +12,8 @@
 #include "FL/Fl_Scroll.H"
 #include "FL/Fl_Hold_Browser.H"
 #include "FL/fl_ask.H"
-#include "FL/Fl_File_Input.H"
+#include "FL/Fl_Value_Input.H"
+#include "FL/Fl_Multi_Label.H"
 
 #include <shlobj.h>
 #include <iostream>
@@ -74,8 +75,11 @@ private:
 	Fl_Button* m_working_dir_selector_button;
 	Fl_Button* m_problem_dir_selector_button;
 	Fl_Button* m_reset_settings_button;
+	Fl_Button* m_apply_settings_button;
 
 	Fl_Choice* m_theme_choice;
+
+	Fl_Value_Input* m_test_memory_limit_input;
 
 	bool m_problem_browser_update_needed;
 };

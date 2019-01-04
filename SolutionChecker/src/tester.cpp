@@ -16,6 +16,7 @@ void TestManager::StartTesting(int problem_id_, const std::string& solution_loca
 
 	m_test_list.clear();
 	m_testing_state = TESTING_STATE_ONLINE;
+	m_testing_stage.store(0);
 
 	m_testing_thread = new std::thread(&TestManager::TestingSequence, this, problem, solution_location_, all_tests_);
 }
@@ -28,6 +29,7 @@ void TestManager::FinishTesting()
 		delete m_testing_thread;
 		m_testing_thread = nullptr;
 		m_testing_state = TESTING_STATE_OFFLINE;
+		m_testing_stage.store(0);
 	}
 }
 
