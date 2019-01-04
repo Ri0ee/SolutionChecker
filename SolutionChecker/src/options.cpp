@@ -86,6 +86,15 @@ bool OptionsManager::GetOptions()
 			m_theme = line.substr(delim_pos + 1, line.size());
 			continue;
 		}
+
+		if (param_name == "TestMemoryLimit")
+		{
+			std::stringstream param_value(line.substr(delim_pos + 1, line.size()));
+			int test_memory_limit = 0;
+			param_value >> test_memory_limit;
+			m_test_memory_limit = test_memory_limit;
+			continue;
+		}
 	}
 
 	in_file.close();
@@ -103,6 +112,7 @@ void OptionsManager::SetDefaults()
 	m_working_dir = "";
 	m_theme = "none";
 	m_use_only_one_test = false;
+	m_test_memory_limit = 500;
 }
 
 bool OptionsManager::UpdateOptionsFile()
@@ -121,6 +131,7 @@ bool OptionsManager::UpdateOptionsFile()
 	out_file << "LastProblem:" << m_last_problem << "\n";
 	out_file << "UseOnlyOneTest:" << (m_use_only_one_test ? "true" : "false") << "\n";
 	out_file << "Theme:" << m_theme << "\n";
+	out_file << "TestMemoryLimit:" << m_test_memory_limit << "\n";
 
 	out_file.close();
 

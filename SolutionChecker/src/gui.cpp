@@ -247,8 +247,22 @@ bool Gui::Run()
 
 					for (unsigned i = 0; i < temp_result_data.size(); i++)
 					{
-						temp_output_buf = temp_output_buf + std::to_string(i + 1) + ": " +
-							(temp_result_data[i].m_status & TEST_STATUS_OK ? "OK\n" : "FAIL\n");
+						temp_output_buf = temp_output_buf + std::to_string(i + 1) + ": ";
+
+						temp_output_buf = temp_output_buf + "Run time = " + std::to_string(temp_result_data[i].m_run_time) + "ms; ";
+						temp_output_buf = temp_output_buf + "Exit code = " + std::to_string(temp_result_data[i].m_exit_code) + "; ";
+						temp_output_buf = temp_output_buf + "Peak memory used = " + std::to_string((temp_result_data[i].m_peak_memory_used / 1024) / 1024) + "MB; ";
+
+						if (temp_result_data[i].m_status & TEST_STATUS_TIME_LIMIT)
+							temp_output_buf = temp_output_buf + "TIME LIMIT; ";
+						
+						if (temp_result_data[i].m_status & TEST_STATUS_MEMORY_LIMIT)
+							temp_output_buf = temp_output_buf + "MEMORY LIMIT; ";
+
+						if (temp_result_data[i].m_status & TEST_STATUS_RUNTIME_ERROR)
+							temp_output_buf = temp_output_buf + "RUNTIME ERROR; ";
+
+						temp_output_buf = temp_output_buf + (temp_result_data[i].m_status & TEST_STATUS_OK ? "OK\n" : "FAIL\n");
 					}
 
 					fl_alert(temp_output_buf.c_str());
@@ -459,7 +473,6 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 	{
 		m_options_manager->SetTheme(m_options_manager->GetThemeName(m_theme_choice->value()));
 		Fl::scheme(m_options_manager->GetThemeName().c_str());
-		Fl::get_system_colors();
 		Fl::reload_scheme();
 		return;
 	}

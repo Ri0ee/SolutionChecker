@@ -70,12 +70,16 @@ public:
 	int GetThemeId() { return GetThemeId(m_theme); }
 	void SetTheme(const std::string& theme_) { m_theme = theme_; }
 
+	int GetTestMemoryLimit() { return m_test_memory_limit; }
+	void SetTestMemoryLimit(int test_memory_limit_) { m_test_memory_limit = test_memory_limit_; }
+
 private:
 	std::string m_path_to_options_file;
 
 	float m_window_pos_x;
 	float m_window_pos_y;
 	int m_last_problem;
+	int m_test_memory_limit;
 	std::string m_working_dir;
 	std::string m_problem_dir;
 	std::string m_last_exe_dir;

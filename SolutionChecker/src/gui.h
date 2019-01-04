@@ -12,6 +12,7 @@
 #include "FL/Fl_Scroll.H"
 #include "FL/Fl_Hold_Browser.H"
 #include "FL/fl_ask.H"
+#include "FL/Fl_File_Input.H"
 
 #include <shlobj.h>
 #include <iostream>
