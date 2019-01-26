@@ -41,13 +41,18 @@ struct ErrorMessage
 class TestManager
 {
 public:
-	TestManager() {}
-	~TestManager() {}
+	TestManager(OptionsManager* options_manager_, ProblemManager* problem_manager_) {
+		Initialize(options_manager_, problem_manager_);
+	}
 
-	bool Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_);
+	TestManager() {}
+
+	~TestManager() {
+		Shutdown();
+	}
+
 	void StartTesting(int problem_id_, const std::string& solution_location_, bool all_tests_);
 	void FinishTesting();
-	void Shutdown();
 	void TestingSequence(Problem problem_, const std::string& solution_location_, bool all_tests_);
 
 	void GetResultData(std::vector<Test>& data_) { data_.assign(m_test_list.begin(), m_test_list.end()); }
@@ -79,6 +84,9 @@ public:
 	}
 
 private:
+	void Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_);
+	void Shutdown();
+
 	OptionsManager* m_options_manager = nullptr;
 	ProblemManager* m_problem_manager = nullptr;
 

@@ -33,38 +33,46 @@
 class OutputWindow
 {
 public:
-	OutputWindow() {}
-	~OutputWindow() {}
+	OutputWindow() {
+		Initialize();
+	}
 
-	bool Initialize();
-	void Shutdown();
+	~OutputWindow() {
+		Shutdown();
+	}
 
 private:
-
+	bool Initialize();
+	void Shutdown();
 };
 
 class SettingsWindow
 {
 public:
-	SettingsWindow() {}
-	~SettingsWindow() {}
+	SettingsWindow(OptionsManager* options_manager_) {
+		Initialize(options_manager_);
+	}
 
-	bool Initialize(OptionsManager* options_manager_);
-	void Shutdown();
+	SettingsWindow() {}
+
+	~SettingsWindow() {}
 
 	void Show();
 	void Hide();
-	void UpdateWidgetInfo();
-	void SelectDirectory(int detail_);
 
 	bool IsVisible() { return m_window->visible(); }
 	bool IsProblemBrowserUpdateNeeded() { return m_problem_browser_update_needed; }
 	void SetProblemBrowserUpdateNeeded(bool value_) { m_problem_browser_update_needed = value_; }
 
+private:
+	void Initialize(OptionsManager* options_manager_);
+
 	void ButtonClick(Fl_Widget* w);
 	static void ButtonCallback(Fl_Widget* w, void* f) { ((SettingsWindow*)f)->ButtonClick(w); }
 
-private:
+	void UpdateWidgetInfo();
+	void SelectDirectory(int detail_);
+
 	OptionsManager* m_options_manager = nullptr;
 
 	Fl_Double_Window* m_window;
@@ -87,21 +95,29 @@ private:
 class Gui
 {
 public:
+	Gui(OptionsManager* options_manager_, ProblemManager* problem_manager_, TestManager* test_manager_) {
+		Initialize(options_manager_, problem_manager_, test_manager_);
+	}
+
 	Gui() {}
-	~Gui() {}
 
-	bool Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_, TestManager* test_manager_);
+	~Gui() {
+		Shutdown();
+	}
+
 	bool Run();
+	
+private:
+	void Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_, TestManager* test_manager_);
 	void Shutdown();
-	void SelectFile();
-
-	void ButtonClick(Fl_Widget* w);
-	void WindowAction();
 
 	static void ButtonCallback(Fl_Widget* w, void* f) { ((Gui*)f)->ButtonClick(w); }
 	static void WindowCallback(Fl_Widget* w, void* f) { ((Gui*)f)->WindowAction(); }
 
-private:
+	void ButtonClick(Fl_Widget* w);
+	void WindowAction();
+	void SelectFile();
+
 	OptionsManager* m_options_manager = nullptr;
 	ProblemManager* m_problem_manager = nullptr;
 	TestManager* m_test_manager = nullptr;

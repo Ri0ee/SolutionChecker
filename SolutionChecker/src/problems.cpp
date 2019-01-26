@@ -2,17 +2,10 @@
 
 
 
-bool ProblemManager::Initialize(const std::string& path_to_problems_folder_)
+void ProblemManager::Initialize(const std::string& path_to_problems_folder_)
 {
 	m_path = path_to_problems_folder_;
 	if(!m_path.empty()) SearchForProblems();
-
-	return true;
-}
-
-void ProblemManager::Shutdown()
-{
-
 }
 
 void ProblemManager::SearchForProblems()

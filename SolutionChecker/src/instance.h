@@ -11,14 +11,22 @@
 class Instance
 {
 public:
-	Instance() {}
-	~Instance() {}
+	Instance(const char* file_location_) {
+		Initialize(file_location_);
+	}
 
-	bool Initialize(char file_location_[]);
+	Instance() {}
+
+	~Instance() {
+		Shutdown();
+	}
+
 	bool Run();
-	void Shutdown();
 
 private:
+	void Initialize(const char* file_location_);
+	void Shutdown();
+
 	Gui* m_gui_ptr = nullptr;
 	OptionsManager* m_options_manager = nullptr;
 	ProblemManager* m_problem_manager = nullptr;

@@ -2,12 +2,10 @@
 
 
 
-bool TestManager::Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_)
+void TestManager::Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_)
 {
 	m_options_manager = options_manager_;
 	m_problem_manager = problem_manager_;
-
-	return true;
 }
 
 void TestManager::StartTesting(int problem_id_, const std::string& solution_location_, bool all_tests_)

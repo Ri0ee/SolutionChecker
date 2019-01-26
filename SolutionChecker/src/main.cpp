@@ -8,12 +8,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	char file_location[_MAX_PATH + 1];
 	GetModuleFileName(NULL, file_location, _MAX_PATH);
 
-	Instance* current_instance = new Instance();
-	if (current_instance->Initialize(file_location))
-		current_instance->Run();
-
-	current_instance->Shutdown();
+	Instance* current_instance = new Instance(file_location);
+	bool ret_state = current_instance->Run();
 	delete current_instance;
 
-	return 0;
+	return ret_state;
 }

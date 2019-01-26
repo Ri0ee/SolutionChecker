@@ -26,11 +26,14 @@ struct Problem
 class ProblemManager
 {
 public:
+	ProblemManager(const std::string& path_to_problems_folder_) {
+		Initialize(path_to_problems_folder_);
+	}
+
 	ProblemManager() {}
+
 	~ProblemManager() {}
 
-	bool Initialize(const std::string& path_to_problems_folder_);
-	void Shutdown();
 	void SearchForProblems();
 	void ShowTaskDescription(int problem_id_);
 	void ChangeDir(const std::string& path_to_problems_folder_) { m_path = path_to_problems_folder_; }
@@ -42,6 +45,8 @@ public:
 	}
 
 private:
+	void Initialize(const std::string& path_to_problems_folder_);
+
 	std::string m_path;
 	std::vector<Problem> m_problem_list;
 };

@@ -132,7 +132,7 @@ void Gui::WindowAction() // Close button pressed
 	m_main_window->hide();
 }
 
-bool Gui::Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_, TestManager* test_manager_)
+void Gui::Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_, TestManager* test_manager_)
 {	
 	m_options_manager = options_manager_;
 	m_problem_manager = problem_manager_;
@@ -208,10 +208,7 @@ bool Gui::Initialize(OptionsManager* options_manager_, ProblemManager* problem_m
 
 	m_main_window->end();
 
-	m_settings_window = new SettingsWindow();
-	m_settings_window->Initialize(m_options_manager);
-
-	return true;
+	m_settings_window = new SettingsWindow(m_options_manager);
 }
 
 bool Gui::Run()
@@ -299,7 +296,6 @@ void Gui::Shutdown()
 {
 	if (m_settings_window != nullptr)
 	{
-		m_settings_window->Shutdown();
 		delete m_settings_window;
 		m_settings_window = nullptr;
 	}
@@ -307,7 +303,7 @@ void Gui::Shutdown()
 
 // Settings Window
 
-bool SettingsWindow::Initialize(OptionsManager* options_manager_)
+void SettingsWindow::Initialize(OptionsManager* options_manager_)
 {
 	m_options_manager = options_manager_;
 
@@ -366,13 +362,6 @@ bool SettingsWindow::Initialize(OptionsManager* options_manager_)
 	m_window->size(w, y);
 	m_window->hide();
 	m_window->end();
-	
-	return true;
-}
-
-void SettingsWindow::Shutdown()
-{
-
 }
 
 void SettingsWindow::Show()
