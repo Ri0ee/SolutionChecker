@@ -58,6 +58,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 	{
 		Test test;
 		test.m_status = 0;
+		test.m_id = current_test;
 
 		std::string input_file_dir = problem_.m_path + "\\" + std::to_string(current_test) + ".in";
 		std::string correct_output_file_dir = problem_.m_path + "\\" + std::to_string(current_test) + ".out";

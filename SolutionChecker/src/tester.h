@@ -30,6 +30,7 @@ struct Test
 	long long int m_run_time;
 	DWORD m_exit_code;
 	int m_peak_memory_used;
+	int m_id;
 };
 
 struct ErrorMessage

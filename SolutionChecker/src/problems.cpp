@@ -2,9 +2,8 @@
 
 
 
-void ProblemManager::Initialize(const std::string& path_to_problems_folder_)
+void ProblemManager::Initialize()
 {
-	m_path = path_to_problems_folder_;
 	if(!m_path.empty()) SearchForProblems();
 }
 

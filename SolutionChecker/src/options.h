@@ -11,11 +11,7 @@
 class OptionsManager
 {
 public:
-	OptionsManager(const std::string& path_to_options_file_) {
-		SetOptionsFilePath(path_to_options_file_);
-		GetOptions();
-	}
-
+	OptionsManager(const std::string& path_to_options_file_) : m_path_to_options_file(path_to_options_file_) { GetOptions(); }
 	OptionsManager() {}
 	~OptionsManager() {}
 

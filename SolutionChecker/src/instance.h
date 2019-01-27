@@ -11,15 +11,9 @@
 class Instance
 {
 public:
-	Instance(const char* file_location_) {
-		Initialize(file_location_);
-	}
-
+	Instance(const char* file_location_) { Initialize(file_location_); }
 	Instance() {}
-
-	~Instance() {
-		Shutdown();
-	}
+	~Instance() { Shutdown(); }
 
 	bool Run();
 

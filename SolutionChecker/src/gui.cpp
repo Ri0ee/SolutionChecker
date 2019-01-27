@@ -2,6 +2,287 @@
 
 
 
+// Output window
+
+void OutputWindow::ListElement::Initialize()
+{
+	int header_width =	(int)fl_width(m_header.c_str());
+	int info_width =	(int)fl_width(m_info.c_str());
+	m_header_display =	new Fl_Box(m_x, m_y, header_width, 20);
+	m_info_display =	new Fl_Box(m_x + header_width + 10, m_y, info_width, 20);
+
+	m_header_display->box(FL_BORDER_FRAME);
+	m_info_display->box(FL_BORDER_BOX);
+
+	m_header_display->copy_label(m_header.c_str());
+	m_info_display->copy_label(m_info.c_str());
+
+	m_header_display->labelcolor(m_text_color);
+	m_info_display->labelcolor(m_text_color);
+
+	m_header_display->labelfont(FL_HELVETICA_BOLD);
+	m_info_display->labelfont(FL_HELVETICA_BOLD);
+}
+
+void OutputWindow::Initialize()
+{
+	m_window = new Fl_Double_Window(500, 520, "Test results");
+	
+	int h = ResetResultList(m_test_result_list);
+
+	m_window->size(400, h);
+	m_window->hide();
+	m_window->end();
+}
+
+void OutputWindow::Hide()
+{
+	m_window->hide();
+}
+
+void OutputWindow::Show()
+{
+	m_window->show();
+}
+
+int OutputWindow::ResetResultList(std::vector<Test>& test_result_list_)
+{
+	int h = 10;
+	for (auto test : test_result_list_)
+	{
+		Fl_Color color;
+		std::string temp_id_buf = std::to_string(test.m_id) + ":";
+		std::string temp_str_buf("");
+		if (test.m_status & TEST_STATUS_OK)
+		{
+			temp_str_buf.append("TEST_STATUS_OK; ");
+			color = FL_DARK_GREEN;
+		}
+
+		if (test.m_status & TEST_STATUS_FAIL)
+		{
+			temp_str_buf.append("TEST_STATUS_FAIL; ");
+			color = FL_DARK_RED;
+		}
+
+		if (test.m_status & TEST_STATUS_MEMORY_LIMIT)
+		{
+			temp_str_buf.append("TEST_STATUS_MEMORY_LIMIT; ");
+			color = FL_DARK_RED;
+		}
+
+		if (test.m_status & TEST_STATUS_RUNTIME_ERROR)
+		{
+			temp_str_buf.append("TEST_STATUS_RUNTIME_ERROR; ");
+			color = FL_DARK_RED;
+		}
+			
+		if (test.m_status & TEST_STATUS_TIME_LIMIT)
+		{
+			temp_str_buf.append("TEST_STATUS_TIME_LIMIT; ");
+			color = FL_DARK_RED;
+		}
+			
+		if (test.m_status & TEST_STATUS_UNKNOWN)
+		{
+			temp_str_buf.append("TEST_STATUS_UNKNOWN; ");
+			color = FL_DARK_YELLOW;
+		}
+
+		ListElement temp_text_union(10, h, temp_id_buf, temp_str_buf, color);
+		m_text_unions.push_back(temp_text_union);
+		h += 30;
+	}
+
+	return h;
+}
+
+// Settings Window
+
+void SettingsWindow::Initialize()
+{
+	m_problem_browser_update_needed = false;
+
+	int y = 10, h = 20;
+	int w = 520;
+
+	m_window = new Fl_Double_Window(w, 500, "Settings");
+
+	int selector_spacing = (int)fl_width("Working dir:") + 5;
+	m_working_dir_selector = new Fl_Input(selector_spacing, y, 295, h, "Working dir:");
+	m_working_dir_selector->value(m_options_manager->GetWorkingDir().c_str());
+
+	m_working_dir_selector_button = new Fl_Button(selector_spacing + 298, y, w - selector_spacing - 298 - 10, h, "Select working dir");
+	m_working_dir_selector_button->callback(this->ButtonCallback, this);
+	m_working_dir_selector_button->clear_visible_focus();
+
+	y += h + 10;
+
+	m_problem_dir_selector = new Fl_Input(selector_spacing, y, 295, h, "Problems:");
+	m_problem_dir_selector->value(m_options_manager->GetProblemDir().c_str());
+
+	m_problem_dir_selector_button = new Fl_Button(selector_spacing + 298, y, w - selector_spacing - 298 - 10, h, "Select problem dir");
+	m_problem_dir_selector_button->callback(this->ButtonCallback, this);
+	m_problem_dir_selector_button->clear_visible_focus();
+
+	y += h + 10;
+
+	m_theme_choice = new Fl_Choice(selector_spacing, y, 295, 22, "Themes:");
+	m_theme_choice->clear_visible_focus();
+	m_theme_choice->callback(this->ButtonCallback, this);
+	m_theme_choice->add("none");
+	m_theme_choice->add("gtk+");
+	m_theme_choice->add("gleam");
+	m_theme_choice->add("plastic");
+	m_theme_choice->value(m_options_manager->GetThemeId());
+
+	y += h + 12;
+
+	m_test_memory_limit_input = new Fl_Value_Input(selector_spacing, y, 295, h, "Mem limit:");
+	m_test_memory_limit_input->value(m_options_manager->GetTestMemoryLimit());
+
+	y += h + 10;
+
+	m_reset_settings_button = new Fl_Button(10, y, 100, h, "Reset settings");
+	m_reset_settings_button->callback(this->ButtonCallback, this);
+	m_reset_settings_button->clear_visible_focus();
+
+	m_apply_settings_button = new Fl_Button(120, y, 100, h, "Apply settings");
+	m_apply_settings_button->callback(this->ButtonCallback, this);
+	m_apply_settings_button->clear_visible_focus();
+
+	y += h + 10;
+
+	m_window->size(w, y);
+	m_window->hide();
+	m_window->end();
+}
+
+void SettingsWindow::Show()
+{
+	m_window->show();
+}
+
+void SettingsWindow::Hide()
+{
+	m_window->hide();
+}
+
+static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
+{
+	if (uMsg == BFFM_INITIALIZED)
+	{
+		std::string tmp = (const char *)lpData;
+		SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
+	}
+
+	return 0;
+}
+
+void SettingsWindow::SelectDirectory(int detail_)
+{
+	TCHAR path[MAX_PATH];
+	std::string path_param("C:\\");
+	if (detail_ == SELECT_WORKING_DIRECTORY)
+		path_param = m_options_manager->GetWorkingDir();
+
+	if (detail_ == SELECT_PROBLEM_DIRECTORY)
+		path_param = m_options_manager->GetProblemDir();
+
+	BROWSEINFO bi = { 0 };
+
+	if (detail_ == SELECT_WORKING_DIRECTORY)
+		bi.lpszTitle = ("Browse for working folder...");
+	else if (detail_ == SELECT_PROBLEM_DIRECTORY)
+		bi.lpszTitle = ("Browse for problem folder...");
+	else
+		bi.lpszTitle = ("Browse for folder...");
+
+	bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
+	bi.lpfn = BrowseCallbackProc;
+	bi.lParam = (LPARAM)path_param.c_str();
+
+	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
+
+	if (pidl != 0)
+	{
+		//get the name of the folder and put it in path
+		SHGetPathFromIDList(pidl, path);
+
+		//free memory used
+		IMalloc* imalloc = 0;
+		if (SUCCEEDED(SHGetMalloc(&imalloc)))
+		{
+			imalloc->Free(pidl);
+			imalloc->Release();
+		}
+
+		if (detail_ == SELECT_WORKING_DIRECTORY)
+		{
+			m_working_dir_selector->value(path);
+			return;
+		}
+
+		if (detail_ == SELECT_PROBLEM_DIRECTORY)
+		{
+			m_problem_dir_selector->value(path);
+			return;
+		}
+
+		return;
+	}
+}
+
+void SettingsWindow::ButtonClick(Fl_Widget* w)
+{
+	std::string button_label(w->label());
+	if (button_label == "Reset settings")
+	{
+		if (fl_ask("Do you really want to reset settings?"))
+		{
+			m_options_manager->SetDefaults();
+			UpdateWidgetInfo();
+		}
+		return;
+	}
+
+	if (button_label == "Apply settings")
+	{
+		m_options_manager->SetWorkingDir(std::string(m_working_dir_selector->value()));
+		m_options_manager->SetProblemDir(std::string(m_problem_dir_selector->value()));
+		m_options_manager->SetTestMemoryLimit((int)m_test_memory_limit_input->value());
+		m_options_manager->SetTheme(m_options_manager->GetThemeName(m_theme_choice->value()));
+		m_options_manager->UpdateOptionsFile();
+
+		m_problem_browser_update_needed = true;
+		Fl::scheme(m_options_manager->GetThemeName().c_str());
+		Fl::reload_scheme();
+		return;
+	}
+
+	if (button_label == "Select working dir")
+	{
+		SelectDirectory(SELECT_WORKING_DIRECTORY);
+		return;
+	}
+
+	if (button_label == "Select problem dir")
+	{
+		SelectDirectory(SELECT_PROBLEM_DIRECTORY);
+		m_problem_browser_update_needed = true;
+		return;
+	}
+}
+
+void SettingsWindow::UpdateWidgetInfo()
+{
+	m_problem_dir_selector->value(m_options_manager->GetProblemDir().c_str());
+	m_working_dir_selector->value(m_options_manager->GetWorkingDir().c_str());
+	m_theme_choice->value(m_options_manager->GetThemeId());
+}
+
+// Main GUI
+
 void Gui::SelectFile()
 {
 	OPENFILENAME ofn = {};
@@ -124,20 +405,19 @@ void Gui::ButtonClick(Fl_Widget* w)
 void Gui::WindowAction() // Close button pressed
 {
 	if (m_settings_window != nullptr)
-		if(m_settings_window->IsVisible()) 
-			m_settings_window->Hide();
+		m_settings_window->Hide();
+
+	for (auto output_window : m_output_windows)
+		if(output_window != nullptr)
+			output_window->Hide();
 
 	m_options_manager->SetLastProblem(m_problem_browser->value());
 
 	m_main_window->hide();
 }
 
-void Gui::Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_, TestManager* test_manager_)
+void Gui::Initialize()
 {	
-	m_options_manager = options_manager_;
-	m_problem_manager = problem_manager_;
-	m_test_manager = test_manager_;
-
 	m_problem_list = m_problem_manager->GetProblemList();
 
 	int y = 10, h = 20;
@@ -237,32 +517,36 @@ bool Gui::Run()
 				if (testing_stage == m_problem_list[m_problem_browser->value() - 1].m_test_count - 1 || (m_all_test_selector->value() == false && testing_stage == 0))
 				{
 					m_test_manager->FinishTesting();
-
+	
 					std::vector<Test> temp_result_data;
-					std::string temp_output_buf("");
 					m_test_manager->GetResultData(temp_result_data);
 
-					for (unsigned i = 0; i < temp_result_data.size(); i++)
+					OutputWindow* output_window_ptr = new OutputWindow(temp_result_data);
+					output_window_ptr->Show();
+
+					bool f = false;
+					for (unsigned int i = 0; i < m_output_windows.size(); i++)
 					{
-						temp_output_buf = temp_output_buf + std::to_string(i + 1) + ": ";
+						if (m_output_windows[i] == nullptr)
+						{
+							m_output_windows[i] = output_window_ptr;
 
-						temp_output_buf = temp_output_buf + "Run time = " + std::to_string(temp_result_data[i].m_run_time) + "ms; ";
-						temp_output_buf = temp_output_buf + "Exit code = " + std::to_string(temp_result_data[i].m_exit_code) + "; ";
-						temp_output_buf = temp_output_buf + "Peak memory used = " + std::to_string((temp_result_data[i].m_peak_memory_used / 1024) / 1024) + "MB; ";
+							f = true;
+							break;
+						}
+						else if (!m_output_windows[i]->IsVisible())
+						{
+							delete m_output_windows[i];
 
-						if (temp_result_data[i].m_status & TEST_STATUS_TIME_LIMIT)
-							temp_output_buf = temp_output_buf + "TIME LIMIT; ";
-						
-						if (temp_result_data[i].m_status & TEST_STATUS_MEMORY_LIMIT)
-							temp_output_buf = temp_output_buf + "MEMORY LIMIT; ";
+							m_output_windows[i] = output_window_ptr;
 
-						if (temp_result_data[i].m_status & TEST_STATUS_RUNTIME_ERROR)
-							temp_output_buf = temp_output_buf + "RUNTIME ERROR; ";
-
-						temp_output_buf = temp_output_buf + (temp_result_data[i].m_status & TEST_STATUS_OK ? "OK\n" : "FAIL\n");
+							f = true;
+							break;
+						}
 					}
 
-					fl_alert(temp_output_buf.c_str());
+					if (f == false) m_output_windows.push_back(output_window_ptr);
+
 
 					m_problem_browser->activate();
 					m_start_test_button->activate();
@@ -299,190 +583,11 @@ void Gui::Shutdown()
 		delete m_settings_window;
 		m_settings_window = nullptr;
 	}
-}
 
-// Settings Window
-
-void SettingsWindow::Initialize(OptionsManager* options_manager_)
-{
-	m_options_manager = options_manager_;
-
-	m_problem_browser_update_needed = false;
-
-	int y = 10, h = 20;
-	int w = 520;
-
-	m_window = new Fl_Double_Window(w, 500, "Settings");
-	
-	int selector_spacing = (int)fl_width("Working dir:") + 5;
-	m_working_dir_selector = new Fl_Input(selector_spacing, y, 295, h, "Working dir:");
-	m_working_dir_selector->value(m_options_manager->GetWorkingDir().c_str());
-
-	m_working_dir_selector_button = new Fl_Button(selector_spacing + 298, y, w - selector_spacing - 298 - 10, h, "Select working dir");
-	m_working_dir_selector_button->callback(this->ButtonCallback, this);
-	m_working_dir_selector_button->clear_visible_focus();
-
-	y += h + 10;
-
-	m_problem_dir_selector = new Fl_Input(selector_spacing, y, 295, h, "Problems:");
-	m_problem_dir_selector->value(m_options_manager->GetProblemDir().c_str());
-
-	m_problem_dir_selector_button = new Fl_Button(selector_spacing + 298, y, w - selector_spacing - 298 - 10, h, "Select problem dir");
-	m_problem_dir_selector_button->callback(this->ButtonCallback, this);
-	m_problem_dir_selector_button->clear_visible_focus();
-
-	y += h + 10;
-
-	m_theme_choice = new Fl_Choice(selector_spacing, y, 295, 22, "Themes:");
-	m_theme_choice->clear_visible_focus();
-	m_theme_choice->callback(this->ButtonCallback, this);
-	m_theme_choice->add("none");
-	m_theme_choice->add("gtk+");
-	m_theme_choice->add("gleam");
-	m_theme_choice->add("plastic");
-	m_theme_choice->value(m_options_manager->GetThemeId());
-
-	y += h + 12;
-
-	m_test_memory_limit_input = new Fl_Value_Input(selector_spacing, y, 295, h, "Mem limit:");
-	m_test_memory_limit_input->value(m_options_manager->GetTestMemoryLimit());
-
-	y += h + 10;
-
-	m_reset_settings_button = new Fl_Button(10, y, 100, h, "Reset settings");
-	m_reset_settings_button->callback(this->ButtonCallback, this);
-	m_reset_settings_button->clear_visible_focus();
-
-	m_apply_settings_button = new Fl_Button(120, y, 100, h, "Apply settings");
-	m_apply_settings_button->callback(this->ButtonCallback, this);
-	m_apply_settings_button->clear_visible_focus();
-
-	y += h + 10;
-
-	m_window->size(w, y);
-	m_window->hide();
-	m_window->end();
-}
-
-void SettingsWindow::Show()
-{
-	m_window->show();
-}
-
-void SettingsWindow::Hide()
-{
-	m_window->hide();
-}
-
-static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
-{
-	if (uMsg == BFFM_INITIALIZED)
-	{
-		std::string tmp = (const char *)lpData;
-		SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
-	}
-
-	return 0;
-}
-
-void SettingsWindow::SelectDirectory(int detail_)
-{
-	TCHAR path[MAX_PATH];
-	std::string path_param("C:\\");
-	if(detail_ == SELECT_WORKING_DIRECTORY)
-		path_param = m_options_manager->GetWorkingDir();
-
-	if (detail_ == SELECT_PROBLEM_DIRECTORY)
-		path_param = m_options_manager->GetProblemDir();
-
-	BROWSEINFO bi = { 0 };
-
-	if (detail_ == SELECT_WORKING_DIRECTORY)
-		bi.lpszTitle = ("Browse for working folder...");
-	else if (detail_ == SELECT_PROBLEM_DIRECTORY)
-		bi.lpszTitle = ("Browse for problem folder...");
-	else
-		bi.lpszTitle = ("Browse for folder...");
-
-	bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
-	bi.lpfn = BrowseCallbackProc;
-	bi.lParam = (LPARAM)path_param.c_str();
-
-	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
-
-	if (pidl != 0)
-	{
-		//get the name of the folder and put it in path
-		SHGetPathFromIDList(pidl, path);
-
-		//free memory used
-		IMalloc* imalloc = 0;
-		if (SUCCEEDED(SHGetMalloc(&imalloc)))
+	for (auto output_window : m_output_windows)
+		if (output_window != nullptr)
 		{
-			imalloc->Free(pidl);
-			imalloc->Release();
+			delete output_window;
+			output_window = nullptr;
 		}
-
-		if (detail_ == SELECT_WORKING_DIRECTORY) 
-		{
-			m_working_dir_selector->value(path);
-			return;
-		}
-
-		if (detail_ == SELECT_PROBLEM_DIRECTORY)
-		{
-			m_problem_dir_selector->value(path);
-			return;
-		}
-
-		return;
-	}
-}
-
-void SettingsWindow::ButtonClick(Fl_Widget* w)
-{
-	std::string button_label(w->label());
-	if (button_label == "Reset settings")
-	{
-		if (fl_ask("Do you really want to reset settings?"))
-		{
-			m_options_manager->SetDefaults();
-			UpdateWidgetInfo();
-		}
-		return;
-	}
-
-	if (button_label == "Apply settings")
-	{
-		m_options_manager->SetWorkingDir(std::string(m_working_dir_selector->value()));
-		m_options_manager->SetProblemDir(std::string(m_problem_dir_selector->value()));
-		m_options_manager->SetTestMemoryLimit((int)m_test_memory_limit_input->value());
-		m_options_manager->SetTheme(m_options_manager->GetThemeName(m_theme_choice->value()));
-		m_options_manager->UpdateOptionsFile();
-
-		m_problem_browser_update_needed = true;
-		Fl::scheme(m_options_manager->GetThemeName().c_str());
-		Fl::reload_scheme();
-		return;
-	}
-
-	if (button_label == "Select working dir")
-	{
-		SelectDirectory(SELECT_WORKING_DIRECTORY);
-		return;
-	}
-
-	if (button_label == "Select problem dir")
-	{
-		SelectDirectory(SELECT_PROBLEM_DIRECTORY);
-		m_problem_browser_update_needed = true;
-		return;
-	}
-}
-
-void SettingsWindow::UpdateWidgetInfo()
-{
-	m_problem_dir_selector->value(m_options_manager->GetProblemDir().c_str());
-	m_working_dir_selector->value(m_options_manager->GetWorkingDir().c_str());
-	m_theme_choice->value(m_options_manager->GetThemeId());
 }
