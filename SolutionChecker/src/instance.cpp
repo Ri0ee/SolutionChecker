@@ -8,7 +8,9 @@ void Instance::Initialize(const char* file_location_)
 	m_current_dir = file_location.substr(0, file_location.find_last_of('\\', file_location.size()));
 
 	m_options_manager = new OptionsManager(m_current_dir + "\\options.txt");
-	m_problem_manager = new ProblemManager(m_options_manager->GetProblemDir());
+	m_options_manager->AppPath() = m_current_dir;
+
+	m_problem_manager = new ProblemManager(m_options_manager->ProblemDir());
 	m_test_manager =	new TestManager(m_options_manager, m_problem_manager);
 	m_gui_ptr =			new Gui(m_options_manager, m_problem_manager, m_test_manager);
 }

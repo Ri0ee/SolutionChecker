@@ -42,7 +42,7 @@ void TestManager::Shutdown()
 
 void TestManager::TestingSequence(Problem problem_, const std::string& solution_location_, bool all_tests_)
 {
-	std::string working_dir = m_options_manager->GetWorkingDir() + "\\";
+	std::string working_dir = m_options_manager->WorkingDir() + "\\";
 	std::string new_executable_dir = working_dir + "solution.exe";
 	std::string new_input_file_dir = working_dir + problem_.m_input_file_name;
 	std::string new_output_file_dir = working_dir + problem_.m_output_file_name;
@@ -99,10 +99,10 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		JOBOBJECT_EXTENDED_LIMIT_INFORMATION jeli = { 0 };
 		jeli.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_PROCESS_MEMORY;
 		jeli.BasicLimitInformation.LimitFlags |= JOB_OBJECT_LIMIT_JOB_MEMORY;
-		if (problem_.m_memory_limit > m_options_manager->GetTestMemoryLimit())
+		if (problem_.m_memory_limit > m_options_manager->TestMemoryLimit())
 		{
-			jeli.JobMemoryLimit = m_options_manager->GetTestMemoryLimit() * 1024 * 1024;
-			jeli.ProcessMemoryLimit = m_options_manager->GetTestMemoryLimit() * 1024 * 1024;
+			jeli.JobMemoryLimit = m_options_manager->TestMemoryLimit() * 1024 * 1024;
+			jeli.ProcessMemoryLimit = m_options_manager->TestMemoryLimit() * 1024 * 1024;
 		}
 		else
 		{

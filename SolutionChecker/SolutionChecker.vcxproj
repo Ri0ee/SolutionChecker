@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\compiler.cpp" />
     <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\instance.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -143,6 +144,7 @@
     <ClCompile Include="src\tester.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\compiler.h" />
     <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\instance.h" />
     <ClInclude Include="src\options.h" />

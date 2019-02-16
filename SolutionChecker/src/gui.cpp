@@ -104,27 +104,71 @@ void SettingsWindow::Initialize()
 	m_problem_browser_update_needed = false;
 
 	int y = 10, h = 20;
-	int w = 520;
+	int w = 700;
+	int selector_spacing = (int)fl_width("Working dir:") + 5;
+
+	double s1 = fl_width("Cpp Compiler:");
+	double s2 = fl_width("C Compiler:");
+	double s3 = fl_width("Pascal Compiler:");
+	double s4 = fl_width("Java Compiler:");
+	int compiler_selector_spacing = (int)max(max(s1, s2), max(s3, s4));
 
 	m_window = new Fl_Double_Window(w, 500, "Settings");
 
-	int selector_spacing = (int)fl_width("Working dir:") + 5;
-	m_working_dir_selector = new Fl_Input(selector_spacing, y, 295, h, "Working dir:");
-	m_working_dir_selector->value(m_options_manager->GetWorkingDir().c_str());
+	m_working_dir_selector = new Fl_Input(selector_spacing, y, 400, h, "Working dir:");
+	m_working_dir_selector->value(m_options_manager->WorkingDir().c_str());
 
-	m_working_dir_selector_button = new Fl_Button(selector_spacing + 298, y, w - selector_spacing - 298 - 10, h, "Select working dir");
+	m_working_dir_selector_button = new Fl_Button(selector_spacing + 403, y, w - selector_spacing - 400 - 10, h, "Working dir...");
 	m_working_dir_selector_button->callback(this->ButtonCallback, this);
 	m_working_dir_selector_button->clear_visible_focus();
 
 	y += h + 10;
 
-	m_problem_dir_selector = new Fl_Input(selector_spacing, y, 295, h, "Problems:");
-	m_problem_dir_selector->value(m_options_manager->GetProblemDir().c_str());
+	m_problem_dir_selector = new Fl_Input(selector_spacing, y, 400, h, "Problems:");
+	m_problem_dir_selector->value(m_options_manager->ProblemDir().c_str());
 
-	m_problem_dir_selector_button = new Fl_Button(selector_spacing + 298, y, w - selector_spacing - 298 - 10, h, "Select problem dir");
-	m_problem_dir_selector_button->callback(this->ButtonCallback, this);
+	m_problem_dir_selector_button = new Fl_Button(selector_spacing + 403, y, w - selector_spacing - 400 - 10, h, "Problem dir...");
+	m_problem_dir_selector_button->callback(ButtonCallback, this);
 	m_problem_dir_selector_button->clear_visible_focus();
 
+	y += h + 10;
+	y += h + 10;
+
+	m_cpp_compiler_dir_selector = new Fl_Input(compiler_selector_spacing, y, 400, h, "Cpp Compiler:");
+	m_cpp_compiler_dir_selector->value(m_options_manager->CppCompilerDir().c_str());
+
+	m_cpp_compiler_dir_selector_button = new Fl_Button(compiler_selector_spacing + 403, y, w - compiler_selector_spacing - 400 - 10, h, "Cpp compiler...");
+	m_cpp_compiler_dir_selector_button->callback(ButtonCallback, this);
+	m_cpp_compiler_dir_selector_button->clear_visible_focus();
+
+	y += h + 10;
+
+	m_c_compiler_dir_selector = new Fl_Input(compiler_selector_spacing, y, 400, h, "C Compiler:");
+	m_c_compiler_dir_selector->value(m_options_manager->CCompilerDir().c_str());
+
+	m_c_compiler_dir_selector_button = new Fl_Button(compiler_selector_spacing + 403, y, w - compiler_selector_spacing - 400 - 10, h, "C compiler...");
+	m_c_compiler_dir_selector_button->callback(ButtonCallback, this);
+	m_c_compiler_dir_selector_button->clear_visible_focus();
+
+	y += h + 10;
+
+	m_pascal_compiler_dir_selector = new Fl_Input(compiler_selector_spacing, y, 400, h, "Pascal Compiler:");
+	m_pascal_compiler_dir_selector->value(m_options_manager->PascalCompilerDir().c_str());
+
+	m_pascal_compiler_dir_selector_button = new Fl_Button(compiler_selector_spacing + 403, y, w - compiler_selector_spacing - 400 - 10, h, "Pascal compiler...");
+	m_pascal_compiler_dir_selector_button->callback(ButtonCallback, this);
+	m_pascal_compiler_dir_selector_button->clear_visible_focus();
+
+	y += h + 10;
+
+	m_java_compiler_dir_selector = new Fl_Input(compiler_selector_spacing, y, 400, h, "Java Compiler:");
+	m_java_compiler_dir_selector->value(m_options_manager->JavaCompilerDir().c_str());
+
+	m_java_compiler_dir_selector_button = new Fl_Button(compiler_selector_spacing + 403, y, w - compiler_selector_spacing - 400 - 10, h, "Java compiler...");
+	m_java_compiler_dir_selector_button->callback(ButtonCallback, this);
+	m_java_compiler_dir_selector_button->clear_visible_focus();
+
+	y += h + 10;
 	y += h + 10;
 
 	m_theme_choice = new Fl_Choice(selector_spacing, y, 295, 22, "Themes:");
@@ -139,7 +183,7 @@ void SettingsWindow::Initialize()
 	y += h + 12;
 
 	m_test_memory_limit_input = new Fl_Value_Input(selector_spacing, y, 295, h, "Mem limit:");
-	m_test_memory_limit_input->value(m_options_manager->GetTestMemoryLimit());
+	m_test_memory_limit_input->value(m_options_manager->TestMemoryLimit());
 
 	y += h + 10;
 
@@ -179,24 +223,14 @@ static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPAR
 	return 0;
 }
 
-void SettingsWindow::SelectDirectory(int detail_)
+std::string SettingsWindow::SelectDirectory()
 {
 	TCHAR path[MAX_PATH];
-	std::string path_param("C:\\");
-	if (detail_ == SELECT_WORKING_DIRECTORY)
-		path_param = m_options_manager->GetWorkingDir();
-
-	if (detail_ == SELECT_PROBLEM_DIRECTORY)
-		path_param = m_options_manager->GetProblemDir();
+	std::string path_param(m_options_manager->AppPath().c_str());
 
 	BROWSEINFO bi = { 0 };
 
-	if (detail_ == SELECT_WORKING_DIRECTORY)
-		bi.lpszTitle = ("Browse for working folder...");
-	else if (detail_ == SELECT_PROBLEM_DIRECTORY)
-		bi.lpszTitle = ("Browse for problem folder...");
-	else
-		bi.lpszTitle = ("Browse for folder...");
+	bi.lpszTitle = ("Browse for folder...");
 
 	bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
 	bi.lpfn = BrowseCallbackProc;
@@ -217,20 +251,44 @@ void SettingsWindow::SelectDirectory(int detail_)
 			imalloc->Release();
 		}
 
-		if (detail_ == SELECT_WORKING_DIRECTORY)
-		{
-			m_working_dir_selector->value(path);
-			return;
-		}
-
-		if (detail_ == SELECT_PROBLEM_DIRECTORY)
-		{
-			m_problem_dir_selector->value(path);
-			return;
-		}
-
-		return;
+		return std::string(path);
 	}
+
+	return std::string("");
+}
+
+std::string SettingsWindow::SelectFile()
+{
+	OPENFILENAME ofn = {};
+
+	if (ofn.lpstrFile)
+		delete[] ofn.lpstrFile;
+
+	if (ofn.lpstrInitialDir)
+		delete[] ofn.lpstrInitialDir;
+
+	memset((void*)&ofn, 0, sizeof(ofn));
+	ofn.lStructSize = sizeof(OPENFILENAME);
+
+	ofn.Flags |= OFN_NOVALIDATE;
+	ofn.Flags |= OFN_HIDEREADONLY;
+	ofn.Flags |= OFN_EXPLORER;
+	ofn.Flags |= OFN_ENABLESIZING;
+	ofn.Flags |= OFN_NOCHANGEDIR;
+
+	ofn.nMaxFile = 4096 - 1;
+	ofn.lpstrFile = new char[4096];
+	ofn.lpstrFile[0] = 0;
+	ofn.hwndOwner = GetForegroundWindow();
+
+	ofn.lpstrInitialDir = m_options_manager->LastExecutableDir().c_str();
+	ofn.lpstrTitle = "Select exe-file";
+	ofn.lpstrFilter = "Executable .exe\0*.exe\0\0";
+
+	int err = GetOpenFileName(&ofn);
+	if (err == 0) return std::string("");
+
+	return std::string(ofn.lpstrFile);
 }
 
 void SettingsWindow::ButtonClick(Fl_Widget* w)
@@ -248,36 +306,72 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "Apply settings")
 	{
-		m_options_manager->SetWorkingDir(std::string(m_working_dir_selector->value()));
-		m_options_manager->SetProblemDir(std::string(m_problem_dir_selector->value()));
-		m_options_manager->SetTestMemoryLimit((int)m_test_memory_limit_input->value());
-		m_options_manager->SetTheme(m_options_manager->GetThemeName(m_theme_choice->value()));
+		m_options_manager->WorkingDir() = std::string(m_working_dir_selector->value());
+		m_options_manager->ProblemDir() = std::string(m_problem_dir_selector->value());
+
+		m_options_manager->CppCompilerDir() = std::string(m_cpp_compiler_dir_selector->value());
+		m_options_manager->CCompilerDir() = std::string(m_c_compiler_dir_selector->value());
+		m_options_manager->PascalCompilerDir() = std::string(m_pascal_compiler_dir_selector->value());
+		m_options_manager->JavaCompilerDir() = std::string(m_java_compiler_dir_selector->value());
+
+		m_options_manager->TestMemoryLimit() = (int)m_test_memory_limit_input->value();
+		m_options_manager->ThemeName() = m_options_manager->GetThemeName(m_theme_choice->value());
 		m_options_manager->UpdateOptionsFile();
 
 		m_problem_browser_update_needed = true;
-		Fl::scheme(m_options_manager->GetThemeName().c_str());
+		Fl::scheme(m_options_manager->ThemeName().c_str());
 		Fl::reload_scheme();
 		return;
 	}
 
-	if (button_label == "Select working dir")
+	if (button_label == "Working dir...")
 	{
-		SelectDirectory(SELECT_WORKING_DIRECTORY);
+		m_working_dir_selector->value(SelectDirectory().c_str());
 		return;
 	}
 
-	if (button_label == "Select problem dir")
+	if (button_label == "Problem dir...")
 	{
-		SelectDirectory(SELECT_PROBLEM_DIRECTORY);
+		m_problem_dir_selector->value(SelectDirectory().c_str());
 		m_problem_browser_update_needed = true;
+		return;
+	}
+
+	if (button_label == "Cpp compiler...")
+	{
+		m_cpp_compiler_dir_selector->value(SelectFile().c_str());
+		return;
+	}
+
+	if (button_label == "C compiler...")
+	{
+		m_c_compiler_dir_selector->value(SelectFile().c_str());
+		return;
+	}
+
+	if (button_label == "Pascal compiler...")
+	{
+		m_pascal_compiler_dir_selector->value(SelectFile().c_str());
+		return;
+	}
+
+	if (button_label == "Java compiler...")
+	{
+		m_java_compiler_dir_selector->value(SelectFile().c_str());
 		return;
 	}
 }
 
 void SettingsWindow::UpdateWidgetInfo()
 {
-	m_problem_dir_selector->value(m_options_manager->GetProblemDir().c_str());
-	m_working_dir_selector->value(m_options_manager->GetWorkingDir().c_str());
+	m_problem_dir_selector->value(m_options_manager->ProblemDir().c_str());
+	m_working_dir_selector->value(m_options_manager->WorkingDir().c_str());
+
+	m_cpp_compiler_dir_selector->value(m_options_manager->CppCompilerDir().c_str());
+	m_c_compiler_dir_selector->value(m_options_manager->CCompilerDir().c_str());
+	m_pascal_compiler_dir_selector->value(m_options_manager->PascalCompilerDir().c_str());
+	m_java_compiler_dir_selector->value(m_options_manager->JavaCompilerDir().c_str());
+
 	m_theme_choice->value(m_options_manager->GetThemeId());
 }
 
@@ -307,7 +401,7 @@ void Gui::SelectFile()
 	ofn.lpstrFile[0] = 0;
 	ofn.hwndOwner = GetForegroundWindow();
 
-	ofn.lpstrInitialDir = m_options_manager->GetLastExecutableDir().c_str();
+	ofn.lpstrInitialDir = m_options_manager->LastExecutableDir().c_str();
 	ofn.lpstrTitle = "Select exe-file";
 	ofn.lpstrFilter = "Executable .exe\0*.exe\0\0";
 
@@ -315,7 +409,7 @@ void Gui::SelectFile()
 	if (err == 0) return;
 
 	m_exefile_selector_value->value(ofn.lpstrFile);
-	m_options_manager->SetLastExecutableDir(std::string(ofn.lpstrFile));
+	m_options_manager->LastExecutableDir() = std::string(ofn.lpstrFile);
 }
 
 void Gui::ButtonClick(Fl_Widget* w)
@@ -325,8 +419,8 @@ void Gui::ButtonClick(Fl_Widget* w)
 	{
 		m_first_test_selector->value(true);
 		m_all_test_selector->value(false);
-		m_options_manager->SetUseOnlyOneTest(true);
-		m_options_manager->SetUseMultipleTests(false);
+		m_options_manager->UseOnlyOneTest() = true;
+		m_options_manager->UseMultipleTests() = false;
 		return;
 	}
 
@@ -334,8 +428,8 @@ void Gui::ButtonClick(Fl_Widget* w)
 	{
 		m_first_test_selector->value(false);
 		m_all_test_selector->value(true);
-		m_options_manager->SetUseOnlyOneTest(false);
-		m_options_manager->SetUseMultipleTests(true);
+		m_options_manager->UseOnlyOneTest() = false;
+		m_options_manager->UseMultipleTests() = true;
 		return;
 	}
 
@@ -411,7 +505,7 @@ void Gui::WindowAction() // Close button pressed
 		if(output_window != nullptr)
 			output_window->Hide();
 
-	m_options_manager->SetLastProblem(m_problem_browser->value());
+	m_options_manager->LastProblem() = m_problem_browser->value();
 
 	m_main_window->hide();
 }
@@ -421,7 +515,7 @@ void Gui::Initialize()
 	m_problem_list = m_problem_manager->GetProblemList();
 
 	int y = 10, h = 20;
-	Fl::scheme(m_options_manager->GetThemeName().c_str());
+	Fl::scheme(m_options_manager->ThemeName().c_str());
 	Fl::get_system_colors();
 	fl_font(FL_HELVETICA, 16);
 
@@ -430,7 +524,7 @@ void Gui::Initialize()
 
 	int selector_spacing = (int)fl_width("Path to exe-file:") + 5;
 	m_exefile_selector_value = new Fl_Input(selector_spacing, y, 350, h, "Path to exe-file:");
-	m_exefile_selector_value->value(m_options_manager->GetLastExecutableDir().c_str());
+	m_exefile_selector_value->value(m_options_manager->LastExecutableDir().c_str());
 	m_exefile_selector_button = new Fl_Button(selector_spacing + 355, y, 500 - (selector_spacing + 355) - 5, h, "...");
 	m_exefile_selector_button->callback(ButtonCallback, this);
 	m_exefile_selector_button->clear_visible_focus();
@@ -438,14 +532,14 @@ void Gui::Initialize()
 	m_problem_browser = new Fl_Hold_Browser(510, y, 0, 0);
 	for (unsigned i = 0; i < m_problem_list.size(); i++)
 		m_problem_browser->add(std::string(m_problem_list[i].m_folder_name + ": " + m_problem_list[i].m_caption).c_str());
-	m_problem_browser->value(m_options_manager->GetLastProblem());
+	m_problem_browser->value(m_options_manager->LastProblem());
 
 	y += h + 10;
 
 	m_first_test_selector = new Fl_Round_Button(5, y, 150, h, "Use only first test");
 	m_first_test_selector->callback(ButtonCallback, this);
 	m_first_test_selector->clear_visible_focus();
-	if (m_options_manager->GetUseOnlyOneTest())
+	if (m_options_manager->UseOnlyOneTest())
 		m_first_test_selector->set();
 	
 	y += h + 10;
@@ -453,7 +547,7 @@ void Gui::Initialize()
 	m_all_test_selector = new Fl_Round_Button(5, y, 150, h, "Use all tests");
 	m_all_test_selector->callback(ButtonCallback, this);
 	m_all_test_selector->clear_visible_focus();
-	if(m_options_manager->GetUseMultipleTests())
+	if(m_options_manager->UseMultipleTests())
 		m_all_test_selector->set();
 
 	y += h + 10;
@@ -484,7 +578,7 @@ void Gui::Initialize()
 
 	m_problem_browser->size(180, y - 20);
 	m_main_window->size(700, y);
-	m_main_window->position((int)m_options_manager->GetWindowPosX(), (int)m_options_manager->GetWindowPosY());
+	m_main_window->position((int)m_options_manager->WindowPosX(), (int)m_options_manager->WindowPosY());
 
 	m_main_window->end();
 
@@ -561,7 +655,7 @@ bool Gui::Run()
 
 		if (m_settings_window->IsProblemBrowserUpdateNeeded())
 		{
-			m_problem_manager->ChangeDir(m_options_manager->GetProblemDir());
+			m_problem_manager->ChangeDir(m_options_manager->ProblemDir());
 			m_problem_manager->SearchForProblems();
 			m_problem_list = m_problem_manager->GetProblemList();
 

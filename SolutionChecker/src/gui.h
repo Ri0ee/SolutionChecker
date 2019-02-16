@@ -27,6 +27,10 @@
 
 #define SELECT_WORKING_DIRECTORY 1
 #define SELECT_PROBLEM_DIRECTORY 2
+#define SELECT_CPP_COMPILER_DIRECTORY 3
+#define SELECT_C_COMPILER_DIRECTORY 4
+#define SELECT_PASCAL_COMPILER_DIRECTORY 5
+#define SELECT_JAVA_COMPILER_DIRECTORY 6
 
 
 
@@ -86,7 +90,8 @@ private:
 	static void ButtonCallback(Fl_Widget* w, void* f) { ((SettingsWindow*)f)->ButtonClick(w); }
 
 	void UpdateWidgetInfo();
-	void SelectDirectory(int detail_);
+	std::string SelectDirectory();
+	std::string SelectFile();
 
 	OptionsManager* m_options_manager = nullptr;
 
@@ -94,9 +99,17 @@ private:
 
 	Fl_Input* m_working_dir_selector;
 	Fl_Input* m_problem_dir_selector;
+	Fl_Input* m_pascal_compiler_dir_selector;
+	Fl_Input* m_cpp_compiler_dir_selector;
+	Fl_Input* m_c_compiler_dir_selector;
+	Fl_Input* m_java_compiler_dir_selector;
 
 	Fl_Button* m_working_dir_selector_button;
 	Fl_Button* m_problem_dir_selector_button;
+	Fl_Button* m_pascal_compiler_dir_selector_button;
+	Fl_Button* m_cpp_compiler_dir_selector_button;
+	Fl_Button* m_c_compiler_dir_selector_button;
+	Fl_Button* m_java_compiler_dir_selector_button;
 	Fl_Button* m_reset_settings_button;
 	Fl_Button* m_apply_settings_button;
 
