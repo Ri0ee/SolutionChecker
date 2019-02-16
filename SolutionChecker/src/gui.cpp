@@ -111,7 +111,7 @@ void SettingsWindow::Initialize()
 	double s2 = fl_width("C Compiler:");
 	double s3 = fl_width("Pascal Compiler:");
 	double s4 = fl_width("Java Compiler:");
-	int compiler_selector_spacing = (int)max(max(s1, s2), max(s3, s4));
+	int compiler_selector_spacing = (int)max(max(s1, s2), max(s3, s4)) + 5;
 
 	m_window = new Fl_Double_Window(w, 500, "Settings");
 
@@ -119,7 +119,7 @@ void SettingsWindow::Initialize()
 	m_working_dir_selector->value(m_options_manager->WorkingDir().c_str());
 
 	m_working_dir_selector_button = new Fl_Button(selector_spacing + 403, y, w - selector_spacing - 400 - 10, h, "Working dir...");
-	m_working_dir_selector_button->callback(this->ButtonCallback, this);
+	m_working_dir_selector_button->callback(ButtonCallback, this);
 	m_working_dir_selector_button->clear_visible_focus();
 
 	y += h + 10;
@@ -173,7 +173,7 @@ void SettingsWindow::Initialize()
 
 	m_theme_choice = new Fl_Choice(selector_spacing, y, 295, 22, "Themes:");
 	m_theme_choice->clear_visible_focus();
-	m_theme_choice->callback(this->ButtonCallback, this);
+	m_theme_choice->callback(ButtonCallback, this);
 	m_theme_choice->add("none");
 	m_theme_choice->add("gtk+");
 	m_theme_choice->add("gleam");
@@ -188,11 +188,11 @@ void SettingsWindow::Initialize()
 	y += h + 10;
 
 	m_reset_settings_button = new Fl_Button(10, y, 100, h, "Reset settings");
-	m_reset_settings_button->callback(this->ButtonCallback, this);
+	m_reset_settings_button->callback(ButtonCallback, this);
 	m_reset_settings_button->clear_visible_focus();
 
 	m_apply_settings_button = new Fl_Button(120, y, 100, h, "Apply settings");
-	m_apply_settings_button->callback(this->ButtonCallback, this);
+	m_apply_settings_button->callback(ButtonCallback, this);
 	m_apply_settings_button->clear_visible_focus();
 
 	y += h + 10;
