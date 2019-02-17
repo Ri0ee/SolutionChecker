@@ -9,7 +9,5 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	GetModuleFileName(NULL, file_location, _MAX_PATH);
 
 	Instance current_instance(file_location);
-	int ret_state = current_instance.Run();
-
-	return ret_state;
+	return current_instance.Run();
 }
