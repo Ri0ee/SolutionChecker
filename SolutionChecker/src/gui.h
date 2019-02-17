@@ -24,6 +24,7 @@
 #include "options.h"
 #include "tester.h"
 #include "problems.h"
+#include "compiler.h"
 
 
 
@@ -120,7 +121,7 @@ public:
 		m_options_manager(options_manager_), m_problem_manager(problem_manager_), m_test_manager(test_manager_) { Initialize(); }
 	~Gui() { Shutdown(); }
 
-	bool Run();
+	int Run();
 	
 private:
 	void Initialize();

@@ -15,7 +15,7 @@ public:
 	Instance() {}
 	~Instance() { Shutdown(); }
 
-	bool Run();
+	int Run();
 
 private:
 	void Initialize(const char* file_location_);

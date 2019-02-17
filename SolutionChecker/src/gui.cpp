@@ -445,7 +445,7 @@ void Gui::ButtonClick(Fl_Widget* w)
 		m_first_test_selector->deactivate();
 
 		m_testing_progress->activate();
-		if (m_all_test_selector->value() == true)
+		if (m_all_test_selector->value() == 0) // Checked
 			m_testing_progress->maximum((float)problem.m_test_count);
 		else
 			m_testing_progress->maximum(1);
@@ -585,7 +585,7 @@ void Gui::Initialize()
 	m_settings_window = new SettingsWindow(m_options_manager);
 }
 
-bool Gui::Run()
+int Gui::Run()
 {
 	m_main_window->show();
 
@@ -667,7 +667,7 @@ bool Gui::Run()
 		}
 	}
 
-	return true;
+	return 0;
 }
 
 void Gui::Shutdown()

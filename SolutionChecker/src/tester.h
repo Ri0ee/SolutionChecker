@@ -10,6 +10,7 @@
 
 #include "options.h"
 #include "problems.h"
+#include "utils.h"
 
 #define TESTING_STATE_OFFLINE	0
 #define TESTING_STATE_ONLINE	1
@@ -33,12 +34,6 @@ struct Test
 	int m_id;
 };
 
-struct ErrorMessage
-{
-	std::string m_location;
-	DWORD m_error_id;
-};
-
 class TestManager
 {
 public:
@@ -59,26 +54,13 @@ public:
 	void GetResultData(std::vector<Test>& data_) { data_.assign(m_test_list.begin(), m_test_list.end()); }
 	int GetTestingStage() { return m_testing_stage.load(); }
 	bool GetTestingState() { return m_testing_state; }
+
 	std::string GetErrorMessage() 
 	{ 
 		if (!m_last_error_stack.empty())
 		{
-			std::string temp_str_buf;
-			DWORD temp_err_id = m_last_error_stack.top().m_error_id;
-			std::string location = m_last_error_stack.top().m_location;
+			std::string temp_str_buf = FormatError(m_last_error_stack.top().m_error_id, m_last_error_stack.top().m_location);
 			m_last_error_stack.pop();
-
-			LPTSTR error_text = NULL;
-
-			FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, 
-				temp_err_id, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&error_text, 0, NULL);
-
-			if (NULL != error_text)
-			{
-				temp_str_buf = location + ": " + std::string(error_text);
-				LocalFree(error_text);
-				error_text = NULL;
-			}
 			return temp_str_buf;
 		}
 		else return std::string("No errors");

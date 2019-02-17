@@ -15,7 +15,7 @@ void Instance::Initialize(const char* file_location_)
 	m_gui_ptr =			new Gui(m_options_manager, m_problem_manager, m_test_manager);
 }
 
-bool Instance::Run()
+int Instance::Run()
 {
 	return m_gui_ptr->Run();
 }
