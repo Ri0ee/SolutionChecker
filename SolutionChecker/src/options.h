@@ -25,14 +25,17 @@ public:
 	bool& UseMultipleTests() { return m_use_multiple_tests; }
 	int& TestMemoryLimit() { return m_test_memory_limit; }
 	int& LastProblem() { return m_last_problem; }
+
 	std::string& CppCompilerDir() { return m_cpp_compiler_dir; }
 	std::string& CCompilerDir() { return m_c_compiler_dir; }
 	std::string& PascalCompilerDir() { return m_pascal_compiler_dir; }
 	std::string& JavaCompilerDir() { return m_java_compiler_dir; }
+
 	std::string& CppDefaultArgs() { return m_cpp_default_args; }
 	std::string& CDefaultArgs() { return m_c_default_args; }
 	std::string& PascalDefaultArgs() { return m_pascal_default_args; }
 	std::string& JavaDefaultArgs() { return m_java_default_args; }
+
 	std::string& ThemeName() { return m_theme; }
 	std::string& WorkingDir() { return m_working_dir; }
 	std::string& LastExecutableDir() { return m_last_exe_dir; }
@@ -56,14 +59,16 @@ private:
 	bool m_use_multiple_tests;
 	std::string m_working_dir;
 	std::string m_problem_dir;
+	std::string m_last_exe_dir;
+	std::string m_theme;
+
 	std::string m_cpp_compiler_dir;
 	std::string m_c_compiler_dir;
 	std::string m_pascal_compiler_dir;
 	std::string m_java_compiler_dir;
-	std::string m_last_exe_dir;
-	std::string m_theme;
-	std::string m_pascal_default_args;
+
 	std::string m_cpp_default_args;
-	std::string m_java_default_args;
 	std::string m_c_default_args;
+	std::string m_pascal_default_args;
+	std::string m_java_default_args;
 };
