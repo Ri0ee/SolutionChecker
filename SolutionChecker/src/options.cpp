@@ -119,6 +119,30 @@ bool OptionsManager::GetOptions()
 			m_java_compiler_dir = line.substr(delim_pos + 1, line.size());
 			continue;
 		}
+
+		if (param_name == "CppDefaultArgs")
+		{
+			m_cpp_default_args = line.substr(delim_pos + 1, line.size());
+			continue;
+		}
+
+		if (param_name == "CDefaultArgs")
+		{
+			m_c_default_args = line.substr(delim_pos + 1, line.size());
+			continue;
+		}
+
+		if (param_name == "PascalDefaultArgs")
+		{
+			m_pascal_default_args = line.substr(delim_pos + 1, line.size());
+			continue;
+		}
+
+		if (param_name == "JavaDefaultArgs")
+		{
+			m_java_default_args = line.substr(delim_pos + 1, line.size());
+			continue;
+		}
 	}
 
 	in_file.close();
@@ -134,10 +158,17 @@ void OptionsManager::SetDefaults()
 	m_last_problem = 0;
 	m_problem_dir = "";
 	m_working_dir = "";
+
 	m_cpp_compiler_dir = "";
 	m_c_compiler_dir = "";
 	m_pascal_compiler_dir = "";
 	m_java_compiler_dir = "";
+
+	m_cpp_default_args = "";
+	m_c_default_args = "";
+	m_pascal_default_args = "";
+	m_java_default_args = "";
+
 	m_theme = "none";
 	m_use_only_one_test = false;
 	m_test_memory_limit = 500;
@@ -160,10 +191,16 @@ bool OptionsManager::UpdateOptionsFile()
 	out_file << "UseOnlyOneTest:" << (m_use_only_one_test ? "true" : "false") << "\n";
 	out_file << "Theme:" << m_theme << "\n";
 	out_file << "TestMemoryLimit:" << m_test_memory_limit << "\n";
+
 	out_file << "CppCompilerDir:" << m_cpp_compiler_dir << "\n";
 	out_file << "CCompilerDir:" << m_c_compiler_dir << "\n";
 	out_file << "PascalCompilerDir:" << m_pascal_compiler_dir << "\n";
 	out_file << "JavaCompilerDir:" << m_java_compiler_dir << "\n";
+
+	out_file << "CppDefaultArgs:" << m_cpp_default_args << "\n";
+	out_file << "CDefaultArgs:" << m_c_default_args << "\n";
+	out_file << "PascalDefaultArgs:" << m_pascal_default_args << "\n";
+	out_file << "JavaDefaultArgs:" << m_java_default_args << "\n";
 
 	out_file.close();
 
