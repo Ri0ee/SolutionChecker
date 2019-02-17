@@ -97,6 +97,10 @@ private:
 	Fl_Input* m_cpp_compiler_dir_selector;
 	Fl_Input* m_c_compiler_dir_selector;
 	Fl_Input* m_java_compiler_dir_selector;
+	Fl_Input* m_c_default_arg_selector;
+	Fl_Input* m_cpp_default_arg_selector;
+	Fl_Input* m_pascal_default_arg_selector;
+	Fl_Input* m_java_default_arg_selector;
 
 	Fl_Button* m_working_dir_selector_button;
 	Fl_Button* m_problem_dir_selector_button;

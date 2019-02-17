@@ -105,13 +105,19 @@ void SettingsWindow::Initialize()
 
 	int y = 10, h = 20;
 	int w = 700;
-	int selector_spacing = (int)fl_width("Working dir:") + 5;
 
 	double s1 = fl_width("Cpp Compiler:");
 	double s2 = fl_width("C Compiler:");
 	double s3 = fl_width("Pascal Compiler:");
 	double s4 = fl_width("Java Compiler:");
-	int compiler_selector_spacing = (int)max(max(s1, s2), max(s3, s4)) + 5;
+	int compiler_selector_spacing = (int)max(max(s1, s2), max(s3, s4)) + 7;
+	int selector_spacing = compiler_selector_spacing;
+
+	s1 = fl_width("Cpp default args:");
+	s2 = fl_width("C default args:");
+	s3 = fl_width("Pascal default args:");
+	s4 = fl_width("Java default args:");
+	int compiler_default_arg_spacing = (int)max(max(s1, s2), max(s3, s4)) + 7;
 
 	m_window = new Fl_Double_Window(w, 500, "Settings");
 
@@ -167,6 +173,27 @@ void SettingsWindow::Initialize()
 	m_java_compiler_dir_selector_button = new Fl_Button(compiler_selector_spacing + 403, y, w - compiler_selector_spacing - 400 - 10, h, "Java compiler...");
 	m_java_compiler_dir_selector_button->callback(ButtonCallback, this);
 	m_java_compiler_dir_selector_button->clear_visible_focus();
+
+	y += h + 10;
+	y += h + 10;
+
+	m_cpp_default_arg_selector = new Fl_Input(compiler_default_arg_spacing, y, w - compiler_default_arg_spacing - 7, h, "Cpp default args:");
+	m_cpp_default_arg_selector->value(m_options_manager->CppDefaultArgs().c_str());
+
+	y += h + 10;
+
+	m_c_default_arg_selector = new Fl_Input(compiler_default_arg_spacing, y, w - compiler_default_arg_spacing - 7, h, "C default args:");
+	m_c_default_arg_selector->value(m_options_manager->CDefaultArgs().c_str());
+
+	y += h + 10;
+
+	m_pascal_default_arg_selector = new Fl_Input(compiler_default_arg_spacing, y, w - compiler_default_arg_spacing - 7, h, "Pascal default args:");
+	m_pascal_default_arg_selector->value(m_options_manager->PascalDefaultArgs().c_str());
+
+	y += h + 10;
+
+	m_java_default_arg_selector = new Fl_Input(compiler_default_arg_spacing, y, w - compiler_default_arg_spacing - 7, h, "Java default args:");
+	m_java_default_arg_selector->value(m_options_manager->JavaDefaultArgs().c_str());
 
 	y += h + 10;
 	y += h + 10;
@@ -313,6 +340,11 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 		m_options_manager->CCompilerDir() = std::string(m_c_compiler_dir_selector->value());
 		m_options_manager->PascalCompilerDir() = std::string(m_pascal_compiler_dir_selector->value());
 		m_options_manager->JavaCompilerDir() = std::string(m_java_compiler_dir_selector->value());
+
+		m_options_manager->CppDefaultArgs() = std::string(m_cpp_default_arg_selector->value());
+		m_options_manager->CDefaultArgs() = std::string(m_c_default_arg_selector->value());
+		m_options_manager->PascalDefaultArgs() = std::string(m_pascal_default_arg_selector->value());
+		m_options_manager->JavaDefaultArgs() = std::string(m_java_default_arg_selector->value());
 
 		m_options_manager->TestMemoryLimit() = (int)m_test_memory_limit_input->value();
 		m_options_manager->ThemeName() = m_options_manager->GetThemeName(m_theme_choice->value());
