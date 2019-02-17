@@ -36,7 +36,7 @@ bool Compiler::CompilePascal(const std::string& file_name_)
 
 	if (DeleteFile(result_executable_path.c_str()) != TRUE)
 	{
-		m_last_error_stack.push({ "DeleteFile", GetLastError() });
+		m_error_stack.push({ "DeleteFile", GetLastError() });
 	}
 
 	STARTUPINFO startup_info;
@@ -51,13 +51,13 @@ bool Compiler::CompilePascal(const std::string& file_name_)
 	}
 	else
 	{
-		m_last_error_stack.push({ "CreateProcess", GetLastError() });
+		m_error_stack.push({ "CreateProcess", GetLastError() });
 		return false;
 	}
 
 	if (DeleteFile(result_object_path.c_str()) != TRUE) // Delete object file {file_name}.o
 	{
-		m_last_error_stack.push({ "DeleteFile", GetLastError() });
+		m_error_stack.push({ "DeleteFile", GetLastError() });
 	}
 
 	return true;

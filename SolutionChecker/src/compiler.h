@@ -23,10 +23,10 @@ public:
 
 	std::string GetErrorMessage()
 	{
-		if (!m_last_error_stack.empty())
+		if (!m_error_stack.empty())
 		{
-			std::string temp_str_buf = FormatError(m_last_error_stack.top().m_error_id, m_last_error_stack.top().m_location);
-			m_last_error_stack.pop();
+			std::string temp_str_buf = FormatError(m_error_stack.top().m_error_id, m_error_stack.top().m_location);
+			m_error_stack.pop();
 			return temp_str_buf;
 		}
 		else return std::string("No errors");
@@ -40,5 +40,5 @@ private:
 
 	OptionsManager* m_options_manager = nullptr;
 
-	std::stack<ErrorMessage> m_last_error_stack;
+	std::stack<ErrorMessage> m_error_stack;
 };

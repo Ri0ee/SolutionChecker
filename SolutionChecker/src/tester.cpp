@@ -51,7 +51,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 	if (CopyFile(solution_location_.c_str(), new_executable_dir.c_str(), false) != TRUE)
 	{
 		m_testing_state = TESTING_STATE_ERROR;
-		m_last_error_stack.push({ "CopyFile function (solution executable file)", GetLastError() });
+		m_error_stack.push({ "CopyFile function (solution executable file)", GetLastError() });
 	}
 
 	for (int current_test = 0; current_test < problem_.m_test_count; current_test++)
@@ -70,7 +70,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		if (CopyFile(input_file_dir.c_str(), new_input_file_dir.c_str(), false) != TRUE)
 		{
 			m_testing_state = TESTING_STATE_ERROR;
-			m_last_error_stack.push({ "CopyFile function (input file)", GetLastError() });
+			m_error_stack.push({ "CopyFile function (input file)", GetLastError() });
 		}
 
 		// Create job object to limit process memory usage later
@@ -79,7 +79,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		if (job_handle == NULL)
 		{
 			m_testing_state = TESTING_STATE_ERROR;
-			m_last_error_stack.push({ "CreateJobObject function", GetLastError() });
+			m_error_stack.push({ "CreateJobObject function", GetLastError() });
 		}
 
 		// Create completion port to link it with job later
@@ -87,7 +87,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		if (job_port_handle == NULL)
 		{
 			m_testing_state = TESTING_STATE_ERROR;
-			m_last_error_stack.push({ "CreateIoCompletionPort function", GetLastError() });
+			m_error_stack.push({ "CreateIoCompletionPort function", GetLastError() });
 		}
 
 		// Create job completion port to get notified about limit break later
@@ -114,14 +114,14 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		if (SetInformationJobObject(job_handle, JobObjectExtendedLimitInformation, &jeli, sizeof(jeli)) != TRUE)
 		{
 			m_testing_state = TESTING_STATE_ERROR;
-			m_last_error_stack.push({ "SetInformationJobObject function (JobObjectExtendedLimitInformation)", GetLastError() });
+			m_error_stack.push({ "SetInformationJobObject function (JobObjectExtendedLimitInformation)", GetLastError() });
 		}
 
 		// Link job object with competion port
 		if (SetInformationJobObject(job_handle, JobObjectAssociateCompletionPortInformation, &job_port, sizeof(job_port)) != TRUE)
 		{
 			m_testing_state = TESTING_STATE_ERROR;
-			m_last_error_stack.push({ "SetInformationJobObject function (JobObjectAssociateCompletionPortInformation)", GetLastError() });
+			m_error_stack.push({ "SetInformationJobObject function (JobObjectAssociateCompletionPortInformation)", GetLastError() });
 		}
 
 		STARTUPINFO sui;
@@ -156,7 +156,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 				if (GetQueuedCompletionStatus(job_port_handle, &completion_code, &completion_key, &overlapped, 0) != TRUE)
 				{
 					m_testing_state = TESTING_STATE_ERROR;
-					m_last_error_stack.push({ "GetQueuedCompletionStatus function", GetLastError() });
+					m_error_stack.push({ "GetQueuedCompletionStatus function", GetLastError() });
 				}
 
 				if (completion_code == JOB_OBJECT_MSG_PROCESS_MEMORY_LIMIT || completion_code == JOB_OBJECT_MSG_JOB_MEMORY_LIMIT)
@@ -190,14 +190,14 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 				if (FileTimeToSystemTime(&start_time, &s_start_time) != TRUE)
 				{
 					m_testing_state = TESTING_STATE_ERROR;
-					m_last_error_stack.push({ "FileTimeToSystemTime function", GetLastError() });
+					m_error_stack.push({ "FileTimeToSystemTime function", GetLastError() });
 					convert_success = false;
 				}
 
 				if (FileTimeToSystemTime(&end_time, &s_end_time) != TRUE)
 				{
 					m_testing_state = TESTING_STATE_ERROR;
-					m_last_error_stack.push({ "FileTimeToSystemTime function", GetLastError() });
+					m_error_stack.push({ "FileTimeToSystemTime function", GetLastError() });
 					convert_success = false;
 				}
 
@@ -213,7 +213,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 			else
 			{
 				m_testing_state = TESTING_STATE_ERROR;
-				m_last_error_stack.push({ "GetProcessTimes function", GetLastError() });
+				m_error_stack.push({ "GetProcessTimes function", GetLastError() });
 			}
 
 			CloseHandle(pi.hProcess);
@@ -222,7 +222,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		else // Unable to create process
 		{
 			m_testing_state = TESTING_STATE_ERROR;
-			m_last_error_stack.push({ "CreateProcess function", GetLastError() });
+			m_error_stack.push({ "CreateProcess function", GetLastError() });
 		}
 
 		// Check if result is correct
@@ -252,14 +252,14 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		if (DeleteFileA(new_output_file_dir.c_str()) != TRUE)
 		{
 			m_testing_state = TESTING_STATE_ERROR;
-			m_last_error_stack.push({ "DeleteFileA function (output file)", GetLastError() });
+			m_error_stack.push({ "DeleteFileA function (output file)", GetLastError() });
 		}
 
 		// Delete input file in working directory
 		if (DeleteFileA(new_input_file_dir.c_str()) != TRUE)
 		{
 			m_testing_state = TESTING_STATE_ERROR;
-			m_last_error_stack.push({ "DeleteFileA function (input file)", GetLastError() });
+			m_error_stack.push({ "DeleteFileA function (input file)", GetLastError() });
 		}
 
 		// If checkbox "use one test only" is checked
@@ -270,6 +270,6 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 	if (DeleteFileA(new_executable_dir.c_str()) != TRUE)
 	{
 		m_testing_state = TESTING_STATE_ERROR;
-		m_last_error_stack.push({ "DeleteFileA function (solution executable file)", GetLastError() });
+		m_error_stack.push({ "DeleteFileA function (solution executable file)", GetLastError() });
 	}
 }
