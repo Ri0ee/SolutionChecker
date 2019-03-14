@@ -114,6 +114,6 @@ void ProblemManager::SearchForProblems()
 
 void ProblemManager::ShowTaskDescription(int problem_id_)
 {
-	std::string temp_command_buffer = m_problem_list[problem_id_].m_path + "\\" + m_problem_list[problem_id_].m_description_file_name;
-	ShellExecuteA(0, "edit", temp_command_buffer.c_str(), 0, 0, SW_SHOW);
+	std::string file_dir = m_problem_list[problem_id_].m_path + "\\" + m_problem_list[problem_id_].m_description_file_name;
+	ShowTextFile(file_dir);
 }

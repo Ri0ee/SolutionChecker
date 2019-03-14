@@ -2,12 +2,6 @@
 
 
 
-void TestManager::Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_)
-{
-	m_options_manager = options_manager_;
-	m_problem_manager = problem_manager_;
-}
-
 void TestManager::StartTesting(int problem_id_, const std::string& solution_location_, bool all_tests_)
 {
 	Problem problem = m_problem_manager->GetProblem(problem_id_);
@@ -48,11 +42,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 	std::string new_output_file_dir = working_dir + problem_.m_output_file_name;
 
 	// Copy solution file to working directory
-	if (CopyFile(solution_location_.c_str(), new_executable_dir.c_str(), false) != TRUE)
-	{
-		m_testing_state = TESTING_STATE_ERROR;
-		m_error_stack.push({ "CopyFile function (solution executable file)", GetLastError() });
-	}
+	std::filesystem::copy_file(solution_location_, new_executable_dir);
 
 	for (int current_test = 0; current_test < problem_.m_test_count; current_test++)
 	{
@@ -63,15 +53,18 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		std::string input_file_dir = problem_.m_path + "\\" + std::to_string(current_test) + ".in";
 		std::string correct_output_file_dir = problem_.m_path + "\\" + std::to_string(current_test) + ".out";
 
+		std::fstream input_file(input_file_dir);
+		if (input_file.is_open()) 
+		{
+			test.m_input_data = std::string((std::istreambuf_iterator<char>(input_file)), std::istreambuf_iterator<char>());
+			input_file.close();
+		}
+
 		// Update testing stage
 		m_testing_stage.store(current_test);
 
 		// Copy input file to working directory
-		if (CopyFile(input_file_dir.c_str(), new_input_file_dir.c_str(), false) != TRUE)
-		{
-			m_testing_state = TESTING_STATE_ERROR;
-			m_error_stack.push({ "CopyFile function (input file)", GetLastError() });
-		}
+		std::filesystem::copy_file(input_file_dir, new_input_file_dir);
 
 		// Create job object to limit process memory usage later
 		std::string job_name = "SolutionCheckerJobObject";
@@ -230,10 +223,10 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		std::fstream correct_output_file(correct_output_file_dir);
 		if (result_output_file.is_open() && correct_output_file.is_open())
 		{
-			std::string result_data((std::istreambuf_iterator<char>(result_output_file)), std::istreambuf_iterator<char>());
-			std::string correct_data((std::istreambuf_iterator<char>(correct_output_file)), std::istreambuf_iterator<char>());
+			test.m_output_data = std::string((std::istreambuf_iterator<char>(result_output_file)), std::istreambuf_iterator<char>());
+			test.m_destination_data = std::string((std::istreambuf_iterator<char>(correct_output_file)), std::istreambuf_iterator<char>());
 
-			if (result_data == correct_data)
+			if (test.m_output_data == test.m_destination_data)
 				test.m_status |= TEST_STATUS_OK;
 			else
 				test.m_status |= TEST_STATUS_FAIL;
@@ -249,27 +242,15 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		m_test_list.push_back(test);
 
 		// Delete output file in working directory
-		if (DeleteFileA(new_output_file_dir.c_str()) != TRUE)
-		{
-			m_testing_state = TESTING_STATE_ERROR;
-			m_error_stack.push({ "DeleteFileA function (output file)", GetLastError() });
-		}
+		std::filesystem::remove(new_output_file_dir.c_str());
 
 		// Delete input file in working directory
-		if (DeleteFileA(new_input_file_dir.c_str()) != TRUE)
-		{
-			m_testing_state = TESTING_STATE_ERROR;
-			m_error_stack.push({ "DeleteFileA function (input file)", GetLastError() });
-		}
+		std::filesystem::remove(new_input_file_dir.c_str());
 
 		// If checkbox "use one test only" is checked
 		if (all_tests_ == false) break;
 	}
 	
 	// Delete executable file in working directory
-	if (DeleteFileA(new_executable_dir.c_str()) != TRUE)
-	{
-		m_testing_state = TESTING_STATE_ERROR;
-		m_error_stack.push({ "DeleteFileA function (solution executable file)", GetLastError() });
-	}
+	std::filesystem::remove(new_executable_dir.c_str());
 }

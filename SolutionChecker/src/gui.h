@@ -48,7 +48,7 @@ private:
 
 	void ButtonClick(Fl_Widget* w);
 	void WindowAction();
-	void SelectFile();
+	std::string SelectFile();
 
 	OptionsManager* m_options_manager = nullptr;
 	ProblemManager* m_problem_manager = nullptr;
@@ -63,10 +63,11 @@ private:
 	Fl_Button*			m_exefile_selector_button;
 	Fl_Round_Button*	m_first_test_selector;
 	Fl_Round_Button*	m_all_test_selector;
-	Fl_Input*			m_exefile_selector_value;
+	Fl_Input*			m_exefile_selector;
 	Fl_Progress*		m_testing_progress;
 	Fl_Hold_Browser*	m_problem_browser;
 
 	std::vector<Problem>		m_problem_list;
 	std::vector<OutputWindow*>	m_output_windows;
+	int m_output_window_created_file_count = 0;
 };

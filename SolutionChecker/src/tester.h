@@ -6,7 +6,7 @@
 #include <chrono>
 #include <stack>
 #include <string>
-#include <assert.h>
+#include <filesystem>
 
 #include "options.h"
 #include "problems.h"
@@ -32,20 +32,18 @@ struct Test
 	DWORD m_exit_code;
 	int m_peak_memory_used;
 	int m_id;
+	std::string m_input_data;
+	std::string m_output_data;
+	std::string m_destination_data;
 };
 
 class TestManager
 {
 public:
-	TestManager(OptionsManager* options_manager_, ProblemManager* problem_manager_) {
-		Initialize(options_manager_, problem_manager_);
-	}
-
+	TestManager(OptionsManager* options_manager_, ProblemManager* problem_manager_) :
+		m_options_manager(options_manager_), m_problem_manager(problem_manager_) {}
 	TestManager() {}
-
-	~TestManager() {
-		Shutdown();
-	}
+	~TestManager() { Shutdown(); }
 
 	void StartTesting(int problem_id_, const std::string& solution_location_, bool all_tests_);
 	void FinishTesting();
@@ -67,7 +65,6 @@ public:
 	}
 
 private:
-	void Initialize(OptionsManager* options_manager_, ProblemManager* problem_manager_);
 	void Shutdown();
 
 	OptionsManager* m_options_manager = nullptr;

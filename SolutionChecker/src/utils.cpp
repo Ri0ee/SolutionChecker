@@ -19,3 +19,8 @@ std::string FormatError(DWORD error_code_, const std::string& location_)
 
 	return temp_str_buf;
 }
+
+void ShowTextFile(const std::string& file_name_)
+{
+	ShellExecuteA(0, "open", file_name_.c_str(), 0, 0, SW_SHOW);
+}
