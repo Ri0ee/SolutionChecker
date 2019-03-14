@@ -41,8 +41,10 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 	std::string new_input_file_dir = working_dir + problem_.m_input_file_name;
 	std::string new_output_file_dir = working_dir + problem_.m_output_file_name;
 
+	std::error_code err_c;
+
 	// Copy solution file to working directory
-	std::filesystem::copy_file(solution_location_, new_executable_dir);
+	std::filesystem::copy(solution_location_, new_executable_dir, err_c);
 
 	for (int current_test = 0; current_test < problem_.m_test_count; current_test++)
 	{
@@ -64,7 +66,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		m_testing_stage.store(current_test);
 
 		// Copy input file to working directory
-		std::filesystem::copy_file(input_file_dir, new_input_file_dir);
+		std::filesystem::copy(input_file_dir, new_input_file_dir, err_c);
 
 		// Create job object to limit process memory usage later
 		std::string job_name = "SolutionCheckerJobObject";
