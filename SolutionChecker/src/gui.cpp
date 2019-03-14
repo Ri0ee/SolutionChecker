@@ -250,16 +250,13 @@ int Gui::Run()
 						if (m_output_windows[i] == nullptr)
 						{
 							m_output_windows[i] = output_window_ptr;
-
 							f = true;
 							break;
 						}
 						else if (!m_output_windows[i]->IsVisible())
 						{
 							delete m_output_windows[i];
-
 							m_output_windows[i] = output_window_ptr;
-
 							f = true;
 							break;
 						}
@@ -285,8 +282,8 @@ int Gui::Run()
 			m_problem_list = m_problem_manager->GetProblemList();
 
 			m_problem_browser->clear();
-			for (unsigned i = 0; i < m_problem_list.size(); i++)
-				m_problem_browser->add(std::string(m_problem_list[i].m_folder_name + ": " + m_problem_list[i].m_caption).c_str());
+			for (auto problem : m_problem_list)
+				m_problem_browser->add(std::string(problem.m_folder_name + ": " + problem.m_caption).c_str());
 
 			m_settings_window->SetProblemBrowserUpdateNeeded(false);
 		}
