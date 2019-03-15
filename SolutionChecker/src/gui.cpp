@@ -2,7 +2,7 @@
 
 
 
-std::string Gui::SelectFile()
+std::string Gui::SelectFile(const std::string& initial_dir_)
 {
 	OPENFILENAME ofn = {};
 
@@ -26,7 +26,7 @@ std::string Gui::SelectFile()
 	ofn.lpstrFile[0] = 0;
 	ofn.hwndOwner = GetForegroundWindow();
 
-	ofn.lpstrInitialDir = m_options_manager->LastSolutionDir().c_str();
+	ofn.lpstrInitialDir = initial_dir_.c_str();
 	ofn.lpstrTitle = "Select exe or source file";
 	ofn.lpstrFilter = "Executable .exe\0*.exe\0Source .pas\0*.pas\0Source .cpp\0*.cpp\0Source .c\0*.c\0Source .java\0*.java\0\0";
 
@@ -91,8 +91,12 @@ void Gui::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "...")
 	{
-		m_solution_selector->value(SelectFile().c_str());
-		m_options_manager->LastSolutionDir() = std::string(m_solution_selector->value());
+		std::string temp_string = SelectFile(m_options_manager->LastSolutionDir());
+		if (!temp_string.empty())
+		{
+			m_solution_selector->value(temp_string.c_str());
+			m_options_manager->LastSolutionDir() = temp_string;
+		}
 		return;
 	}
 

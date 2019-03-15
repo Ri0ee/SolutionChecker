@@ -48,7 +48,7 @@ private:
 
 	void ButtonClick(Fl_Widget* w);
 	void WindowAction();
-	std::string SelectFile();
+	std::string SelectFile(const std::string& initial_dir_);
 
 	OptionsManager* m_options_manager = nullptr;
 	ProblemManager* m_problem_manager = nullptr;
