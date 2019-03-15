@@ -41,6 +41,15 @@ void SettingsWindow::Initialize()
 	m_problem_dir_selector_button->clear_visible_focus();
 
 	y += h + 10;
+
+	m_temp_dir_selector = new Fl_Input(selector_spacing, y, 400, h, "Temp dir:");
+	m_temp_dir_selector->value(m_options_manager->TempDir().c_str());
+
+	m_temp_dir_selector_button = new Fl_Button(selector_spacing + 403, y, w - selector_spacing - 400 - 10, 20, "Temp dir...");
+	m_temp_dir_selector_button->callback(ButtonCallback, this);
+	m_temp_dir_selector_button->clear_visible_focus();
+
+	y += h + 10;
 	y += h + 10;
 
 	m_cpp_compiler_dir_selector = new Fl_Input(compiler_selector_spacing, y, 400, h, "Cpp Compiler:");
@@ -211,7 +220,7 @@ std::string SettingsWindow::SelectFile()
 	ofn.lpstrFile[0] = 0;
 	ofn.hwndOwner = GetForegroundWindow();
 
-	ofn.lpstrInitialDir = m_options_manager->LastExecutableDir().c_str();
+	ofn.lpstrInitialDir = m_options_manager->LastSolutionDir().c_str();
 	ofn.lpstrTitle = "Select exe-file";
 	ofn.lpstrFilter = "Executable .exe\0*.exe\0\0";
 
@@ -238,6 +247,7 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 	{
 		m_options_manager->WorkingDir() = std::string(m_working_dir_selector->value());
 		m_options_manager->ProblemDir() = std::string(m_problem_dir_selector->value());
+		m_options_manager->TempDir() = std::string(m_temp_dir_selector->value());
 
 		m_options_manager->CppCompilerDir() = std::string(m_cpp_compiler_dir_selector->value());
 		m_options_manager->CCompilerDir() = std::string(m_c_compiler_dir_selector->value());
@@ -272,6 +282,12 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 		return;
 	}
 
+	if (button_label == "Temp dir...")
+	{
+		m_temp_dir_selector->value(SelectDirectory().c_str());
+		return;
+	}
+
 	if (button_label == "Cpp compiler...")
 	{
 		m_cpp_compiler_dir_selector->value(SelectFile().c_str());
@@ -301,6 +317,7 @@ void SettingsWindow::UpdateWidgetInfo()
 {
 	m_problem_dir_selector->value(m_options_manager->ProblemDir().c_str());
 	m_working_dir_selector->value(m_options_manager->WorkingDir().c_str());
+	m_temp_dir_selector->value(m_options_manager->TempDir().c_str());
 
 	m_cpp_compiler_dir_selector->value(m_options_manager->CppCompilerDir().c_str());
 	m_c_compiler_dir_selector->value(m_options_manager->CCompilerDir().c_str());

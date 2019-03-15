@@ -59,9 +59,9 @@ bool OptionsManager::GetOptions()
 			continue;
 		}
 
-		if (param_name == "LastExecutableDir")
+		if (param_name == "LastSolutionDir")
 		{
-			m_last_exe_dir = line.substr(delim_pos + 1, line.size());
+			m_last_solution_dir = line.substr(delim_pos + 1, line.size());
 			continue;
 		}
 
@@ -160,7 +160,7 @@ void OptionsManager::SetDefaults()
 {
 	m_window_pos_x = 100;
 	m_window_pos_y = 100;
-	m_last_exe_dir = "";
+	m_last_solution_dir = "";
 	m_last_problem = 0;
 	m_problem_dir = "";
 	m_working_dir = "";
@@ -194,7 +194,7 @@ bool OptionsManager::UpdateOptionsFile()
 	out_file << "WorkingDir:" << m_working_dir << "\n";
 	out_file << "ProblemDir:" << m_problem_dir << "\n";
 	out_file << "TempDir:" << m_temp_dir << "\n";
-	out_file << "LastExecutableDir:" << m_last_exe_dir << "\n";
+	out_file << "LastSolutionDir:" << m_last_solution_dir << "\n";
 	out_file << "LastProblem:" << m_last_problem << "\n";
 	out_file << "UseOnlyOneTest:" << (m_use_only_one_test ? "true" : "false") << "\n";
 	out_file << "Theme:" << m_theme << "\n";

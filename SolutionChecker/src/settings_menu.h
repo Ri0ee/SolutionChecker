@@ -46,6 +46,8 @@ private:
 
 	Fl_Input* m_working_dir_selector;
 	Fl_Input* m_problem_dir_selector;
+	Fl_Input* m_temp_dir_selector;
+
 	Fl_Input* m_pascal_compiler_dir_selector;
 	Fl_Input* m_cpp_compiler_dir_selector;
 	Fl_Input* m_c_compiler_dir_selector;
@@ -57,6 +59,8 @@ private:
 
 	Fl_Button* m_working_dir_selector_button;
 	Fl_Button* m_problem_dir_selector_button;
+	Fl_Button* m_temp_dir_selector_button;
+
 	Fl_Button* m_pascal_compiler_dir_selector_button;
 	Fl_Button* m_cpp_compiler_dir_selector_button;
 	Fl_Button* m_c_compiler_dir_selector_button;

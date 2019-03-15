@@ -37,7 +37,7 @@ public:
 
 	std::string& ThemeName() { return m_theme; }
 	std::string& WorkingDir() { return m_working_dir; }
-	std::string& LastExecutableDir() { return m_last_exe_dir; }
+	std::string& LastSolutionDir() { return m_last_solution_dir; }
 	std::string& ProblemDir() { return m_problem_dir; }
 	std::string& OptionsFilePath() { return m_path_to_options_file; }
 	std::string& AppPath() { return m_app_path; }
@@ -60,7 +60,7 @@ private:
 	std::string m_working_dir;
 	std::string m_problem_dir;
 	std::string m_temp_dir;
-	std::string m_last_exe_dir;
+	std::string m_last_solution_dir;
 	std::string m_theme;
 
 	std::string m_cpp_compiler_dir;

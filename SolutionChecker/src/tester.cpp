@@ -36,15 +36,46 @@ void TestManager::Shutdown()
 
 void TestManager::TestingSequence(Problem problem_, const std::string& solution_location_, bool all_tests_)
 {
-	std::string working_dir = m_options_manager->WorkingDir() + "\\";
+	std::error_code err_c;
+
+	std::string temp_dir = m_options_manager->TempDir() + "\\"; // Directory for compilation (if any)
+	std::string working_dir = m_options_manager->WorkingDir() + "\\"; // Directory for testing executable files
 	std::string new_executable_dir = working_dir + "solution.exe";
 	std::string new_input_file_dir = working_dir + problem_.m_input_file_name;
 	std::string new_output_file_dir = working_dir + problem_.m_output_file_name;
+	std::string temp_solution_file_dir = "";
+	std::string solution_file_type = solution_location_.substr(solution_location_.find_last_of(".") + 1, solution_location_.size());
+	
+	bool is_executable_file_temp = false;
+	// Compilation if given solution file is not executable
+	if (solution_file_type != "exe")
+	{
+		std::string new_source_file_dir = temp_dir + "solution_source." + solution_file_type;
+		std::filesystem::remove(new_source_file_dir, err_c);
+		std::filesystem::copy(solution_location_, new_source_file_dir, err_c);
+		Compiler compiler(m_options_manager);
 
-	std::error_code err_c;
+		if (solution_file_type == "pas")
+			temp_solution_file_dir = compiler.Compile(new_source_file_dir, Pascal);
+		else if (solution_file_type == "cpp")
+			temp_solution_file_dir = compiler.Compile(new_source_file_dir, Cpp);
+		else if (solution_file_type == "c")
+			temp_solution_file_dir = compiler.Compile(new_source_file_dir, C);
+		else if (solution_file_type == "java")
+			temp_solution_file_dir = compiler.Compile(new_source_file_dir, Java);
+
+		is_executable_file_temp = true;
+
+		// Remove created temporary source file
+		std::filesystem::remove(new_source_file_dir);
+	}
+	else temp_solution_file_dir = solution_location_;
 
 	// Copy solution file to working directory
-	std::filesystem::copy(solution_location_, new_executable_dir, err_c);
+	std::filesystem::copy(temp_solution_file_dir, new_executable_dir, err_c);
+
+	// Remove executable file if it was created as a temporary file
+	if (is_executable_file_temp) std::filesystem::remove(temp_solution_file_dir);
 
 	for (int current_test = 0; current_test < problem_.m_test_count; current_test++)
 	{

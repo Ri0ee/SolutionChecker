@@ -26,9 +26,9 @@ std::string Gui::SelectFile()
 	ofn.lpstrFile[0] = 0;
 	ofn.hwndOwner = GetForegroundWindow();
 
-	ofn.lpstrInitialDir = m_options_manager->LastExecutableDir().c_str();
-	ofn.lpstrTitle = "Select exe-file";
-	ofn.lpstrFilter = "Executable .exe\0*.exe\0\0";
+	ofn.lpstrInitialDir = m_options_manager->LastSolutionDir().c_str();
+	ofn.lpstrTitle = "Select exe or source file";
+	ofn.lpstrFilter = "Executable .exe\0*.exe\0Source .pas\0*.pas\0Source .cpp\0*.cpp\0Source .c\0*.c\0Source .java\0*.java\0\0";
 
 	int err = GetOpenFileName(&ofn);
 	if (err == 0) return std::string("");
@@ -75,7 +75,7 @@ void Gui::ButtonClick(Fl_Widget* w)
 			m_testing_progress->maximum(1);
 		m_testing_progress->value(0);
 
-		m_test_manager->StartTesting(m_problem_browser->value() - 1, std::string(m_exefile_selector->value()), m_all_test_selector->value());
+		m_test_manager->StartTesting(m_problem_browser->value() - 1, std::string(m_solution_selector->value()), m_all_test_selector->value());
 
 		return;
 	}
@@ -91,8 +91,8 @@ void Gui::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "...")
 	{
-		m_exefile_selector->value(SelectFile().c_str());
-		m_options_manager->LastExecutableDir() = std::string(m_exefile_selector->value());
+		m_solution_selector->value(SelectFile().c_str());
+		m_options_manager->LastSolutionDir() = std::string(m_solution_selector->value());
 		return;
 	}
 
@@ -131,7 +131,7 @@ void Gui::WindowAction() // Close button pressed
 			output_window->Hide();
 
 	m_options_manager->LastProblem() = m_problem_browser->value();
-	m_options_manager->LastExecutableDir() = m_exefile_selector->value();
+	m_options_manager->LastSolutionDir() = m_solution_selector->value();
 
 	m_main_window->hide();
 }
@@ -149,11 +149,11 @@ void Gui::Initialize()
 	m_main_window->callback(WindowCallback, this);
 
 	int selector_spacing = (int)fl_width("Path to exe-file:") + 5;
-	m_exefile_selector = new Fl_Input(selector_spacing, y, 350, h, "Path to exe-file:");
-	m_exefile_selector->value(m_options_manager->LastExecutableDir().c_str());
-	m_exefile_selector_button = new Fl_Button(selector_spacing + 355, y, 500 - (selector_spacing + 355) - 5, h, "...");
-	m_exefile_selector_button->callback(ButtonCallback, this);
-	m_exefile_selector_button->clear_visible_focus();
+	m_solution_selector = new Fl_Input(selector_spacing, y, 350, h, "Path to solution:");
+	m_solution_selector->value(m_options_manager->LastSolutionDir().c_str());
+	m_solution_file_selector_button = new Fl_Button(selector_spacing + 355, y, 500 - (selector_spacing + 355) - 5, h, "...");
+	m_solution_file_selector_button->callback(ButtonCallback, this);
+	m_solution_file_selector_button->clear_visible_focus();
 
 	m_problem_browser = new Fl_Hold_Browser(510, y, 0, 0);
 	for (unsigned i = 0; i < m_problem_list.size(); i++)

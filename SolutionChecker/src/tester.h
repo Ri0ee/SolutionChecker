@@ -11,6 +11,7 @@
 #include "options.h"
 #include "problems.h"
 #include "utils.h"
+#include "compiler.h"
 
 #define TESTING_STATE_OFFLINE	0
 #define TESTING_STATE_ONLINE	1

@@ -60,10 +60,10 @@ private:
 	Fl_Button*			m_settings_button;
 	Fl_Button*			m_show_problem_info_button;
 	Fl_Button*			m_show_problem_description_button;
-	Fl_Button*			m_exefile_selector_button;
+	Fl_Button*			m_solution_file_selector_button;
 	Fl_Round_Button*	m_first_test_selector;
 	Fl_Round_Button*	m_all_test_selector;
-	Fl_Input*			m_exefile_selector;
+	Fl_Input*			m_solution_selector;
 	Fl_Progress*		m_testing_progress;
 	Fl_Hold_Browser*	m_problem_browser;
 
