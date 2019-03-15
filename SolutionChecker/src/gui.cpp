@@ -69,7 +69,7 @@ void Gui::ButtonClick(Fl_Widget* w)
 		m_first_test_selector->deactivate();
 
 		m_testing_progress->activate();
-		if (m_all_test_selector->value() == 0) // Checked
+		if (m_all_test_selector->value() != 0) // Checked
 			m_testing_progress->maximum((float)problem.m_test_count);
 		else
 			m_testing_progress->maximum(1);
