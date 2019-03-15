@@ -143,6 +143,12 @@ bool OptionsManager::GetOptions()
 			m_java_default_args = line.substr(delim_pos + 1, line.size());
 			continue;
 		}
+
+		if (param_name == "TempDir")
+		{
+			m_temp_dir = line.substr(delim_pos + 1, line.size());
+			continue;
+		}
 	}
 
 	in_file.close();
@@ -158,6 +164,7 @@ void OptionsManager::SetDefaults()
 	m_last_problem = 0;
 	m_problem_dir = "";
 	m_working_dir = "";
+	m_temp_dir = "";
 
 	m_cpp_compiler_dir = "";
 	m_c_compiler_dir = "";
@@ -186,6 +193,7 @@ bool OptionsManager::UpdateOptionsFile()
 	out_file << "WindowPosY:" << m_window_pos_y << "\n";
 	out_file << "WorkingDir:" << m_working_dir << "\n";
 	out_file << "ProblemDir:" << m_problem_dir << "\n";
+	out_file << "TempDir:" << m_temp_dir << "\n";
 	out_file << "LastExecutableDir:" << m_last_exe_dir << "\n";
 	out_file << "LastProblem:" << m_last_problem << "\n";
 	out_file << "UseOnlyOneTest:" << (m_use_only_one_test ? "true" : "false") << "\n";

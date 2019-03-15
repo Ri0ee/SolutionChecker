@@ -41,6 +41,7 @@ public:
 	std::string& ProblemDir() { return m_problem_dir; }
 	std::string& OptionsFilePath() { return m_path_to_options_file; }
 	std::string& AppPath() { return m_app_path; }
+	std::string& TempDir() { return m_temp_dir; }
 
 	std::string GetThemeName(int id_);
 	int GetThemeId(const std::string& theme_);
@@ -58,6 +59,7 @@ private:
 	bool m_use_multiple_tests;
 	std::string m_working_dir;
 	std::string m_problem_dir;
+	std::string m_temp_dir;
 	std::string m_last_exe_dir;
 	std::string m_theme;
 
