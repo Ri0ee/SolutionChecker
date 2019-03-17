@@ -37,16 +37,12 @@ std::string Compiler::CompilePascal(const std::string& file_name_)
 	// Remove executable file if there was any
 	std::filesystem::remove(result_executable_path);
 
-	STARTUPINFO startup_info;
-	PROCESS_INFORMATION process_info;
-	ZeroMemory(&process_info, sizeof(PROCESS_INFORMATION));
-	ZeroMemory(&startup_info, sizeof(STARTUPINFO));
+	STARTUPINFO startup_info = { 0 };
+	PROCESS_INFORMATION process_info = { 0 };
 	startup_info.cb = sizeof(STARTUPINFO);
 
 	if (CreateProcess(compiler_path.c_str(), compiler_args_lpstr, 0, 0, false, CREATE_NO_WINDOW, 0, compiler_dir.c_str(), &startup_info, &process_info) == TRUE)
-	{
 		WaitForSingleObject(process_info.hProcess, INFINITE);
-	}
 	else
 	{
 		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateProcess (Compilation)", 0, 0, Fatal });
