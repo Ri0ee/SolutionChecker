@@ -49,13 +49,19 @@ std::string Compiler::CompilePascal(const std::string& file_name_)
 	}
 	else
 	{
-		m_error_stack.push({ "CreateProcess", GetLastError() });
-		return std::string();
+		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateProcess (Compilation)", 0, 0, Fatal });
+		return std::string("");
 	}
 
 	// Delete object file {file_name}.o
 	std::filesystem::remove(result_object_path); 
 
+	if (!std::filesystem::exists(result_executable_path))
+	{
+		m_error_manager->PushError({ "Result file does not exist", "Compilation", 0, 0, Fatal });
+		return std::string("");
+	}
+		
 	return result_executable_path;
 }
 

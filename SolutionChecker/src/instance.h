@@ -5,6 +5,7 @@
 #include "gui.h"
 #include "options.h"
 #include "problems.h"
+#include "error_manager.h"
 
 
 
@@ -25,6 +26,7 @@ private:
 	OptionsManager* m_options_manager = nullptr;
 	ProblemManager* m_problem_manager = nullptr;
 	TestManager* m_test_manager = nullptr;
+	ErrorManager* m_error_manager = nullptr;
 
 	std::string m_current_dir;
 };

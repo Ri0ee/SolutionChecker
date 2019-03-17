@@ -222,60 +222,48 @@ int Gui::Run()
 	while (Fl::wait() > 0)
 	{
 		unsigned int testing_state = m_test_manager->GetTestingState();
-		if (testing_state == TESTING_STATE_ONLINE || testing_state == TESTING_STATE_ERROR)
+		if (testing_state == TESTING_STATE_ONLINE)
 		{
-			if (testing_state == TESTING_STATE_ERROR)
+			int testing_stage = m_test_manager->GetTestingStage();
+
+			m_testing_progress->value((float)testing_stage + 1);
+			if (testing_stage == m_problem_list[m_problem_browser->value() - 1].m_test_count - 1 || (m_all_test_selector->value() == false && testing_stage == 0))
 			{
-				std::string error_message = m_test_manager->GetErrorMessage();
-				while (error_message != "No errors")
+				m_test_manager->FinishTesting();
+
+				std::vector<Test> temp_result_data;
+				m_test_manager->GetResultData(temp_result_data);
+
+				OutputWindow* output_window_ptr = new OutputWindow(temp_result_data, m_options_manager, &m_output_window_created_file_count);
+				output_window_ptr->Show();
+
+				bool f = false;
+				for (unsigned int i = 0; i < m_output_windows.size(); i++)
 				{
-					fl_alert(error_message.c_str());
-					error_message = m_test_manager->GetErrorMessage();
-				}
-			}
-			else
-			{
-				int testing_stage = m_test_manager->GetTestingStage();
-
-				m_testing_progress->value((float)testing_stage + 1);
-				if (testing_stage == m_problem_list[m_problem_browser->value() - 1].m_test_count - 1 || (m_all_test_selector->value() == false && testing_stage == 0))
-				{
-					m_test_manager->FinishTesting();
-	
-					std::vector<Test> temp_result_data;
-					m_test_manager->GetResultData(temp_result_data);
-
-					OutputWindow* output_window_ptr = new OutputWindow(temp_result_data, m_options_manager, &m_output_window_created_file_count);
-					output_window_ptr->Show();
-
-					bool f = false;
-					for (unsigned int i = 0; i < m_output_windows.size(); i++)
+					if (m_output_windows[i] == nullptr)
 					{
-						if (m_output_windows[i] == nullptr)
-						{
-							m_output_windows[i] = output_window_ptr;
-							f = true;
-							break;
-						}
-						else if (!m_output_windows[i]->IsVisible())
-						{
-							delete m_output_windows[i];
-							m_output_windows[i] = output_window_ptr;
-							f = true;
-							break;
-						}
+						m_output_windows[i] = output_window_ptr;
+						f = true;
+						break;
 					}
-
-					if (f == false) m_output_windows.push_back(output_window_ptr);
-
-					m_problem_browser->activate();
-					m_start_test_button->activate();
-					m_all_test_selector->activate();
-					m_first_test_selector->activate();
-
-					m_testing_progress->deactivate();
-					m_testing_progress->value(0);
+					else if (!m_output_windows[i]->IsVisible())
+					{
+						delete m_output_windows[i];
+						m_output_windows[i] = output_window_ptr;
+						f = true;
+						break;
+					}
 				}
+
+				if (f == false) m_output_windows.push_back(output_window_ptr);
+
+				m_problem_browser->activate();
+				m_start_test_button->activate();
+				m_all_test_selector->activate();
+				m_first_test_selector->activate();
+
+				m_testing_progress->deactivate();
+				m_testing_progress->value(0);
 			}
 		}
 

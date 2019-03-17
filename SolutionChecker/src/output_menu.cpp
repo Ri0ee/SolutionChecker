@@ -35,6 +35,12 @@ void OutputWindow::ListElement::Initialize()
 		m_text_color = FL_DARK_RED;
 	}
 
+	if (m_test.m_status & TEST_STATUS_TESTING_SEQUENCE_ERROR)
+	{
+		m_info.append("TEST_STATUS_TESTING_SEQUENCE_ERROR; ");
+		m_text_color = FL_DARK_YELLOW;
+	}
+
 	if (m_test.m_status & TEST_STATUS_UNKNOWN)
 	{
 		m_info.append("TEST_STATUS_UNKNOWN; ");

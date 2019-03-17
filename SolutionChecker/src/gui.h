@@ -27,14 +27,16 @@
 #include "compiler.h"
 #include "settings_menu.h"
 #include "output_menu.h"
+#include "error_manager.h"
 
 
 
 class Gui
 {
 public:
-	Gui(OptionsManager* options_manager_, ProblemManager* problem_manager_, TestManager* test_manager_) :
-		m_options_manager(options_manager_), m_problem_manager(problem_manager_), m_test_manager(test_manager_) { Initialize(); }
+	Gui(OptionsManager* options_manager_, ProblemManager* problem_manager_, TestManager* test_manager_, ErrorManager* error_manager_) :
+		m_options_manager(options_manager_), m_problem_manager(problem_manager_), 
+		m_test_manager(test_manager_), m_error_manager(error_manager_) { Initialize(); }
 	~Gui() { Shutdown(); }
 
 	int Run();
@@ -54,6 +56,7 @@ private:
 	ProblemManager* m_problem_manager = nullptr;
 	TestManager*	m_test_manager = nullptr;
 	SettingsWindow* m_settings_window = nullptr;
+	ErrorManager*	m_error_manager = nullptr;
 
 	Fl_Double_Window*	m_main_window;
 	Fl_Button*			m_start_test_button;

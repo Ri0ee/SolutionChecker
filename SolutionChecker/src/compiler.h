@@ -7,6 +7,7 @@
 
 #include "options.h"
 #include "utils.h"
+#include "error_manager.h"
 
 
 
@@ -17,21 +18,11 @@ enum CompilerLanguage{
 class Compiler
 {
 public:
-	Compiler(OptionsManager* options_manager_) : m_options_manager(options_manager_) {}
+	Compiler(OptionsManager* options_manager_, ErrorManager* error_manager_) : 
+		m_options_manager(options_manager_), m_error_manager(error_manager_) {}
 	~Compiler() {}
 	
 	std::string Compile(const std::string& file_name_, CompilerLanguage compiler_language_);
-
-	std::string GetErrorMessage()
-	{
-		if (!m_error_stack.empty())
-		{
-			std::string temp_str_buf = FormatError(m_error_stack.top().m_error_id, m_error_stack.top().m_location);
-			m_error_stack.pop();
-			return temp_str_buf;
-		}
-		else return std::string("No errors");
-	}
 
 private:
 	std::string CompileCpp(const std::string& file_name_);
@@ -40,6 +31,5 @@ private:
 	std::string CompileC(const std::string& file_name_);
 
 	OptionsManager* m_options_manager = nullptr;
-
-	std::stack<ErrorMessage> m_error_stack;
+	ErrorManager* m_error_manager = nullptr;
 };

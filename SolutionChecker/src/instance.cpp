@@ -10,9 +10,10 @@ void Instance::Initialize(const char* file_location_)
 	m_options_manager = new OptionsManager(m_current_dir + "\\options.txt");
 	m_options_manager->AppPath() = m_current_dir;
 
-	m_problem_manager = new ProblemManager(m_options_manager->ProblemDir());
-	m_test_manager =	new TestManager(m_options_manager, m_problem_manager);
-	m_gui_ptr =			new Gui(m_options_manager, m_problem_manager, m_test_manager);
+	m_error_manager =	new ErrorManager(m_options_manager);
+	m_problem_manager = new ProblemManager(m_options_manager->ProblemDir(), m_error_manager);
+	m_test_manager =	new TestManager(m_options_manager, m_problem_manager, m_error_manager);
+	m_gui_ptr =			new Gui(m_options_manager, m_problem_manager, m_test_manager, m_error_manager);
 }
 
 int Instance::Run()
@@ -38,6 +39,12 @@ void Instance::Shutdown()
 	{
 		delete m_problem_manager;
 		m_problem_manager = nullptr;
+	}
+
+	if (m_error_manager != nullptr)
+	{
+		delete m_error_manager;
+		m_error_manager = nullptr;
 	}
 
 	if (m_options_manager != nullptr)

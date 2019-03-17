@@ -4,15 +4,20 @@
 
 std::string FormatError(DWORD error_code_, const std::string& location_)
 {
+	return std::string(location_ + ": " + GetErrorMessage(error_code_));
+}
+
+std::string GetErrorMessage(DWORD error_code_)
+{
 	std::string temp_str_buf("");
 	LPTSTR error_text = NULL;
 
 	FormatMessage(FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_IGNORE_INSERTS, NULL,
 		error_code_, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT), (LPTSTR)&error_text, 0, NULL);
 
-	if (NULL != error_text)
+	if (error_text != NULL)
 	{
-		temp_str_buf = location_ + ": " + std::string(error_text);
+		temp_str_buf = std::string(error_text);
 		LocalFree(error_text);
 		error_text = NULL;
 	}

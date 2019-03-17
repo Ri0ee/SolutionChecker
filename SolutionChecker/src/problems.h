@@ -7,6 +7,7 @@
 #include <Windows.h>
 
 #include "utils.h"
+#include "error_manager.h"
 
 
 
@@ -27,7 +28,10 @@ struct Problem
 class ProblemManager
 {
 public:
-	ProblemManager(const std::string& path_to_problems_folder_) : m_path(path_to_problems_folder_) { Initialize(); }
+	ProblemManager(const std::string& path_to_problems_folder_, ErrorManager* error_manager_) : 
+		m_path(path_to_problems_folder_), m_error_manager(error_manager_) { 
+		Initialize(); 
+	}
 	ProblemManager() {}
 	~ProblemManager() {}
 
@@ -43,6 +47,8 @@ public:
 
 private:
 	void Initialize();
+
+	ErrorManager* m_error_manager = nullptr;
 
 	std::string m_path;
 	std::vector<Problem> m_problem_list;
