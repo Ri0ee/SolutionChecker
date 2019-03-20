@@ -14,6 +14,7 @@
 #include <string>
 
 #include "options.h"
+#include "problem_creator_menu.h"
 
 
 
@@ -41,6 +42,8 @@ private:
 	std::string SelectFile();
 
 	OptionsManager* m_options_manager = nullptr;
+
+	ProblemCreatorWindow* m_problem_creator_window = nullptr;
 
 	Fl_Double_Window* m_window;
 
