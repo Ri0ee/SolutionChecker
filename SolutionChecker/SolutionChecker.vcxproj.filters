@@ -1,84 +1,87 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Исходные файлы">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{89f05fa2-1600-405a-924f-192658f8491d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Файлы заголовков">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    <Filter Include="Tester">
+      <UniqueIdentifier>{ac86c6f1-b375-4ca1-b620-d8fe3cb759f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Файлы ресурсов">
-      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
-      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    <Filter Include="Other">
+      <UniqueIdentifier>{73c80d02-e86a-41c3-a7fb-bc0113867b65}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\main.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\instance.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gui.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\options.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\tester.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\problems.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\compiler.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\utils.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="src\output_menu.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
     <ClCompile Include="src\settings_menu.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="src\output_menu.cpp">
-      <Filter>Исходные файлы</Filter>
+    <ClCompile Include="src\gui.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="src\compiler.cpp">
+      <Filter>Tester</Filter>
+    </ClCompile>
+    <ClCompile Include="src\tester.cpp">
+      <Filter>Tester</Filter>
+    </ClCompile>
+    <ClCompile Include="src\problems.cpp">
+      <Filter>Tester</Filter>
+    </ClCompile>
+    <ClCompile Include="src\utils.cpp">
+      <Filter>Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\options.cpp">
+      <Filter>Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\instance.cpp">
+      <Filter>Other</Filter>
     </ClCompile>
     <ClCompile Include="src\error_manager.cpp">
-      <Filter>Исходные файлы</Filter>
+      <Filter>Other</Filter>
+    </ClCompile>
+    <ClCompile Include="src\problem_importer_menu.cpp">
+      <Filter>GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\instance.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gui.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\options.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\tester.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\problems.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\compiler.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\utils.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="src\settings_menu.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>GUI</Filter>
     </ClInclude>
     <ClInclude Include="src\output_menu.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui.h">
+      <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="src\problems.h">
+      <Filter>Tester</Filter>
+    </ClInclude>
+    <ClInclude Include="src\tester.h">
+      <Filter>Tester</Filter>
+    </ClInclude>
+    <ClInclude Include="src\compiler.h">
+      <Filter>Tester</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utils.h">
+      <Filter>Other</Filter>
+    </ClInclude>
+    <ClInclude Include="src\options.h">
+      <Filter>Other</Filter>
+    </ClInclude>
+    <ClInclude Include="src\instance.h">
+      <Filter>Other</Filter>
     </ClInclude>
     <ClInclude Include="src\error_manager.h">
-      <Filter>Файлы заголовков</Filter>
+      <Filter>Other</Filter>
+    </ClInclude>
+    <ClInclude Include="src\problem_importer_menu.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

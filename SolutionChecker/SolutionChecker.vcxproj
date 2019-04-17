@@ -145,6 +145,7 @@
     <ClCompile Include="src\options.cpp" />
     <ClCompile Include="src\output_menu.cpp" />
     <ClCompile Include="src\problems.cpp" />
+    <ClCompile Include="src\problem_importer_menu.cpp" />
     <ClCompile Include="src\settings_menu.cpp" />
     <ClCompile Include="src\tester.cpp" />
     <ClCompile Include="src\utils.cpp" />
@@ -157,6 +158,7 @@
     <ClInclude Include="src\options.h" />
     <ClInclude Include="src\output_menu.h" />
     <ClInclude Include="src\problems.h" />
+    <ClInclude Include="src\problem_importer_menu.h" />
     <ClInclude Include="src\settings_menu.h" />
     <ClInclude Include="src\tester.h" />
     <ClInclude Include="src\utils.h" />

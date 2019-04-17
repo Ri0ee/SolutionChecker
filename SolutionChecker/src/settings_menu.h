@@ -14,7 +14,7 @@
 #include <string>
 
 #include "options.h"
-#include "problem_creator_menu.h"
+#include "problem_importer_menu.h"
 
 
 
@@ -22,7 +22,7 @@ class SettingsWindow
 {
 public:
 	SettingsWindow(OptionsManager* options_manager_) : m_options_manager(options_manager_) { Initialize(); }
-	~SettingsWindow() {}
+	~SettingsWindow() { Shutdown(); }
 
 	void Show();
 	void Hide();
@@ -33,6 +33,7 @@ public:
 
 private:
 	void Initialize();
+	void Shutdown();
 
 	void ButtonClick(Fl_Widget* w);
 	static void ButtonCallback(Fl_Widget* w, void* f) { ((SettingsWindow*)f)->ButtonClick(w); }
@@ -43,7 +44,7 @@ private:
 
 	OptionsManager* m_options_manager = nullptr;
 
-	ProblemCreatorWindow* m_problem_creator_window = nullptr;
+	ProblemImporterWindow* m_problem_importer_window = nullptr;
 
 	Fl_Double_Window* m_window;
 
@@ -70,6 +71,7 @@ private:
 	Fl_Button* m_java_compiler_dir_selector_button;
 	Fl_Button* m_reset_settings_button;
 	Fl_Button* m_apply_settings_button;
+	Fl_Button* m_import_problem_button;
 
 	Fl_Choice* m_theme_choice;
 
