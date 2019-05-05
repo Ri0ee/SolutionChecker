@@ -47,7 +47,7 @@ private:
 	OptionsManager* m_options_manager = nullptr;
 	ProblemManager* m_problem_manager = nullptr;
 
-	ProblemImporterWindow* m_problem_importer_window = nullptr;
+	ProblemCreatorWindow* m_problem_creator_window = nullptr;
 
 	Fl_Double_Window* m_window;
 

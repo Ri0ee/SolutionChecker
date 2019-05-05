@@ -1,6 +1,48 @@
 #include "problem_importer_menu.h"
 
-void ProblemImporterWindow::Initialize()
+std::vector<std::string> ProblemCreatorWindow::SelectMultipleFiles(const std::string& initial_dir_)
+{
+	OPENFILENAME ofn = {};
+	ofn.lStructSize = sizeof(OPENFILENAME);
+
+	if (ofn.lpstrFile)
+		delete[] ofn.lpstrFile;
+
+	if (ofn.lpstrInitialDir)
+		delete[] ofn.lpstrInitialDir;
+
+	ofn.Flags |= OFN_NOVALIDATE;
+	ofn.Flags |= OFN_HIDEREADONLY;
+	ofn.Flags |= OFN_EXPLORER;
+	ofn.Flags |= OFN_ENABLESIZING;
+	ofn.Flags |= OFN_ALLOWMULTISELECT;
+	ofn.Flags |= OFN_FILEMUSTEXIST;
+
+	ofn.nMaxFile = 4096 - 1;
+	ofn.lpstrFile = new char[4096];
+	ofn.lpstrFile[0] = 0;
+	ofn.hwndOwner = NULL;
+
+	ofn.lpstrInitialDir = initial_dir_.c_str();
+	ofn.lpstrTitle = "Select files";
+
+	int err = GetOpenFileName(&ofn);
+	if (err == 0) return std::vector<std::string>();
+
+	std::vector<std::string> res;
+	char* str = ofn.lpstrFile;
+	std::string directory = str;
+	str += (directory.length() + 1);
+	while (*str) {
+		std::string filename = str;
+		str += (filename.length() + 1);
+		res.push_back(filename);
+	}
+
+	return res;
+}
+
+void ProblemCreatorWindow::Initialize()
 {
 	m_window = new Fl_Double_Window(500, 500, "Problem importer");
 
@@ -39,6 +81,14 @@ void ProblemImporterWindow::Initialize()
 	y += h + 10;
 
 	m_answer_files_input = new Fl_Input(100, y, 300, h, "answer files");
+	m_answer_file_selector_button = new Fl_Button(410, y, 200, h, "select answer files...");
+	m_answer_file_selector_button->callback(ButtonCallback, this);
+
+	y += h + 10;
+
+	m_input_files_input = new Fl_Input(100, y, 300, h, "input files");
+	m_input_file_selector_button = new Fl_Button(410, y, 200, h, "select input files...");
+	m_input_file_selector_button->callback(ButtonCallback, this);
 
 	y += h + 10;
 
@@ -62,27 +112,49 @@ void ProblemImporterWindow::Initialize()
 
 	y += h + 10;
 
-	m_import_button = new Fl_Button(100, y, 100, h, "Import");
-	m_import_button->callback(ButtonCallback, this);
-	m_import_button->clear_visible_focus();
+	m_create_button = new Fl_Button(100, y, 100, h, "Create");
+	m_create_button->callback(ButtonCallback, this);
+	m_create_button->clear_visible_focus();
 
 	y += h + 10;
 
 	m_window->end();
-	m_window->size(410, y);
+	m_window->size(620, y);
 	m_window->hide();
 }
 
-void ProblemImporterWindow::Shutdown()
+void ProblemCreatorWindow::Shutdown()
 {
 
 }
 
-void ProblemImporterWindow::ButtonClick(Fl_Widget* w)
+void ProblemCreatorWindow::ButtonClick(Fl_Widget* w)
 {
 	std::string button_label(w->label());
 
-	if (button_label == "Import")
+	if (button_label == "select answer files...")
+	{
+		auto file_vec = SelectMultipleFiles(m_problem_manager->GetPath().c_str());
+		std::string file_str;
+		for (auto& file : file_vec)
+			file_str += file + " ";
+
+		m_answer_files_input->value(file_str.c_str());
+		return;
+	}
+
+	if (button_label == "select input files...")
+	{
+		auto file_vec = SelectMultipleFiles(m_problem_manager->GetPath().c_str());
+		std::string file_str;
+		for (auto& file : file_vec)
+			file_str += file + " ";
+
+		m_input_files_input->value(file_str.c_str());
+		return;
+	}
+
+	if (button_label == "Create")
 	{
 		std::stringstream sst;
 
@@ -125,12 +197,12 @@ void ProblemImporterWindow::ButtonClick(Fl_Widget* w)
 	}
 }
 
-void ProblemImporterWindow::Show()
+void ProblemCreatorWindow::Show()
 {
 	m_window->show();
 }
 
-void ProblemImporterWindow::Hide()
+void ProblemCreatorWindow::Hide()
 {
 	m_window->hide();
 }

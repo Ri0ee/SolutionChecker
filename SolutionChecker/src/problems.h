@@ -80,6 +80,8 @@ public:
 		return m_problem_list[problem_id_]; 
 	}
 
+	std::string GetPath() { return m_path.string(); }
+
 private:
 	void Initialize();
 

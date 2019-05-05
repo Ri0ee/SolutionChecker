@@ -6,7 +6,7 @@ void SettingsWindow::Initialize()
 {
 	m_problem_browser_update_needed = false;
 
-	m_problem_importer_window = new ProblemImporterWindow(m_problem_manager);
+	m_problem_creator_window = new ProblemCreatorWindow(m_problem_manager);
 
 	int y = 10, h = 20;
 	int w = 700;
@@ -149,10 +149,10 @@ void SettingsWindow::Initialize()
 
 void SettingsWindow::Shutdown()
 {
-	if (m_problem_importer_window)
+	if (m_problem_creator_window)
 	{
-		m_problem_importer_window->Hide();
-		delete m_problem_importer_window;
+		m_problem_creator_window->Hide();
+		delete m_problem_creator_window;
 	}
 }
 
@@ -286,7 +286,7 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "Import problem")
 	{
-		m_problem_importer_window->Show();
+		m_problem_creator_window->Show();
 		return;
 	}
 
