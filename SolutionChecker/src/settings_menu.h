@@ -15,13 +15,15 @@
 
 #include "options.h"
 #include "problem_importer_menu.h"
+#include "problems.h"
 
 
 
 class SettingsWindow
 {
 public:
-	SettingsWindow(OptionsManager* options_manager_) : m_options_manager(options_manager_) { Initialize(); }
+	SettingsWindow(OptionsManager* options_manager_, ProblemManager* problem_manager_) : 
+		m_options_manager(options_manager_), m_problem_manager(problem_manager_) { Initialize(); }
 	~SettingsWindow() { Shutdown(); }
 
 	void Show();
@@ -43,6 +45,7 @@ private:
 	std::string SelectFile();
 
 	OptionsManager* m_options_manager = nullptr;
+	ProblemManager* m_problem_manager = nullptr;
 
 	ProblemImporterWindow* m_problem_importer_window = nullptr;
 

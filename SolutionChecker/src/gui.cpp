@@ -108,8 +108,8 @@ void Gui::ButtonClick(Fl_Widget* w)
 		std::string message_buffer = "caption: " + m_problem_list[id].m_caption + "\n" +
 			"id: " + std::to_string(m_problem_list[id].m_id) + "\n" +
 			"path: " + m_problem_list[id].m_path + "\n" +
-			"input file name: " + m_problem_list[id].m_input_file_name + "\n" +
-			"output file name: " + m_problem_list[id].m_output_file_name + "\n" +
+			"input file name: " + m_problem_list[id].m_input_file + "\n" +
+			"output file name: " + m_problem_list[id].m_output_file + "\n" +
 			"test count: " + std::to_string(m_problem_list[id].m_test_count) + "\n" +
 			"time limit: " + std::to_string(m_problem_list[id].m_time_limit) + " seconds\n" +
 			"memory limit: " + std::to_string(m_problem_list[id].m_memory_limit) + " MB\n";
@@ -161,7 +161,7 @@ void Gui::Initialize()
 
 	m_problem_browser = new Fl_Hold_Browser(510, y, 0, 0);
 	for (unsigned i = 0; i < m_problem_list.size(); i++)
-		m_problem_browser->add(std::string(m_problem_list[i].m_folder_name + ": " + m_problem_list[i].m_caption).c_str());
+		m_problem_browser->add(std::string(m_problem_list[i].m_folder + ": " + m_problem_list[i].m_caption).c_str());
 	m_problem_browser->value(m_options_manager->LastProblem());
 
 	y += h + 10;
@@ -212,7 +212,7 @@ void Gui::Initialize()
 
 	m_main_window->end();
 
-	m_settings_window = new SettingsWindow(m_options_manager);
+	m_settings_window = new SettingsWindow(m_options_manager, m_problem_manager);
 }
 
 int Gui::Run()
@@ -275,7 +275,7 @@ int Gui::Run()
 
 			m_problem_browser->clear();
 			for (auto problem : m_problem_list)
-				m_problem_browser->add(std::string(problem.m_folder_name + ": " + problem.m_caption).c_str());
+				m_problem_browser->add(std::string(problem.m_folder + ": " + problem.m_caption).c_str());
 
 			m_settings_window->SetProblemBrowserUpdateNeeded(false);
 		}

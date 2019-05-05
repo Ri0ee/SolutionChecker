@@ -6,7 +6,7 @@ void SettingsWindow::Initialize()
 {
 	m_problem_browser_update_needed = false;
 
-	m_problem_importer_window = new ProblemImporterWindow();
+	m_problem_importer_window = new ProblemImporterWindow(m_problem_manager);
 
 	int y = 10, h = 20;
 	int w = 700;

@@ -90,8 +90,8 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 
 	std::string working_dir = m_options_manager->WorkingDir() + "\\"; // Directory for testing executable files
 	std::string new_executable_dir = working_dir + "solution.exe";
-	std::string new_input_file_dir = working_dir + problem_.m_input_file_name;
-	std::string new_output_file_dir = working_dir + problem_.m_output_file_name;
+	std::string new_input_file_dir = working_dir + problem_.m_input_file;
+	std::string new_output_file_dir = working_dir + problem_.m_output_file;
 
 	std::string temp_solution_file_dir;
 	std::string solution_file_type = solution_location_.substr(solution_location_.find_last_of(".") + 1, solution_location_.size());

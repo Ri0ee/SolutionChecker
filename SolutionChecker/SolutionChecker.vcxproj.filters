@@ -7,6 +7,9 @@
     <Filter Include="Tester">
       <UniqueIdentifier>{ac86c6f1-b375-4ca1-b620-d8fe3cb759f3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{12eac0eb-1a61-41d6-bc61-1e51d040c440}</UniqueIdentifier>
+    </Filter>
     <Filter Include="Other">
       <UniqueIdentifier>{73c80d02-e86a-41c3-a7fb-bc0113867b65}</UniqueIdentifier>
     </Filter>
@@ -48,6 +51,9 @@
     <ClCompile Include="src\problem_importer_menu.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
+    <ClCompile Include="include\tinyxml2.cpp">
+      <Filter>Include</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\settings_menu.h">
@@ -82,6 +88,9 @@
     </ClInclude>
     <ClInclude Include="src\problem_importer_menu.h">
       <Filter>GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="include\tinyxml2.h">
+      <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

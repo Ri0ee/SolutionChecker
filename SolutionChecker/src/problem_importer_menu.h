@@ -11,12 +11,15 @@
 
 #include <string>
 
+#include "problems.h"
+
 
 
 class ProblemImporterWindow
 {
 public:
-	ProblemImporterWindow() { Initialize(); }
+	ProblemImporterWindow(ProblemManager* problem_manager_) :
+		m_problem_manager(problem_manager_) { Initialize(); }
 	~ProblemImporterWindow() { Shutdown(); }
 
 	void Show();
@@ -28,6 +31,8 @@ private:
 
 	void ButtonClick(Fl_Widget* w);
 	static void ButtonCallback(Fl_Widget* w, void* f) { ((ProblemImporterWindow*)f)->ButtonClick(w); }
+
+	ProblemManager* m_problem_manager = nullptr;
 
 	Fl_Double_Window* m_window;
 

@@ -84,6 +84,9 @@ void ProblemImporterWindow::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "Import")
 	{
+		Problem problem;
+		m_problem_manager->CreateProblem(problem, "prooooblem.xml");
+
 		fl_alert("Import successful");
 		return;
 	}
