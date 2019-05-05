@@ -10,6 +10,7 @@
 #include "FL/fl_message.H"
 
 #include <string>
+#include <sstream>
 
 #include "problems.h"
 

@@ -105,7 +105,7 @@ void Gui::ButtonClick(Fl_Widget* w)
 		if (m_problem_browser->value() == 0) return;
 
 		int id = m_problem_browser->value() - 1;
-		std::string message_buffer = "caption: " + m_problem_list[id].m_caption + "\n" +
+		std::string message_buffer = "name: " + m_problem_list[id].m_name + "\n" +
 			"id: " + std::to_string(m_problem_list[id].m_id) + "\n" +
 			"path: " + m_problem_list[id].m_path + "\n" +
 			"input file name: " + m_problem_list[id].m_input_file + "\n" +
@@ -141,7 +141,7 @@ void Gui::WindowAction() // Close button pressed
 }
 
 void Gui::Initialize()
-{	
+{
 	m_problem_list = m_problem_manager->GetProblemList();
 
 	int y = 10, h = 20;
@@ -161,7 +161,7 @@ void Gui::Initialize()
 
 	m_problem_browser = new Fl_Hold_Browser(510, y, 0, 0);
 	for (unsigned i = 0; i < m_problem_list.size(); i++)
-		m_problem_browser->add(std::string(m_problem_list[i].m_folder + ": " + m_problem_list[i].m_caption).c_str());
+		m_problem_browser->add(std::string(std::to_string(m_problem_list[i].m_id) + ": " + m_problem_list[i].m_name).c_str());
 	m_problem_browser->value(m_options_manager->LastProblem());
 
 	y += h + 10;
@@ -275,7 +275,7 @@ int Gui::Run()
 
 			m_problem_browser->clear();
 			for (auto problem : m_problem_list)
-				m_problem_browser->add(std::string(problem.m_folder + ": " + problem.m_caption).c_str());
+				m_problem_browser->add(std::string(std::to_string(problem.m_id) + ": " + problem.m_name).c_str());
 
 			m_settings_window->SetProblemBrowserUpdateNeeded(false);
 		}

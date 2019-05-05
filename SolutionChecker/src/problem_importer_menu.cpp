@@ -84,10 +84,43 @@ void ProblemImporterWindow::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "Import")
 	{
-		Problem problem;
-		m_problem_manager->CreateProblem(problem, "prooooblem.xml");
+		std::stringstream sst;
 
-		fl_alert("Import successful");
+		Problem problem;
+		try 
+		{
+			sst << m_bonus_points_input->value();
+			sst >> problem.m_bonus_points;
+			sst.clear();
+
+			sst << m_id_input->value();
+			sst >> problem.m_id;
+			sst.clear();
+
+			sst << m_memory_limit_input->value();
+			sst >> problem.m_memory_limit;
+			sst.clear();
+
+			sst << m_time_limit_input->value();
+			sst >> problem.m_time_limit;
+			sst.clear();
+
+			sst << m_test_count_input->value();
+			sst >> problem.m_test_count;
+		}
+		catch (const std::exception& e)
+		{
+			fl_alert(e.what());
+			return;
+		}
+		
+		problem.m_description_file = m_description_input->value();
+		problem.m_input_file = m_input_file_input->value();
+		problem.m_output_file = m_output_file_input->value();
+		problem.m_name = m_name_input->value();
+
+		m_problem_manager->CreateProblem(problem, "ProblemLayout.xml");
+		fl_alert("Problem created successfully");
 		return;
 	}
 }

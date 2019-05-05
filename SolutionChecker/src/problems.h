@@ -15,6 +15,24 @@
 
 struct Problem
 {
+	Problem() { Clear(); }
+	void Clear()
+	{
+		m_id = 0;
+		m_test_count = 0;
+		m_bonus_points = 0;
+		m_memory_limit = 0;
+		m_time_limit = 0;
+		m_name = "";
+		m_path = "";
+		m_input_file = "";
+		m_output_file = "";
+		m_description_file = "";
+		m_checker_exe = "";
+		m_checker_src = "";
+		m_tests.clear();
+	}
+
 	struct Test 
 	{
 		int points;
@@ -22,16 +40,14 @@ struct Problem
 		std::string m_answer_file;
 	};
 
+	std::string m_path;
+
 	int m_id;
 	int m_test_count;
 	int m_bonus_points;
 	int m_memory_limit;
 	double m_time_limit;
-
-	std::string m_caption;
-	std::string m_path;
-	std::string m_folder;
-
+	std::string m_name;
 	std::string m_input_file;
 	std::string m_output_file;
 	std::string m_description_file;
