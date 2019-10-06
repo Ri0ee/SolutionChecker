@@ -104,7 +104,7 @@ void ProblemCreatorWindow::Initialize()
 	y += h + 10;
 
 	m_id_input = new Fl_Input(100, y, 300, h, "id");
-	// TODO: advise an ID
+	m_id_input->value(std::to_string(m_problem_manager->GetFreeID()).c_str());
 
 	y += h + 10;
 

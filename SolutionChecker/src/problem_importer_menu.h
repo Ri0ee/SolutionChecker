@@ -12,6 +12,7 @@
 #include <shlobj.h>
 #include <string>
 #include <sstream>
+#include <filesystem>
 
 #include "problems.h"
 #include "options.h"

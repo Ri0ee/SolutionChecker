@@ -23,6 +23,11 @@ void ProblemManager::SearchForProblems()
 		
 		m_problem_list.push_back(problem);
 	}
+
+	// Sort problems by id
+	std::sort(m_problem_list.begin(), m_problem_list.end(), [](Problem& p1, Problem& p2) -> bool {
+		return p1.m_id < p2.m_id;
+		});
 }
 
 void ProblemManager::ShowTaskDescription(int problem_id_)
@@ -151,4 +156,23 @@ bool ProblemManager::ReadProblem(Problem& problem_, const std::string& problem_l
 	}
 
 	return true;
+}
+
+int ProblemManager::GetFreeID()
+{
+	if (m_problem_list.empty()) 
+		SearchForProblems();
+
+	int last_id = 0;
+	for (auto& problem : m_problem_list)
+	{
+		int cid = problem.m_id;
+
+		if (cid - last_id > 1) 
+			return last_id + 1;
+
+		last_id = cid;
+	}
+
+	return m_problem_list.size() + 1;
 }

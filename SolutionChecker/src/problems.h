@@ -75,6 +75,7 @@ public:
 
 	void CreateProblem(Problem& problem_, const std::string& problem_layout_file_);
 	bool ReadProblem(Problem& problem_, const std::string& problem_layout_file_path_);
+	int GetFreeID();
 
 	std::vector<Problem> GetProblemList() { return m_problem_list; }
 	Problem GetProblem(unsigned int problem_id_) { 
