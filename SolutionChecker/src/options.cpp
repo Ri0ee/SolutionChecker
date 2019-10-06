@@ -149,6 +149,78 @@ bool OptionsManager::GetOptions()
 			m_temp_dir = line.substr(delim_pos + 1, line.size());
 			continue;
 		}
+
+		if (param_name == "AutofillInputFile")
+		{
+			m_autofill_inputfile = line.substr(delim_pos + 1, line.size());
+			continue;
+		}
+
+		if (param_name == "AutofillOutputFile")
+		{
+			m_autofill_outputfile = line.substr(delim_pos + 1, line.size());
+			continue;
+		}
+
+		if (param_name == "AutofillDescriptionFile")
+		{
+			m_autofill_descriptionfile = line.substr(delim_pos + 1, line.size());
+			continue;
+		}
+
+		if (param_name == "AutofillCheckerSrc")
+		{
+			m_autofill_checkersrc = line.substr(delim_pos + 1, line.size());
+			continue;
+		}
+
+		if (param_name == "AutofillCheckerExe")
+		{
+			m_autofill_checkerexe = line.substr(delim_pos + 1, line.size());
+			continue;
+		}
+
+		if (param_name == "AutofillSolution")
+		{
+			m_autofill_solution = line.substr(delim_pos + 1, line.size());
+			continue;
+		}
+
+		if (param_name == "AutofillPoints")
+		{
+			std::stringstream param_value(line.substr(delim_pos + 1, line.size()));
+			int points = 0;
+			param_value >> points;
+			m_autofill_points = points;
+			continue;
+		}
+
+		if (param_name == "AutofillBonusPoints")
+		{
+			std::stringstream param_value(line.substr(delim_pos + 1, line.size()));
+			int bonus_points = 0;
+			param_value >> bonus_points;
+			m_autofill_bonuspoints = bonus_points;
+			continue;
+		}
+
+		if (param_name == "AutofillTimeLimit")
+		{
+			std::stringstream param_value(line.substr(delim_pos + 1, line.size()));
+			double time_limit= 0;
+			param_value >> time_limit;
+			m_autofill_timelimit = time_limit;
+			continue;
+		}
+
+		if (param_name == "AutofillMemLimit")
+		{
+			std::stringstream param_value(line.substr(delim_pos + 1, line.size()));
+			int mem_limit = 0;
+			param_value >> mem_limit;
+			m_autofill_memlimit = mem_limit;
+			continue;
+		}
 	}
 
 	in_file.close();
@@ -175,6 +247,17 @@ void OptionsManager::SetDefaults()
 	m_c_default_args = "";
 	m_pascal_default_args = "";
 	m_java_default_args = "";
+
+	m_autofill_points = 1;
+	m_autofill_bonuspoints = 1;
+	m_autofill_memlimit = 512;
+	m_autofill_timelimit = 1.5;
+	m_autofill_checkerexe = "Checker.exe";
+	m_autofill_checkersrc = "Checker.pas";
+	m_autofill_descriptionfile = "Description.txt";
+	m_autofill_inputfile = "input.txt";
+	m_autofill_outputfile = "output.txt";
+	m_autofill_solution = "Solution.pas";
 
 	m_theme = "none";
 	m_use_only_one_test = false;
@@ -209,6 +292,17 @@ bool OptionsManager::UpdateOptionsFile()
 	out_file << "CDefaultArgs:" << m_c_default_args << "\n";
 	out_file << "PascalDefaultArgs:" << m_pascal_default_args << "\n";
 	out_file << "JavaDefaultArgs:" << m_java_default_args << "\n";
+
+	out_file << "AutofillInputFile:" << m_autofill_inputfile << "\n";
+	out_file << "AutofillOutputFile:" << m_autofill_outputfile << "\n";
+	out_file << "AutofillDescriptionFile:" << m_autofill_descriptionfile << "\n";
+	out_file << "AutofillCheckerSrc:" << m_autofill_checkersrc << "\n";
+	out_file << "AutofillCheckerExe:" << m_autofill_checkerexe << "\n";
+	out_file << "AutofillSolution:" << m_autofill_solution << "\n";
+	out_file << "AutofillPoints:" << m_autofill_points << "\n";
+	out_file << "AutofillBonusPoints:" << m_autofill_bonuspoints << "\n";
+	out_file << "AutofillTimeLimit:" << m_autofill_timelimit << "\n";
+	out_file << "AutofillMemLimit:" << m_autofill_memlimit;
 
 	out_file.close();
 

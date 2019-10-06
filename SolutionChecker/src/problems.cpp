@@ -36,6 +36,7 @@ void ProblemManager::CreateProblem(Problem& problem_, const std::string& problem
 	std::filesystem::path result_path = m_path / std::filesystem::path(std::to_string(problem_.m_id));
 	std::filesystem::create_directory(result_path);
 
+	// Creating layout xml file and saving it to newly created dir ProblemsDir/<id>/.
 	tinyxml2::XMLDocument problem_layout;
 
 	auto declaration_element = problem_layout.NewDeclaration(nullptr);
@@ -73,6 +74,24 @@ void ProblemManager::CreateProblem(Problem& problem_, const std::string& problem
 	problem_layout.InsertEndChild(problem_element);
 
 	problem_layout.SaveFile((result_path.string() + "\\" + problem_layout_file_).c_str());
+
+	std::error_code ec;
+
+	// Copy problem description
+	std::filesystem::copy_file(problem_.m_base_path + "\\" + problem_.m_description_file, result_path / problem_.m_description_file, ec);
+
+	// Copy test input and answer files
+	for (auto& p_test: problem_.m_tests) {
+		std::filesystem::copy_file(problem_.m_base_path + "\\" + p_test.m_answer_file, result_path / p_test.m_answer_file, ec);
+		std::filesystem::copy_file(problem_.m_base_path + "\\" + p_test.m_input_file, result_path / p_test.m_input_file, ec);
+	}
+
+	// Copy solution src
+	std::filesystem::copy_file(problem_.m_base_path + "\\" + problem_.m_solution_src, result_path / problem_.m_solution_src, ec);
+
+	// Copy checker executable and source code
+	std::filesystem::copy_file(problem_.m_base_path + "\\" + problem_.m_checker_exe, result_path / problem_.m_checker_exe, ec);
+	std::filesystem::copy_file(problem_.m_base_path + "\\" + problem_.m_checker_src, result_path / problem_.m_checker_src, ec);
 }
 
 bool ProblemManager::ReadProblem(Problem& problem_, const std::string& problem_layout_file_path_)

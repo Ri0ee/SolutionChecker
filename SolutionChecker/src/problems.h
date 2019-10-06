@@ -41,6 +41,7 @@ struct Problem
 	};
 
 	std::string m_path;
+	std::string m_base_path;
 
 	int m_id;
 	int m_test_count;
@@ -53,6 +54,7 @@ struct Problem
 	std::string m_description_file;
 	std::string m_checker_src;
 	std::string m_checker_exe;
+	std::string m_solution_src;
 
 	std::vector<Test> m_tests;
 };

@@ -42,37 +42,94 @@ std::vector<std::string> ProblemCreatorWindow::SelectMultipleFiles(const std::st
 	return res;
 }
 
+static int CALLBACK BrowseCallbackProc(HWND hwnd, UINT uMsg, LPARAM lParam, LPARAM lpData)
+{
+	if (uMsg == BFFM_INITIALIZED)
+	{
+		std::string tmp = (const char*)lpData;
+		SendMessage(hwnd, BFFM_SETSELECTION, TRUE, lpData);
+	}
+
+	return 0;
+}
+
+std::string ProblemCreatorWindow::SelectDirectory()
+{
+	TCHAR path[MAX_PATH];
+	std::string path_param(m_problem_manager->GetPath());
+
+	BROWSEINFO bi = { 0 };
+
+	bi.lpszTitle = ("Browse for folder...");
+
+	bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
+	bi.lpfn = BrowseCallbackProc;
+	bi.lParam = (LPARAM)path_param.c_str();
+
+	LPITEMIDLIST pidl = SHBrowseForFolder(&bi);
+
+	if (pidl != 0)
+	{
+		//get the name of the folder and put it in path
+		SHGetPathFromIDList(pidl, path);
+
+		//free memory used
+		IMalloc* imalloc = 0;
+		if (SUCCEEDED(SHGetMalloc(&imalloc)))
+		{
+			imalloc->Free(pidl);
+			imalloc->Release();
+		}
+
+		return std::string(path);
+	}
+
+	return std::string("");
+}
+
 void ProblemCreatorWindow::Initialize()
 {
 	m_window = new Fl_Double_Window(500, 500, "Problem importer");
 
 	int y = 10, h = 20;
 
+	m_base_dir_input = new Fl_Input(100, y, 300, h, "base dir");
+	m_base_dir_selector_button = new Fl_Button(410, y, 200, h, "select problem base dir...");
+	m_base_dir_selector_button->callback(ButtonCallback, this);
+
+	y += h + 10;
+
 	m_name_input = new Fl_Input(100, y, 300, h, "name");
 
 	y += h + 10;
 
 	m_id_input = new Fl_Input(100, y, 300, h, "id");
+	// TODO: advise an ID
 
 	y += h + 10;
 
 	m_description_input = new Fl_Input(100, y, 300, h, "description");
+	m_description_input->value(m_options_manager->AutofillDescriptionFile().c_str());
 
 	y += h + 10;
 
 	m_time_limit_input = new Fl_Input(100, y, 300, h, "time limit");
+	m_time_limit_input->value(std::to_string(m_options_manager->AutofillTimeLimit()).c_str());
 
 	y += h + 10;
 
 	m_memory_limit_input = new Fl_Input(100, y, 300, h, "memory limit");
+	m_memory_limit_input->value(std::to_string(m_options_manager->AutofillMemLimit()).c_str());
 
 	y += h + 10;
 
 	m_input_file_input = new Fl_Input(100, y, 300, h, "input file");
+	m_input_file_input->value(m_options_manager->AutofillInputFile().c_str());
 
 	y += h + 10;
 
 	m_output_file_input = new Fl_Input(100, y, 300, h, "output file");
+	m_output_file_input->value(m_options_manager->AutofillOutputFile().c_str());
 
 	y += h + 10;
 
@@ -93,22 +150,27 @@ void ProblemCreatorWindow::Initialize()
 	y += h + 10;
 
 	m_checker_src_input = new Fl_Input(100, y, 300, h, "checker src");
+	m_checker_src_input->value(m_options_manager->AutofillCheckerSrc().c_str());
 
 	y += h + 10;
 
 	m_checker_exe_input = new Fl_Input(100, y, 300, h, "checker exe");
+	m_checker_exe_input->value(m_options_manager->AutofillCheckerExe().c_str());
 
 	y += h + 10;
 
 	m_solution_input = new Fl_Input(100, y, 300, h, "solution");
+	m_solution_input->value(m_options_manager->AutofillSolution().c_str());
 
 	y += h + 10;
 
 	m_points_input = new Fl_Input(100, y, 300, h, "points");
+	m_points_input->value(std::to_string(m_options_manager->AutofillPoints()).c_str());
 
 	y += h + 10;
 
 	m_bonus_points_input = new Fl_Input(100, y, 300, h, "bonus points");
+	m_bonus_points_input->value(std::to_string(m_options_manager->AutofillBonusPoints()).c_str());
 
 	y += h + 10;
 
@@ -132,9 +194,16 @@ void ProblemCreatorWindow::ButtonClick(Fl_Widget* w)
 {
 	std::string button_label(w->label());
 
+	if (button_label == "select problem base dir...") 
+	{
+		m_base_dir_input->value(SelectDirectory().c_str());
+		return;
+	}
+
 	if (button_label == "select answer files...")
 	{
-		auto file_vec = SelectMultipleFiles(m_problem_manager->GetPath().c_str());
+		auto path = (std::string(m_base_dir_input->value()).empty() ? m_problem_manager->GetPath() : std::string(m_base_dir_input->value()));
+		auto file_vec = SelectMultipleFiles(path.c_str());
 		std::string file_str;
 		for (auto& file : file_vec)
 			file_str += file + " ";
@@ -145,7 +214,8 @@ void ProblemCreatorWindow::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "select input files...")
 	{
-		auto file_vec = SelectMultipleFiles(m_problem_manager->GetPath().c_str());
+		auto path = (std::string(m_base_dir_input->value()).empty() ? m_problem_manager->GetPath() : std::string(m_base_dir_input->value()));
+		auto file_vec = SelectMultipleFiles(path.c_str());
 		std::string file_str;
 		for (auto& file : file_vec)
 			file_str += file + " ";
@@ -190,6 +260,24 @@ void ProblemCreatorWindow::ButtonClick(Fl_Widget* w)
 		problem.m_input_file = m_input_file_input->value();
 		problem.m_output_file = m_output_file_input->value();
 		problem.m_name = m_name_input->value();
+		problem.m_base_path = m_base_dir_input->value();
+
+		std::string answer_files = m_answer_files_input->value();
+		std::string input_files = m_input_files_input->value();
+
+		while (!answer_files.empty()) {
+			Problem::Test test;
+			test.m_answer_file = answer_files.substr(0, answer_files.find_first_of(" "));
+			test.m_input_file = input_files.substr(0, input_files.find_first_of(" "));
+
+			answer_files.erase(0, answer_files.find_first_of(" ") + 1);
+			input_files.erase(0, input_files.find_first_of(" ") + 1);
+
+			sst << m_points_input->value();
+			sst >> test.points;
+
+			problem.m_tests.push_back(test);
+		}
 
 		m_problem_manager->CreateProblem(problem, "ProblemLayout.xml");
 		fl_alert("Problem created successfully");

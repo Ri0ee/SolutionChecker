@@ -9,18 +9,20 @@
 #include "FL/Fl_Input.H"
 #include "FL/fl_message.H"
 
+#include <shlobj.h>
 #include <string>
 #include <sstream>
 
 #include "problems.h"
+#include "options.h"
 
 
 
 class ProblemCreatorWindow
 {
 public:
-	ProblemCreatorWindow(ProblemManager* problem_manager_) :
-		m_problem_manager(problem_manager_) { Initialize(); }
+	ProblemCreatorWindow(ProblemManager* problem_manager_, OptionsManager* options_manager_) :
+		m_problem_manager(problem_manager_), m_options_manager(options_manager_) { Initialize(); }
 	~ProblemCreatorWindow() { Shutdown(); }
 
 	void Show();
@@ -34,8 +36,10 @@ private:
 	static void ButtonCallback(Fl_Widget* w, void* f) { ((ProblemCreatorWindow*)f)->ButtonClick(w); }
 
 	std::vector<std::string> SelectMultipleFiles(const std::string& initial_dir_);
+	std::string SelectDirectory();
 
 	ProblemManager* m_problem_manager = nullptr;
+	OptionsManager* m_options_manager = nullptr;
 
 	Fl_Double_Window* m_window;
 
@@ -54,8 +58,10 @@ private:
 	Fl_Input* m_solution_input;
 	Fl_Input* m_points_input;
 	Fl_Input* m_bonus_points_input;
+	Fl_Input* m_base_dir_input;
 
 	Fl_Button* m_create_button;
 	Fl_Button* m_input_file_selector_button;
 	Fl_Button* m_answer_file_selector_button;
+	Fl_Button* m_base_dir_selector_button;
 };

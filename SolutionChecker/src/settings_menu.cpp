@@ -6,7 +6,7 @@ void SettingsWindow::Initialize()
 {
 	m_problem_browser_update_needed = false;
 
-	m_problem_creator_window = new ProblemCreatorWindow(m_problem_manager);
+	m_problem_creator_window = new ProblemCreatorWindow(m_problem_manager, m_options_manager);
 
 	int y = 10, h = 20;
 	int w = 700;

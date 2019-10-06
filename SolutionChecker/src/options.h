@@ -43,6 +43,17 @@ public:
 	std::string& AppPath() { return m_app_path; }
 	std::string& TempDir() { return m_temp_dir; }
 
+	std::string& AutofillInputFile() { return m_autofill_inputfile; }
+	std::string& AutofillOutputFile() { return m_autofill_outputfile; }
+	std::string& AutofillDescriptionFile() { return m_autofill_descriptionfile; }
+	std::string& AutofillCheckerSrc() { return m_autofill_checkersrc; }
+	std::string& AutofillCheckerExe() { return m_autofill_checkerexe; }
+	std::string& AutofillSolution() { return m_autofill_solution; }
+	int& AutofillPoints() { return m_autofill_points; }
+	int& AutofillBonusPoints() { return m_autofill_bonuspoints; }
+	int& AutofillMemLimit() { return m_autofill_memlimit; }
+	double& AutofillTimeLimit() { return m_autofill_timelimit; }
+
 	std::string GetThemeName(int id_);
 	int GetThemeId(const std::string& theme_);
 	int GetThemeId() { return GetThemeId(m_theme); }
@@ -72,4 +83,15 @@ private:
 	std::string m_c_default_args;
 	std::string m_pascal_default_args;
 	std::string m_java_default_args;
+
+	std::string m_autofill_inputfile;
+	std::string m_autofill_outputfile;
+	std::string m_autofill_descriptionfile;
+	std::string m_autofill_checkersrc;
+	std::string m_autofill_checkerexe;
+	std::string m_autofill_solution;
+	int m_autofill_points;
+	int m_autofill_bonuspoints;
+	double m_autofill_timelimit;
+	int m_autofill_memlimit;
 };
