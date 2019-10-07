@@ -165,7 +165,6 @@ void ProblemCreatorWindow::Initialize()
 	y += h + 10;
 
 	m_points_input = new Fl_Input(100, y, 300, h, "points");
-	m_points_input->value(std::to_string(m_options_manager->AutofillPoints()).c_str());
 
 	y += h + 10;
 
@@ -218,15 +217,16 @@ void ProblemCreatorWindow::ButtonClick(Fl_Widget* w)
 
 			std::string answer_files;
 			std::string input_files;
-			int points;
+			std::string points;
 
 			for (auto& test : problem.m_tests)
 			{
-				points = test.points;
+				points += std::to_string(test.points) + " ";
 				answer_files += test.m_answer_file + " ";
 				input_files += test.m_input_file + " ";
 			}
 
+			m_points_input->value(points.c_str());
 			m_answer_files_input->value(answer_files.c_str());
 			m_input_files_input->value(input_files.c_str());
 		}
@@ -297,17 +297,17 @@ void ProblemCreatorWindow::ButtonClick(Fl_Widget* w)
 
 		std::string answer_files = m_answer_files_input->value();
 		std::string input_files = m_input_files_input->value();
+		std::string points = m_points_input->value();
 
 		while (!answer_files.empty()) {
 			Problem::Test test;
 			test.m_answer_file = answer_files.substr(0, answer_files.find_first_of(" "));
 			test.m_input_file = input_files.substr(0, input_files.find_first_of(" "));
+			test.points = std::stoi(points.substr(0, points.find_first_of(" ")));
 
 			answer_files.erase(0, answer_files.find_first_of(" ") + 1);
 			input_files.erase(0, input_files.find_first_of(" ") + 1);
-
-			sst << m_points_input->value();
-			sst >> test.points;
+			points.erase(0, points.find_first_of(" ") + 1);
 
 			problem.m_tests.push_back(test);
 		}
