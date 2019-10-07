@@ -102,6 +102,8 @@ void ProblemManager::CreateProblem(Problem& problem_, const std::string& problem
 bool ProblemManager::ReadProblem(Problem& problem_, const std::string& problem_layout_file_path_)
 {
 	const char* temp_str_buf;
+	int temp_int_attribute = 0;
+
 	tinyxml2::XMLDocument problem_layout;
 	if (problem_layout.LoadFile(problem_layout_file_path_.c_str()) != tinyxml2::XML_SUCCESS)
 		return false;
@@ -111,7 +113,7 @@ bool ProblemManager::ReadProblem(Problem& problem_, const std::string& problem_l
 	if (strcmp(comment_element->Value(), "Problem exchange format 0.1") != 0)
 		return false;
 
-	auto problem_element = comment_element->NextSibling()->ToElement();
+	auto problem_element = comment_element->NextSiblingElement();
 
 	problem_element->QueryIntAttribute("Gid", &problem_.m_id);
 	problem_element->QueryIntAttribute("TestCount", &problem_.m_test_count);
@@ -137,22 +139,22 @@ bool ProblemManager::ReadProblem(Problem& problem_, const std::string& problem_l
 	problem_element->QueryStringAttribute("OutputFile", &temp_str_buf);
 	problem_.m_output_file = std::string(temp_str_buf);
 
-	if (problem_.m_test_count == 0)
-		return true;
-
-	problem_.m_tests.resize(problem_.m_test_count);
-	auto test = problem_element->FirstChild()->ToElement();
-	for (int i = 0; i < problem_.m_test_count - 1; i++)
+	int test_index = 0;
+	for (auto test_element = problem_element->FirstChildElement(); test_element != NULL;
+		test_element = test_element->NextSiblingElement(), test_index++)
 	{
-		test->QueryIntAttribute("Points", &problem_.m_tests[i].points);
+		Problem::Test temp_test;
 
-		test->QueryStringAttribute("Answer", &temp_str_buf);
-		problem_.m_tests[i].m_answer_file = std::string(temp_str_buf);
+		test_element->QueryIntAttribute("Points", &temp_int_attribute);
+		temp_test.points = temp_int_attribute;
 
-		test->QueryStringAttribute("Input", &temp_str_buf);
-		problem_.m_tests[i].m_input_file = std::string(temp_str_buf);
+		test_element->QueryStringAttribute("Answer", &temp_str_buf);
+		temp_test.m_answer_file = std::string(temp_str_buf);
 
-		test = test->NextSibling()->ToElement();
+		test_element->QueryStringAttribute("Input", &temp_str_buf);
+		temp_test.m_input_file = std::string(temp_str_buf);
+
+		problem_.m_tests.push_back(temp_test);
 	}
 
 	return true;

@@ -196,7 +196,40 @@ void ProblemCreatorWindow::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "select problem base dir...") 
 	{
-		m_base_dir_input->value(SelectDirectory().c_str());
+		std::string dir = SelectDirectory();
+		m_base_dir_input->value(dir.c_str());
+		if (std::filesystem::exists(dir + "\\" + "ProblemLayout.xml"))
+		{
+			fl_alert("Detected layout file in given base directory.");
+			Problem problem;
+			m_problem_manager->ReadProblem(problem, dir + "\\" + "ProblemLayout.xml");
+
+			m_checker_exe_input->value(problem.m_checker_exe.c_str());
+			m_checker_src_input->value(problem.m_checker_src.c_str());
+			m_description_input->value(problem.m_description_file.c_str());
+			m_input_file_input->value(problem.m_input_file.c_str());
+			m_output_file_input->value(problem.m_output_file.c_str());
+			m_memory_limit_input->value(std::to_string(problem.m_memory_limit).c_str());
+			m_time_limit_input->value(std::to_string(problem.m_time_limit).c_str());
+			m_name_input->value(problem.m_name.c_str());
+			m_solution_input->value(problem.m_solution_src.c_str());
+			m_bonus_points_input->value(std::to_string(problem.m_bonus_points).c_str());
+			m_test_count_input->value(std::to_string(problem.m_test_count).c_str());
+
+			std::string answer_files;
+			std::string input_files;
+			int points;
+
+			for (auto& test : problem.m_tests)
+			{
+				points = test.points;
+				answer_files += test.m_answer_file + " ";
+				input_files += test.m_input_file + " ";
+			}
+
+			m_answer_files_input->value(answer_files.c_str());
+			m_input_files_input->value(input_files.c_str());
+		}
 		return;
 	}
 
