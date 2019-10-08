@@ -106,16 +106,11 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		m_created_file_list.push_back(new_source_file_dir);
 		Compiler compiler(m_options_manager, m_error_manager);
 
-		if (solution_file_type == "pas")
-			temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Pascal);
-		else if (solution_file_type == "cpp")
-			temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Cpp);
-		else if (solution_file_type == "c")
-			temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::C);
-		else if (solution_file_type == "java")
-			temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Java);
-		else
-			m_error_manager->PushError({ "Unknown file type", "Testing", 0, 0, Severity::Fatal });
+		if		(solution_file_type == "pas")	temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Pascal);
+		else if (solution_file_type == "cpp")	temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Cpp);
+		else if (solution_file_type == "c")		temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::C);
+		else if (solution_file_type == "java")	temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Java);
+		else m_error_manager->PushError({ "Unknown file type", "Testing", 0, 0, Severity::Fatal });
 
 		// Failed to compile for some reason
 		if (temp_solution_file_dir.empty())
