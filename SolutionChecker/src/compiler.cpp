@@ -22,13 +22,10 @@ std::string Compiler::CompilePascal(const std::string& file_name_)
 
 	std::string compiler_path = m_options_manager->PascalCompilerDir();
 	std::string compiler_dir = compiler_path.substr(0, compiler_path.find_last_of("\\"));
-	std::string compiler_args("");
 	std::string result_executable_path = file_name_.substr(0, file_name_.find_last_of(".")) + ".exe";
 	std::string result_object_path = file_name_.substr(0, file_name_.find_last_of(".")) + ".o";
-
-	compiler_args = compiler_args + 
-		"\"" + compiler_path + "\" " + // args[0] - path to the compiler executable file
-		"\"" + file_name_ + "\" ";
+	std::string compiler_args = "\"" + compiler_path + "\" " +	// args[0] - path to the compiler executable file
+								"\"" + file_name_ + "\" ";		// args[1] - path to the source code
 
 	// Convert string to LPSTR
 	LPSTR compiler_args_lpstr = new char[compiler_args.size()];
@@ -41,8 +38,21 @@ std::string Compiler::CompilePascal(const std::string& file_name_)
 	PROCESS_INFORMATION process_info = { 0 };
 	startup_info.cb = sizeof(STARTUPINFO);
 
-	if (CreateProcess(compiler_path.c_str(), compiler_args_lpstr, 0, 0, false, CREATE_NO_WINDOW, 0, compiler_dir.c_str(), &startup_info, &process_info) == TRUE)
+	if (!CreateProcess(	compiler_path.c_str(),
+						compiler_args_lpstr,
+						0,
+						0,
+						false,
+						CREATE_NO_WINDOW,
+						0,
+						compiler_dir.c_str(),
+						&startup_info,
+						&process_info))
+	{
 		WaitForSingleObject(process_info.hProcess, INFINITE);
+		CloseHandle(process_info.hProcess);
+		CloseHandle(process_info.hThread);
+	}
 	else
 	{
 		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateProcess (Compilation)", 0, 0, Fatal });
