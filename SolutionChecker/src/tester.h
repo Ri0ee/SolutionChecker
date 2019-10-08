@@ -30,11 +30,11 @@
 
 struct Test
 {
-	unsigned int m_status; // 32bit storage for TEST_STATUS flags
-	long long int m_run_time;
-	DWORD m_exit_code;
-	int m_peak_memory_used;
-	int m_id;
+	unsigned int m_status = 0; // 32bit storage for TEST_STATUS flags
+	long long int m_run_time = 0;
+	DWORD m_exit_code = -1;
+	int m_peak_memory_used = 0;
+	int m_id = -1;
 	std::string m_input_data;
 	std::string m_output_data;
 	std::string m_destination_data;
@@ -67,7 +67,7 @@ private:
 
 	std::thread* m_testing_thread = nullptr;
 
-	unsigned int m_testing_state; 
+	unsigned int m_testing_state = TESTING_STATE_OFFLINE; 
 	std::vector<Test> m_test_list;
 	std::atomic_int m_testing_stage;
 	std::vector<std::string> m_created_file_list;

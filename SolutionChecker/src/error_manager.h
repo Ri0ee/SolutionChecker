@@ -8,7 +8,7 @@
 
 
 
-enum Severity
+enum class Severity
 {
 	Fatal,
 	Info,

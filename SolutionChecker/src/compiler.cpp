@@ -6,11 +6,12 @@ std::string Compiler::Compile(const std::string& file_name_, CompilerLanguage co
 {
 	switch (compiler_language_)
 	{
-	case Pascal:	return CompilePascal(file_name_);
-	case Cpp:		return CompileCpp(file_name_);
-	case C:			return CompileC(file_name_);
-	case Java:		return CompileJava(file_name_);
-	default:		return std::string();
+	case CompilerLanguage::Pascal:	return CompilePascal(file_name_);
+	case CompilerLanguage::Cpp:		return CompileCpp(file_name_);
+	case CompilerLanguage::C:		return CompileC(file_name_);
+	case CompilerLanguage::Java:	return CompileJava(file_name_);
+	default:
+		return std::string();
 	}
 
 	return std::string();
@@ -38,7 +39,7 @@ std::string Compiler::CompilePascal(const std::string& file_name_)
 	PROCESS_INFORMATION process_info = { 0 };
 	startup_info.cb = sizeof(STARTUPINFO);
 
-	if (!CreateProcess(	compiler_path.c_str(),
+	if (CreateProcess(	compiler_path.c_str(),
 						compiler_args_lpstr,
 						0,
 						0,
@@ -55,7 +56,7 @@ std::string Compiler::CompilePascal(const std::string& file_name_)
 	}
 	else
 	{
-		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateProcess (Compilation)", 0, 0, Fatal });
+		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateProcess (Compilation)", 0, 0, Severity::Fatal });
 		return std::string("");
 	}
 
@@ -64,7 +65,7 @@ std::string Compiler::CompilePascal(const std::string& file_name_)
 
 	if (!std::filesystem::exists(result_executable_path))
 	{
-		m_error_manager->PushError({ "Result file does not exist", "Compilation", 0, 0, Fatal });
+		m_error_manager->PushError({ "Result file does not exist", "Compilation", 0, 0, Severity::Fatal });
 		return std::string("");
 	}
 		

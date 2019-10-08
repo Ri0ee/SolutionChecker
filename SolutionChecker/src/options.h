@@ -62,12 +62,12 @@ private:
 	std::string m_path_to_options_file;
 	std::string m_app_path;
 
-	float m_window_pos_x;
-	float m_window_pos_y;
-	int m_last_problem;
-	int m_test_memory_limit;
-	bool m_use_only_one_test;
-	bool m_use_multiple_tests;
+	float m_window_pos_x = 0;
+	float m_window_pos_y = 0;
+	int m_last_problem = 0;
+	int m_test_memory_limit = 0;
+	bool m_use_only_one_test = 0;
+	bool m_use_multiple_tests = 0;
 	std::string m_working_dir;
 	std::string m_problem_dir;
 	std::string m_temp_dir;
@@ -90,8 +90,8 @@ private:
 	std::string m_autofill_checkersrc;
 	std::string m_autofill_checkerexe;
 	std::string m_autofill_solution;
-	int m_autofill_points;
-	int m_autofill_bonuspoints;
-	double m_autofill_timelimit;
-	int m_autofill_memlimit;
+	int m_autofill_points = 0;
+	int m_autofill_bonuspoints = 0;
+	double m_autofill_timelimit = 0;
+	int m_autofill_memlimit = 0;
 };

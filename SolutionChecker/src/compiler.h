@@ -11,7 +11,7 @@
 
 
 
-enum CompilerLanguage{
+enum class CompilerLanguage{
 	Pascal, Cpp, C, Java
 };
 

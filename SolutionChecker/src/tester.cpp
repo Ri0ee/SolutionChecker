@@ -41,7 +41,7 @@ bool TestManager::CreateJob(HANDLE& job_handle_, HANDLE& job_port_handle_, long 
 	HANDLE job_handle = CreateJobObject(0, "SolutionCheckerJobObject");
 	if (job_handle == NULL)
 	{
-		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateJobObject function", 0, 0, Fatal });
+		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateJobObject function", 0, 0, Severity::Fatal });
 		return false;
 	}
 		
@@ -49,7 +49,7 @@ bool TestManager::CreateJob(HANDLE& job_handle_, HANDLE& job_port_handle_, long 
 	HANDLE job_port_handle = CreateIoCompletionPort(INVALID_HANDLE_VALUE, NULL, 0, 0);
 	if (job_port_handle == NULL)
 	{
-		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateIoCompletionPort function", 0, 0, Fatal });
+		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateIoCompletionPort function", 0, 0, Severity::Fatal });
 		return false;
 	}
 
@@ -67,16 +67,16 @@ bool TestManager::CreateJob(HANDLE& job_handle_, HANDLE& job_port_handle_, long 
 	// Link job object with limit info
 	if (SetInformationJobObject(job_handle, JobObjectExtendedLimitInformation, &jeli, sizeof(jeli)) != TRUE)
 	{
-		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "SetInformationJobObject function (JobObjectExtendedLimitInformation)", 0, 0, Fatal });
+		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "SetInformationJobObject function (JobObjectExtendedLimitInformation)", 0, 0, Severity::Fatal });
 		return false;
 	}
 
 	// Link job object with competion port
 	if (SetInformationJobObject(job_handle, JobObjectAssociateCompletionPortInformation, &job_port, sizeof(job_port)) != TRUE)
 	{
-		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "SetInformationJobObject function (JobObjectAssociateCompletionPortInformation)", 0, 0, Fatal });
+		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "SetInformationJobObject function (JobObjectAssociateCompletionPortInformation)", 0, 0, Severity::Fatal });
 		return false;
-	}
+	}	
 
 	job_handle_ = job_handle;
 	job_port_handle_ = job_port_handle;
@@ -107,19 +107,19 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		Compiler compiler(m_options_manager, m_error_manager);
 
 		if (solution_file_type == "pas")
-			temp_solution_file_dir = compiler.Compile(new_source_file_dir, Pascal);
+			temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Pascal);
 		else if (solution_file_type == "cpp")
-			temp_solution_file_dir = compiler.Compile(new_source_file_dir, Cpp);
+			temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Cpp);
 		else if (solution_file_type == "c")
-			temp_solution_file_dir = compiler.Compile(new_source_file_dir, C);
+			temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::C);
 		else if (solution_file_type == "java")
-			temp_solution_file_dir = compiler.Compile(new_source_file_dir, Java);
+			temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Java);
 		else
-			m_error_manager->PushError({ "Unknown file type", "Testing", 0, 0, Fatal });
+			m_error_manager->PushError({ "Unknown file type", "Testing", 0, 0, Severity::Fatal });
 
 		// Failed to compile for some reason
 		if (temp_solution_file_dir.empty())
-			m_error_manager->PushError({ "Compilation failed", "Testing", 0, 0, Fatal });
+			m_error_manager->PushError({ "Compilation failed", "Testing", 0, 0, Severity::Fatal });
 
 		is_executable_file_temp = true;
 
@@ -162,8 +162,8 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 			continue;
 		}
 
-		std::string input_file_dir = problem_.m_path + "\\" + std::to_string(current_test) + ".in";
-		std::string correct_output_file_dir = problem_.m_path + "\\" + std::to_string(current_test) + ".out";
+		std::string input_file_dir = problem_.m_path + "\\" + problem_.m_tests[current_test].m_input_file;
+		std::string correct_output_file_dir = problem_.m_path + "\\" + problem_.m_tests[current_test].m_answer_file;
 
 		// Copy input file to working directory
 		std::filesystem::copy(input_file_dir, new_input_file_dir, err_c);
@@ -173,7 +173,16 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		sui.cb = sizeof(STARTUPINFO);
 
 		// Execute solution file
-		if (CreateProcessA(new_executable_dir.c_str(), 0, 0, 0, false, CREATE_NO_WINDOW, 0, working_dir.c_str(), &sui, &pi) == TRUE)
+		if (CreateProcessA(	new_executable_dir.c_str(),
+							0, 
+							0, 
+							0, 
+							false, 
+							CREATE_NO_WINDOW, 
+							0,
+							working_dir.c_str(), 
+							&sui, 
+							&pi))
 		{
 			AssignProcessToJobObject(job_handle, pi.hProcess);
 
@@ -196,7 +205,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 			{
 				flag = true;
 				if (GetQueuedCompletionStatus(job_port_handle, &completion_code, &completion_key, &overlapped, 0) != TRUE)
-					m_error_manager->PushError({ GetErrorMessage(GetLastError()), "GetQueuedCompletionStatus function", 0, 0, Fatal });
+					m_error_manager->PushError({ GetErrorMessage(GetLastError()), "GetQueuedCompletionStatus function", 0, 0, Severity::Fatal });
 
 				if (completion_code == JOB_OBJECT_MSG_PROCESS_MEMORY_LIMIT)
 					test.m_status |= TEST_STATUS_MEMORY_LIMIT;
@@ -223,7 +232,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 			FileTimeToSystemTime(&start_time, &s_start_time);
 			FileTimeToSystemTime(&end_time, &s_end_time);
 
-			long long int diff_time = (s_end_time.wSecond * 1000 + s_end_time.wMilliseconds) - (s_start_time.wSecond * 1000 + s_start_time.wMilliseconds);
+			long long int diff_time = (s_end_time.wSecond * (long long int)1000 + s_end_time.wMilliseconds) - (s_start_time.wSecond * (long long int)1000 + s_start_time.wMilliseconds);
 			if ((double)diff_time > problem_.m_time_limit * 1000)
 				test.m_status |= TEST_STATUS_TIME_LIMIT;
 
@@ -234,7 +243,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		} 
 		else // Unable to create process
 		{
-			m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateProcess function", 0, 0, Fatal });
+			m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateProcess function", 0, 0, Severity::Fatal });
 			test.m_status |= TEST_STATUS_TESTING_SEQUENCE_ERROR;
 		}
 
@@ -264,7 +273,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 			correct_output_file.close();
 		} 
 		else // Unable to open result file or correct output file
-			m_error_manager->PushError({ "Unable to open result files", "Result checking", 0, 0, Fatal });
+			m_error_manager->PushError({ "Unable to open result files", "Result checking", 0, 0, Severity::Fatal });
 			
 		m_test_list.push_back(test);
 
