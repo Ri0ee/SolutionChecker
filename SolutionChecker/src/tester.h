@@ -18,12 +18,12 @@
 #define TESTING_STATE_ONLINE	1
 #define TESTING_STATE_FINISHING	2
 
-#define TEST_STATUS_UNKNOWN					0
-#define TEST_STATUS_OK						1 << 0
-#define TEST_STATUS_FAIL					1 << 1
-#define TEST_STATUS_RUNTIME_ERROR			1 << 2
-#define TEST_STATUS_TIME_LIMIT				1 << 3
-#define TEST_STATUS_MEMORY_LIMIT			1 << 4
+#define TEST_STATUS_UNKNOWN			0
+#define TEST_STATUS_OK				1 << 0
+#define TEST_STATUS_FAIL			1 << 1
+#define TEST_STATUS_RUNTIME_ERROR	1 << 2
+#define TEST_STATUS_TIME_LIMIT		1 << 3
+#define TEST_STATUS_MEMORY_LIMIT	1 << 4
 #define TEST_STATUS_TESTING_SEQUENCE_ERROR	1 << 5 
 
 
@@ -60,6 +60,7 @@ private:
 	void Shutdown();
 	void ShutdownTestingSequence();
 	bool CreateJob(HANDLE& job_handle_, HANDLE& job_port_handle_, long int memory_limit_);
+	std::string SelectCompilerAndCompile(const std::string& solution_location_);
 
 	OptionsManager* m_options_manager = nullptr;
 	ProblemManager* m_problem_manager = nullptr;

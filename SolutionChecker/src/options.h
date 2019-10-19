@@ -54,6 +54,8 @@ public:
 	int& AutofillMemLimit() { return m_autofill_memlimit; }
 	double& AutofillTimeLimit() { return m_autofill_timelimit; }
 
+	std::string& JavaVMPath() { return m_javavm_path; }
+
 	std::string GetThemeName(int id_);
 	int GetThemeId(const std::string& theme_);
 	int GetThemeId() { return GetThemeId(m_theme); }
@@ -94,4 +96,6 @@ private:
 	int m_autofill_bonuspoints = 0;
 	double m_autofill_timelimit = 0;
 	int m_autofill_memlimit = 0;
+
+	std::string m_javavm_path;
 };

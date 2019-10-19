@@ -84,61 +84,65 @@ bool TestManager::CreateJob(HANDLE& job_handle_, HANDLE& job_port_handle_, long 
 	return true;
 }
 
+std::string TestManager::SelectCompilerAndCompile(const std::string& solution_location_) {
+	std::error_code err_c;
+	std::string solution_file_type = solution_location_.substr(solution_location_.find_last_of(".") + 1);
+	std::string new_source_file_dir = m_options_manager->TempDir() + "\\" + "solution_source." + solution_file_type;
+	std::string solution_file_dir = "";
+
+	std::filesystem::remove(new_source_file_dir, err_c);
+	std::filesystem::copy(solution_location_, new_source_file_dir, err_c);
+	m_created_file_list.push_back(new_source_file_dir);
+	Compiler compiler(m_options_manager, m_error_manager);
+
+	if (solution_file_type == "pas")
+		solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Pascal);
+	else if (solution_file_type == "cpp")
+		solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Cpp);
+	else if (solution_file_type == "c")
+		solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::C);
+	else
+		m_error_manager->PushError({ "Unknown file type", "Testing", 0, 0, Severity::Fatal });
+
+	// Failed to compile for some reason
+	if (solution_file_dir.empty())
+		m_error_manager->PushError({ "Compilation failed", "Testing", 0, 0, Severity::Fatal });
+
+	// Remove created temporary source file
+	std::filesystem::remove(new_source_file_dir);
+
+	return solution_file_dir;
+}
+
 void TestManager::TestingSequence(Problem problem_, const std::string& solution_location_, bool all_tests_)
 {
 	std::error_code err_c;
 
+	std::string temp_solution_file_dir;
+	std::string solution_file_type = solution_location_.substr(solution_location_.find_last_of(".") + 1);
+	std::string solution_file_name = solution_location_.substr(solution_location_.find_last_of("\\") + 1);
+	bool is_java = (solution_file_type == "java");
+
 	std::string working_dir = m_options_manager->WorkingDir() + "\\"; // Directory for testing executable files
-	std::string new_executable_dir = working_dir + "solution.exe";
+	std::string new_executable_dir = working_dir + (is_java ? solution_file_name : "solution.exe");
 	std::string new_input_file_dir = working_dir + problem_.m_input_file;
 	std::string new_output_file_dir = working_dir + problem_.m_output_file;
 
-	std::string temp_solution_file_dir;
-	std::string solution_file_type = solution_location_.substr(solution_location_.find_last_of(".") + 1, solution_location_.size());
-	bool is_executable_file_temp = false;
-
-	// Compilation if given solution file is not executable
-	if (solution_file_type != "exe")
-	{
-		std::string new_source_file_dir = m_options_manager->TempDir() + "\\" + "solution_source." + solution_file_type;
-		std::filesystem::remove(new_source_file_dir, err_c);
-		std::filesystem::copy(solution_location_, new_source_file_dir, err_c);
-		m_created_file_list.push_back(new_source_file_dir);
-		Compiler compiler(m_options_manager, m_error_manager);
-
-		if		(solution_file_type == "pas")	temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Pascal);
-		else if (solution_file_type == "cpp")	temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Cpp);
-		else if (solution_file_type == "c")		temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::C);
-		else if (solution_file_type == "java")	temp_solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Java);
-		else m_error_manager->PushError({ "Unknown file type", "Testing", 0, 0, Severity::Fatal });
-
-		// Failed to compile for some reason
-		if (temp_solution_file_dir.empty())
-			m_error_manager->PushError({ "Compilation failed", "Testing", 0, 0, Severity::Fatal });
-
-		is_executable_file_temp = true;
-
-		// Remove created temporary source file
-		std::filesystem::remove(new_source_file_dir);
-	}
+	if (solution_file_type != "exe" && !is_java) temp_solution_file_dir = SelectCompilerAndCompile(solution_location_);
 	else temp_solution_file_dir = solution_location_;
 
 	// Copy solution file to working directory
 	std::filesystem::copy(temp_solution_file_dir, new_executable_dir, err_c);
 	m_created_file_list.push_back(new_executable_dir);
-
+	
 	// Remove executable file if it was created as a temporary file
-	if (is_executable_file_temp) 
+	if (temp_solution_file_dir != solution_location_) 
 		std::filesystem::remove(temp_solution_file_dir);
 
 	for (int current_test = 0; current_test < problem_.m_test_count; current_test++)
 	{
-		// Update testing stage
-		m_testing_stage.store(current_test);
-
-		Test test;
-		test.m_status = 0;
-		test.m_id = current_test;
+		m_testing_stage.store(current_test); // Update testing stage
+		Test test = { 0, 0, (DWORD)-1, 0, current_test, "", "", "" };
 
 		// If executable file does not exist
 		if (!std::filesystem::exists(new_executable_dir))
@@ -167,12 +171,19 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		PROCESS_INFORMATION pi = { 0 };
 		sui.cb = sizeof(STARTUPINFO);
 
+		std::string executable = (is_java) ? m_options_manager->JavaVMPath() : new_executable_dir;
+		std::string command_line = (is_java) ? "\"" + m_options_manager->JavaVMPath() + "\" " + "\"" + new_executable_dir + "\"": "";
+
+		// Convert string to LPSTR
+		LPSTR command_line_lpstr = new char[command_line.size()];
+		strcpy_s(command_line_lpstr, command_line.size() + 1, command_line.c_str());
+
 		// Execute solution file
-		if (CreateProcessA(	new_executable_dir.c_str(),
-							0, 
-							0, 
-							0, 
-							false, 
+		if (CreateProcessA(	executable.c_str(),
+							command_line_lpstr,
+							0,
+							0,
+							false,
 							CREATE_NO_WINDOW, 
 							0,
 							working_dir.c_str(), 

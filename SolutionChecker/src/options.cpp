@@ -221,6 +221,12 @@ bool OptionsManager::GetOptions()
 			m_autofill_memlimit = mem_limit;
 			continue;
 		}
+
+		if (param_name == "JavaVMPath")
+		{
+			m_javavm_path = line.substr(delim_pos + 1, line.size());
+			continue;
+		}
 	}
 
 	in_file.close();
@@ -258,6 +264,8 @@ void OptionsManager::SetDefaults()
 	m_autofill_inputfile = "input.txt";
 	m_autofill_outputfile = "output.txt";
 	m_autofill_solution = "Solution.pas";
+
+	m_javavm_path = "C:\\Program Files\\Java\\jre1.8.0_221\\bin\\java.exe";
 
 	m_theme = "none";
 	m_use_only_one_test = false;
@@ -302,7 +310,9 @@ bool OptionsManager::UpdateOptionsFile()
 	out_file << "AutofillPoints:" << m_autofill_points << "\n";
 	out_file << "AutofillBonusPoints:" << m_autofill_bonuspoints << "\n";
 	out_file << "AutofillTimeLimit:" << m_autofill_timelimit << "\n";
-	out_file << "AutofillMemLimit:" << m_autofill_memlimit;
+	out_file << "AutofillMemLimit:" << m_autofill_memlimit << "\n";
+
+	out_file << "JavaVMPath:" << m_javavm_path;
 
 	out_file.close();
 
