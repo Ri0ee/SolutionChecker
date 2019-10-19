@@ -92,5 +92,8 @@
     <ClInclude Include="include\tinyxml2.h">
       <Filter>Include</Filter>
     </ClInclude>
+    <ClInclude Include="src\setting_guru.h">
+      <Filter>Include</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

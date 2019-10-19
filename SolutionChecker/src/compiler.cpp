@@ -21,7 +21,7 @@ std::string Compiler::CompilePascal(const std::string& file_name_)
 {
 	if (file_name_.empty()) return std::string();
 
-	std::string compiler_path = m_options_manager->PascalCompilerDir();
+	std::string compiler_path = m_options_manager->GetOption("PascalCompilerDir");
 	std::string compiler_dir = compiler_path.substr(0, compiler_path.find_last_of("\\"));
 	std::string result_executable_path = file_name_.substr(0, file_name_.find_last_of(".")) + ".exe";
 	std::string result_object_path = file_name_.substr(0, file_name_.find_last_of(".")) + ".o";
@@ -76,13 +76,13 @@ std::string Compiler::CompileCpp(const std::string& file_name_)
 {
 	if (file_name_.empty()) return std::string();
 
-	std::string compiler_path = m_options_manager->CppCompilerDir();
-	std::string compiler_dir = m_options_manager->TempDir();
-	std::string result_executable_path = m_options_manager->TempDir() + "\\a.exe";
+	std::string compiler_path = m_options_manager->GetOption("CppCompilerDir");
+	std::string compiler_dir = m_options_manager->GetOption("TempDir");
+	std::string result_executable_path = m_options_manager->GetOption("TempDir") + "\\a.exe";
 	std::string compiler_args = 
 		"\"" + compiler_path + "\" " +						// args[0] - path to the compiler executable file
 		"\"" + file_name_ + "\" " +							// args[1] - path to the source code
-		m_options_manager->CppDefaultArgs();				// other arguments
+		m_options_manager->GetOption("CppDefaultArgs");		// other arguments
 
 	// Convert string to LPSTR
 	LPSTR compiler_args_lpstr = new char[compiler_args.size()];
@@ -129,13 +129,13 @@ std::string Compiler::CompileC(const std::string& file_name_)
 {
 	if (file_name_.empty()) return std::string();
 
-	std::string compiler_path = m_options_manager->CCompilerDir();
-	std::string compiler_dir = m_options_manager->TempDir();
-	std::string result_executable_path = m_options_manager->TempDir() + "\\a.exe";
+	std::string compiler_path = m_options_manager->GetOption("CCompilerDir");
+	std::string compiler_dir = m_options_manager->GetOption("TempDir");
+	std::string result_executable_path = m_options_manager->GetOption("TempDir") + "\\a.exe";
 	std::string compiler_args =
 		"\"" + compiler_path + "\" " +						// args[0] - path to the compiler executable file
 		"\"" + file_name_ + "\" " +							// args[1] - path to the source code
-		m_options_manager->CDefaultArgs();					// other arguments
+		m_options_manager->GetOption("CDefaultArgs");		// other arguments
 
 	// Convert string to LPSTR
 	LPSTR compiler_args_lpstr = new char[compiler_args.size()];
@@ -182,13 +182,13 @@ std::string Compiler::CompileJava(const std::string& file_name_)
 {
 	if (file_name_.empty()) return std::string();
 
-	std::string compiler_path = m_options_manager->JavaCompilerDir();
-	std::string compiler_dir = m_options_manager->TempDir();
+	std::string compiler_path = m_options_manager->GetOption("JavaCompilerDir");
+	std::string compiler_dir = m_options_manager->GetOption("TempDir");
 	std::string result_executable_path = file_name_.substr(0, file_name_.find_last_of(".")) + ".class";
 	std::string compiler_args =
 		"\"" + compiler_path + "\" " +						// args[0] - path to the compiler executable file
 		"\"" + file_name_ + "\" " +							// args[1] - path to the source code
-		m_options_manager->JavaDefaultArgs();				// other arguments
+		m_options_manager->GetOption("JavaDefaultArgs");	// other arguments
 
 	// Convert string to LPSTR
 	LPSTR compiler_args_lpstr = new char[compiler_args.size()];

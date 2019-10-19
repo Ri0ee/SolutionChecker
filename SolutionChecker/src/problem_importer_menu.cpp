@@ -109,27 +109,27 @@ void ProblemCreatorWindow::Initialize()
 	y += h + 10;
 
 	m_description_input = new Fl_Input(100, y, 300, h, "description");
-	m_description_input->value(m_options_manager->AutofillDescriptionFile().c_str());
+	m_description_input->value(m_options_manager->GetOption("AutofillDescriptionFile").c_str());
 
 	y += h + 10;
 
 	m_time_limit_input = new Fl_Input(100, y, 300, h, "time limit");
-	m_time_limit_input->value(std::to_string(m_options_manager->AutofillTimeLimit()).c_str());
+	m_time_limit_input->value(m_options_manager->GetOption("AutofillTimeLimit").c_str());
 
 	y += h + 10;
 
 	m_memory_limit_input = new Fl_Input(100, y, 300, h, "memory limit");
-	m_memory_limit_input->value(std::to_string(m_options_manager->AutofillMemLimit()).c_str());
+	m_memory_limit_input->value(m_options_manager->GetOption("AutofillMemLimit").c_str());
 
 	y += h + 10;
 
 	m_input_file_input = new Fl_Input(100, y, 300, h, "input file");
-	m_input_file_input->value(m_options_manager->AutofillInputFile().c_str());
+	m_input_file_input->value(m_options_manager->GetOption("AutofillInputFile").c_str());
 
 	y += h + 10;
 
 	m_output_file_input = new Fl_Input(100, y, 300, h, "output file");
-	m_output_file_input->value(m_options_manager->AutofillOutputFile().c_str());
+	m_output_file_input->value(m_options_manager->GetOption("AutofillOutputFile").c_str());
 
 	y += h + 10;
 
@@ -150,17 +150,17 @@ void ProblemCreatorWindow::Initialize()
 	y += h + 10;
 
 	m_checker_src_input = new Fl_Input(100, y, 300, h, "checker src");
-	m_checker_src_input->value(m_options_manager->AutofillCheckerSrc().c_str());
+	m_checker_src_input->value(m_options_manager->GetOption("AutofillCheckerSrc").c_str());
 
 	y += h + 10;
 
 	m_checker_exe_input = new Fl_Input(100, y, 300, h, "checker exe");
-	m_checker_exe_input->value(m_options_manager->AutofillCheckerExe().c_str());
+	m_checker_exe_input->value(m_options_manager->GetOption("AutofillCheckerExe").c_str());
 
 	y += h + 10;
 
 	m_solution_input = new Fl_Input(100, y, 300, h, "solution");
-	m_solution_input->value(m_options_manager->AutofillSolution().c_str());
+	m_solution_input->value(m_options_manager->GetOption("AutofillSolution").c_str());
 
 	y += h + 10;
 
@@ -169,7 +169,7 @@ void ProblemCreatorWindow::Initialize()
 	y += h + 10;
 
 	m_bonus_points_input = new Fl_Input(100, y, 300, h, "bonus points");
-	m_bonus_points_input->value(std::to_string(m_options_manager->AutofillBonusPoints()).c_str());
+	m_bonus_points_input->value(m_options_manager->GetOption("AutofillBonusPoints").c_str());
 
 	y += h + 10;
 

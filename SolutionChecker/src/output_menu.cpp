@@ -84,7 +84,7 @@ void OutputWindow::ListElement::ButtonClick(Fl_Widget* w)
 	std::string button_label(w->label());
 	if (button_label == "Input")
 	{
-		std::string dest_filename = m_options_manager->WorkingDir();
+		std::string dest_filename = m_options_manager->GetOption("WorkingDir");
 		dest_filename.append("\\temp_output" + std::to_string(*m_created_file_count) + ".sctmp");
 		m_created_file_list.push_back(dest_filename);
 		(*m_created_file_count)++;
@@ -100,7 +100,7 @@ void OutputWindow::ListElement::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "Output")
 	{
-		std::string dest_filename = m_options_manager->WorkingDir();
+		std::string dest_filename = m_options_manager->GetOption("WorkingDir");
 		dest_filename.append("\\temp_output" + std::to_string(*m_created_file_count) + ".sctmp");
 		m_created_file_list.push_back(dest_filename);
 		(*m_created_file_count)++;
@@ -116,7 +116,7 @@ void OutputWindow::ListElement::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "Answer")
 	{
-		std::string dest_filename = m_options_manager->WorkingDir();
+		std::string dest_filename = m_options_manager->GetOption("WorkingDir");
 		dest_filename.append("\\temp_output" + std::to_string(*m_created_file_count) + ".sctmp");
 		m_created_file_list.push_back(dest_filename);
 		(*m_created_file_count)++;

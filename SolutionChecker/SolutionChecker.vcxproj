@@ -162,6 +162,7 @@
     <ClInclude Include="src\problems.h" />
     <ClInclude Include="src\problem_importer_menu.h" />
     <ClInclude Include="src\settings_menu.h" />
+    <ClInclude Include="src\setting_guru.h" />
     <ClInclude Include="src\tester.h" />
     <ClInclude Include="src\utils.h" />
   </ItemGroup>

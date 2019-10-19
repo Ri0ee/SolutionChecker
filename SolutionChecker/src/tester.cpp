@@ -84,10 +84,11 @@ bool TestManager::CreateJob(HANDLE& job_handle_, HANDLE& job_port_handle_, long 
 	return true;
 }
 
-std::string TestManager::SelectCompilerAndCompile(const std::string& solution_location_) {
+std::string TestManager::SelectCompilerAndCompile(const std::string& solution_location_) 
+{
 	std::error_code err_c;
 	std::string solution_file_type = solution_location_.substr(solution_location_.find_last_of(".") + 1);
-	std::string new_source_file_dir = m_options_manager->TempDir() + "\\" + "solution_source." + solution_file_type;
+	std::string new_source_file_dir = m_options_manager->GetOption("TempDir") + "\\" + "solution_source." + solution_file_type;
 	std::string solution_file_dir = "";
 
 	std::filesystem::remove(new_source_file_dir, err_c);
@@ -114,6 +115,20 @@ std::string TestManager::SelectCompilerAndCompile(const std::string& solution_lo
 	return solution_file_dir;
 }
 
+long long TestManager::GetExecutionTime(PROCESS_INFORMATION& pi_) 
+{
+	FILETIME start_time = { 0 }, end_time = { 0 }, kernel_time = { 0 }, user_time = { 0 };
+	GetProcessTimes(pi_.hProcess, &start_time, &end_time, &kernel_time, &user_time);
+
+	SYSTEMTIME s_start_time, s_end_time;
+	FileTimeToSystemTime(&start_time, &s_start_time);
+	FileTimeToSystemTime(&end_time, &s_end_time);
+
+	long long int diff_time = (s_end_time.wSecond * (long long int)1000 + s_end_time.wMilliseconds) - (s_start_time.wSecond * (long long int)1000 + s_start_time.wMilliseconds);
+
+	return diff_time;
+}
+
 void TestManager::TestingSequence(Problem problem_, const std::string& solution_location_, bool all_tests_)
 {
 	std::error_code err_c;
@@ -123,7 +138,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 	std::string solution_file_name = solution_location_.substr(solution_location_.find_last_of("\\") + 1);
 	bool is_java = (solution_file_type == "java");
 
-	std::string working_dir = m_options_manager->WorkingDir() + "\\"; // Directory for testing executable files
+	std::string working_dir = m_options_manager->GetOption("WorkingDir") + "\\"; // Directory for testing executable files
 	std::string new_executable_dir = working_dir + (is_java ? solution_file_name : "solution.exe");
 	std::string new_input_file_dir = working_dir + problem_.m_input_file;
 	std::string new_output_file_dir = working_dir + problem_.m_output_file;
@@ -154,7 +169,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 
 		// Create job object to limit process memory usage later
 		HANDLE job_handle, job_port_handle;
-		if (!CreateJob(job_handle, job_port_handle, min(m_options_manager->TestMemoryLimit() * 1024 * 1024, problem_.m_memory_limit * 1024 * 1024)))
+		if (!CreateJob(job_handle, job_port_handle, min(std::stoi(m_options_manager->GetOption("TestMemoryLimit")) * 1024 * 1024, problem_.m_memory_limit * 1024 * 1024)))
 		{
 			test.m_status |= TEST_STATUS_TESTING_SEQUENCE_ERROR;
 			m_test_list.push_back(test);
@@ -171,10 +186,9 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		PROCESS_INFORMATION pi = { 0 };
 		sui.cb = sizeof(STARTUPINFO);
 
-		std::string executable = (is_java) ? m_options_manager->JavaVMPath() : new_executable_dir;
-		std::string command_line = (is_java) ? "\"" + m_options_manager->JavaVMPath() + "\" " + "\"" + new_executable_dir + "\"": "";
+		std::string executable = (is_java) ? m_options_manager->GetOption("JavaVMPath") : new_executable_dir;
+		std::string command_line = (is_java) ? "\"" + m_options_manager->GetOption("JavaVMPath") + "\" " + "\"" + new_executable_dir + "\"": "";
 
-		// Convert string to LPSTR
 		LPSTR command_line_lpstr = new char[command_line.size()];
 		strcpy_s(command_line_lpstr, command_line.size() + 1, command_line.c_str());
 
@@ -231,18 +245,9 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 			if (test.m_exit_code != 0 && !(test.m_status & TEST_STATUS_MEMORY_LIMIT))
 				test.m_status |= TEST_STATUS_RUNTIME_ERROR;
 
-			FILETIME start_time = { 0 }, end_time = { 0 }, kernel_time = { 0 }, user_time = { 0 };
-			GetProcessTimes(pi.hProcess, &start_time, &end_time, &kernel_time, &user_time);
-
-			SYSTEMTIME s_start_time, s_end_time;
-			FileTimeToSystemTime(&start_time, &s_start_time);
-			FileTimeToSystemTime(&end_time, &s_end_time);
-
-			long long int diff_time = (s_end_time.wSecond * (long long int)1000 + s_end_time.wMilliseconds) - (s_start_time.wSecond * (long long int)1000 + s_start_time.wMilliseconds);
-			if ((double)diff_time > problem_.m_time_limit * 1000)
+			test.m_run_time = GetExecutionTime(pi);
+			if (test.m_run_time > problem_.m_time_limit * 1000)
 				test.m_status |= TEST_STATUS_TIME_LIMIT;
-
-			test.m_run_time = diff_time;
 
 			CloseHandle(pi.hProcess);
 			CloseHandle(pi.hThread);
@@ -270,10 +275,8 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 			test.m_output_data = std::string((std::istreambuf_iterator<char>(result_output_file)), std::istreambuf_iterator<char>());
 			test.m_destination_data = std::string((std::istreambuf_iterator<char>(correct_output_file)), std::istreambuf_iterator<char>());
 
-			if (test.m_output_data == test.m_destination_data)
-				test.m_status |= TEST_STATUS_OK;
-			else
-				test.m_status |= TEST_STATUS_FAIL;
+			if (test.m_output_data == test.m_destination_data) test.m_status |= TEST_STATUS_OK;
+			else test.m_status |= TEST_STATUS_FAIL;
 
 			result_output_file.close();
 			correct_output_file.close();

@@ -27,7 +27,7 @@ void SettingsWindow::Initialize()
 	m_window = new Fl_Double_Window(w, 500, "Settings");
 
 	m_working_dir_selector = new Fl_Input(selector_spacing, y, 400, h, "Working dir:");
-	m_working_dir_selector->value(m_options_manager->WorkingDir().c_str());
+	m_working_dir_selector->value(m_options_manager->GetOption("WorkingDir").c_str());
 
 	m_working_dir_selector_button = new Fl_Button(selector_spacing + 403, y, w - selector_spacing - 400 - 10, h, "Working dir...");
 	m_working_dir_selector_button->callback(ButtonCallback, this);
@@ -36,7 +36,7 @@ void SettingsWindow::Initialize()
 	y += h + 10;
 
 	m_problem_dir_selector = new Fl_Input(selector_spacing, y, 400, h, "Problems:");
-	m_problem_dir_selector->value(m_options_manager->ProblemDir().c_str());
+	m_problem_dir_selector->value(m_options_manager->GetOption("ProblemDir").c_str());
 
 	m_problem_dir_selector_button = new Fl_Button(selector_spacing + 403, y, w - selector_spacing - 400 - 10, h, "Problem dir...");
 	m_problem_dir_selector_button->callback(ButtonCallback, this);
@@ -45,7 +45,7 @@ void SettingsWindow::Initialize()
 	y += h + 10;
 
 	m_temp_dir_selector = new Fl_Input(selector_spacing, y, 400, h, "Temp dir:");
-	m_temp_dir_selector->value(m_options_manager->TempDir().c_str());
+	m_temp_dir_selector->value(m_options_manager->GetOption("TempDir").c_str());
 
 	m_temp_dir_selector_button = new Fl_Button(selector_spacing + 403, y, w - selector_spacing - 400 - 10, 20, "Temp dir...");
 	m_temp_dir_selector_button->callback(ButtonCallback, this);
@@ -55,7 +55,7 @@ void SettingsWindow::Initialize()
 	y += h + 10;
 
 	m_cpp_compiler_dir_selector = new Fl_Input(compiler_selector_spacing, y, 400, h, "Cpp Compiler:");
-	m_cpp_compiler_dir_selector->value(m_options_manager->CppCompilerDir().c_str());
+	m_cpp_compiler_dir_selector->value(m_options_manager->GetOption("CppCompilerDir").c_str());
 
 	m_cpp_compiler_dir_selector_button = new Fl_Button(compiler_selector_spacing + 403, y, w - compiler_selector_spacing - 400 - 10, h, "Cpp compiler...");
 	m_cpp_compiler_dir_selector_button->callback(ButtonCallback, this);
@@ -64,7 +64,7 @@ void SettingsWindow::Initialize()
 	y += h + 10;
 
 	m_c_compiler_dir_selector = new Fl_Input(compiler_selector_spacing, y, 400, h, "C Compiler:");
-	m_c_compiler_dir_selector->value(m_options_manager->CCompilerDir().c_str());
+	m_c_compiler_dir_selector->value(m_options_manager->GetOption("CCompilerDir").c_str());
 
 	m_c_compiler_dir_selector_button = new Fl_Button(compiler_selector_spacing + 403, y, w - compiler_selector_spacing - 400 - 10, h, "C compiler...");
 	m_c_compiler_dir_selector_button->callback(ButtonCallback, this);
@@ -73,7 +73,7 @@ void SettingsWindow::Initialize()
 	y += h + 10;
 
 	m_pascal_compiler_dir_selector = new Fl_Input(compiler_selector_spacing, y, 400, h, "Pascal Compiler:");
-	m_pascal_compiler_dir_selector->value(m_options_manager->PascalCompilerDir().c_str());
+	m_pascal_compiler_dir_selector->value(m_options_manager->GetOption("PascalCompilerDir").c_str());
 
 	m_pascal_compiler_dir_selector_button = new Fl_Button(compiler_selector_spacing + 403, y, w - compiler_selector_spacing - 400 - 10, h, "Pascal compiler...");
 	m_pascal_compiler_dir_selector_button->callback(ButtonCallback, this);
@@ -82,7 +82,7 @@ void SettingsWindow::Initialize()
 	y += h + 10;
 
 	m_java_compiler_dir_selector = new Fl_Input(compiler_selector_spacing, y, 400, h, "Java Compiler:");
-	m_java_compiler_dir_selector->value(m_options_manager->JavaCompilerDir().c_str());
+	m_java_compiler_dir_selector->value(m_options_manager->GetOption("JavaCompilerDir").c_str());
 
 	m_java_compiler_dir_selector_button = new Fl_Button(compiler_selector_spacing + 403, y, w - compiler_selector_spacing - 400 - 10, h, "Java compiler...");
 	m_java_compiler_dir_selector_button->callback(ButtonCallback, this);
@@ -92,22 +92,22 @@ void SettingsWindow::Initialize()
 	y += h + 10;
 
 	m_cpp_default_arg_selector = new Fl_Input(compiler_default_arg_spacing, y, w - compiler_default_arg_spacing - 7, h, "Cpp default args:");
-	m_cpp_default_arg_selector->value(m_options_manager->CppDefaultArgs().c_str());
+	m_cpp_default_arg_selector->value(m_options_manager->GetOption("CppDefaultArgs").c_str());
 
 	y += h + 10;
 
 	m_c_default_arg_selector = new Fl_Input(compiler_default_arg_spacing, y, w - compiler_default_arg_spacing - 7, h, "C default args:");
-	m_c_default_arg_selector->value(m_options_manager->CDefaultArgs().c_str());
+	m_c_default_arg_selector->value(m_options_manager->GetOption("CDefaultArgs").c_str());
 
 	y += h + 10;
 
 	m_pascal_default_arg_selector = new Fl_Input(compiler_default_arg_spacing, y, w - compiler_default_arg_spacing - 7, h, "Pascal default args:");
-	m_pascal_default_arg_selector->value(m_options_manager->PascalDefaultArgs().c_str());
+	m_pascal_default_arg_selector->value(m_options_manager->GetOption("PascalDefaultArgs").c_str());
 
 	y += h + 10;
 
 	m_java_default_arg_selector = new Fl_Input(compiler_default_arg_spacing, y, w - compiler_default_arg_spacing - 7, h, "Java default args:");
-	m_java_default_arg_selector->value(m_options_manager->JavaDefaultArgs().c_str());
+	m_java_default_arg_selector->value(m_options_manager->GetOption("JavaDefaultArgs").c_str());
 
 	y += h + 10;
 	y += h + 10;
@@ -124,7 +124,7 @@ void SettingsWindow::Initialize()
 	y += h + 12;
 
 	m_test_memory_limit_input = new Fl_Value_Input(selector_spacing, y, 295, h, "Mem limit:");
-	m_test_memory_limit_input->value(m_options_manager->TestMemoryLimit());
+	m_test_memory_limit_input->value(std::stoi(m_options_manager->GetOption("TestMemoryLimit")));
 
 	y += h + 10;
 
@@ -235,7 +235,7 @@ std::string SettingsWindow::SelectFile()
 	ofn.lpstrFile[0] = 0;
 	ofn.hwndOwner = GetForegroundWindow();
 
-	ofn.lpstrInitialDir = m_options_manager->LastSolutionDir().c_str();
+	ofn.lpstrInitialDir = m_options_manager->GetOption("LastSolutionDir").c_str();
 	ofn.lpstrTitle = "Select exe-file";
 	ofn.lpstrFilter = "Executable .exe\0*.exe\0\0";
 
@@ -260,26 +260,26 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "Apply settings")
 	{
-		m_options_manager->WorkingDir() = std::string(m_working_dir_selector->value());
-		m_options_manager->ProblemDir() = std::string(m_problem_dir_selector->value());
-		m_options_manager->TempDir() = std::string(m_temp_dir_selector->value());
+		m_options_manager->SetOption("WorkingDir", m_working_dir_selector->value());
+		m_options_manager->SetOption("ProblemDir", m_problem_dir_selector->value());
+		m_options_manager->SetOption("TempDir", m_temp_dir_selector->value());
 
-		m_options_manager->CppCompilerDir() = std::string(m_cpp_compiler_dir_selector->value());
-		m_options_manager->CCompilerDir() = std::string(m_c_compiler_dir_selector->value());
-		m_options_manager->PascalCompilerDir() = std::string(m_pascal_compiler_dir_selector->value());
-		m_options_manager->JavaCompilerDir() = std::string(m_java_compiler_dir_selector->value());
+		m_options_manager->SetOption("CppCompilerDir", m_cpp_compiler_dir_selector->value());
+		m_options_manager->SetOption("CCompilerDir", m_c_compiler_dir_selector->value());
+		m_options_manager->SetOption("PascalCompilerDir", m_pascal_compiler_dir_selector->value());
+		m_options_manager->SetOption("JavaCompilerDir", m_java_compiler_dir_selector->value());
 
-		m_options_manager->CppDefaultArgs() = std::string(m_cpp_default_arg_selector->value());
-		m_options_manager->CDefaultArgs() = std::string(m_c_default_arg_selector->value());
-		m_options_manager->PascalDefaultArgs() = std::string(m_pascal_default_arg_selector->value());
-		m_options_manager->JavaDefaultArgs() = std::string(m_java_default_arg_selector->value());
+		m_options_manager->SetOption("CppDefaultArgs", m_cpp_default_arg_selector->value());
+		m_options_manager->SetOption("CDefaultArgs", m_c_default_arg_selector->value());
+		m_options_manager->SetOption("PascalDefaultArgs", m_pascal_default_arg_selector->value());
+		m_options_manager->SetOption("JavaDefaultArgs", m_java_default_arg_selector->value());
 
-		m_options_manager->TestMemoryLimit() = (int)m_test_memory_limit_input->value();
-		m_options_manager->ThemeName() = m_options_manager->GetThemeName(m_theme_choice->value());
+		m_options_manager->SetOption("TestMemoryLimit", std::to_string(m_test_memory_limit_input->value()));
+		m_options_manager->SetOption("Theme", m_options_manager->GetThemeName(m_theme_choice->value()));
 		m_options_manager->UpdateOptionsFile();
 
 		m_problem_browser_update_needed = true;
-		Fl::scheme(m_options_manager->ThemeName().c_str());
+		Fl::scheme(m_options_manager->GetOption("Theme").c_str());
 		Fl::reload_scheme();
 		return;
 	}
@@ -336,14 +336,14 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 
 void SettingsWindow::UpdateWidgetInfo()
 {
-	m_problem_dir_selector->value(m_options_manager->ProblemDir().c_str());
-	m_working_dir_selector->value(m_options_manager->WorkingDir().c_str());
-	m_temp_dir_selector->value(m_options_manager->TempDir().c_str());
+	m_problem_dir_selector->value(m_options_manager->GetOption("ProblemDir").c_str());
+	m_working_dir_selector->value(m_options_manager->GetOption("WorkingDir").c_str());
+	m_temp_dir_selector->value(m_options_manager->GetOption("TempDir").c_str());
 
-	m_cpp_compiler_dir_selector->value(m_options_manager->CppCompilerDir().c_str());
-	m_c_compiler_dir_selector->value(m_options_manager->CCompilerDir().c_str());
-	m_pascal_compiler_dir_selector->value(m_options_manager->PascalCompilerDir().c_str());
-	m_java_compiler_dir_selector->value(m_options_manager->JavaCompilerDir().c_str());
+	m_cpp_compiler_dir_selector->value(m_options_manager->GetOption("CppCompilerDir").c_str());
+	m_c_compiler_dir_selector->value(m_options_manager->GetOption("CCompilerDir").c_str());
+	m_pascal_compiler_dir_selector->value(m_options_manager->GetOption("PascalCompilerDir").c_str());
+	m_java_compiler_dir_selector->value(m_options_manager->GetOption("JavaCompilerDir").c_str());
 
 	m_theme_choice->value(m_options_manager->GetThemeId());
 }

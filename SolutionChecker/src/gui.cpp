@@ -43,8 +43,8 @@ void Gui::ButtonClick(Fl_Widget* w)
 	{
 		m_first_test_selector->value(true);
 		m_all_test_selector->value(false);
-		m_options_manager->UseOnlyOneTest() = true;
-		m_options_manager->UseMultipleTests() = false;
+		m_options_manager->SetOption("UseOnlyOneTest", "1");
+		m_options_manager->SetOption("UseMultipleTests", "0");
 		return;
 	}
 
@@ -52,8 +52,8 @@ void Gui::ButtonClick(Fl_Widget* w)
 	{
 		m_first_test_selector->value(false);
 		m_all_test_selector->value(true);
-		m_options_manager->UseOnlyOneTest() = false;
-		m_options_manager->UseMultipleTests() = true;
+		m_options_manager->SetOption("UseOnlyOneTest", "0");
+		m_options_manager->SetOption("UseMultipleTests", "1");
 		return;
 	}
 
@@ -91,11 +91,11 @@ void Gui::ButtonClick(Fl_Widget* w)
 
 	if (button_label == "...")
 	{
-		std::string temp_string = SelectFile(m_options_manager->LastSolutionDir());
+		std::string temp_string = SelectFile(m_options_manager->GetOption("LastSolutionDir"));
 		if (!temp_string.empty())
 		{
 			m_solution_selector->value(temp_string.c_str());
-			m_options_manager->LastSolutionDir() = temp_string;
+			m_options_manager->SetOption("LastSolutionDir", temp_string);
 		}
 		return;
 	}
@@ -133,9 +133,9 @@ void Gui::WindowAction() // Close button pressed
 	for (auto output_window : m_output_windows)
 		if(output_window != nullptr)
 			output_window->Hide();
-
-	m_options_manager->LastProblem() = m_problem_browser->value();
-	m_options_manager->LastSolutionDir() = m_solution_selector->value();
+	
+	m_options_manager->SetOption("LastProblem", std::to_string(m_problem_browser->value()));
+	m_options_manager->SetOption("LastSolutionDir", m_solution_selector->value());
 
 	m_main_window->hide();
 }
@@ -145,7 +145,7 @@ void Gui::Initialize()
 	m_problem_list = m_problem_manager->GetProblemList();
 
 	int y = 10, h = 20;
-	Fl::scheme(m_options_manager->ThemeName().c_str());
+	Fl::scheme(m_options_manager->GetOption("Theme").c_str());
 	Fl::get_system_colors();
 	fl_font(FL_HELVETICA, 16);
 
@@ -154,7 +154,7 @@ void Gui::Initialize()
 
 	int selector_spacing = (int)fl_width("Path to exe-file:") + 5;
 	m_solution_selector = new Fl_Input(selector_spacing, y, 350, h, "Path to solution:");
-	m_solution_selector->value(m_options_manager->LastSolutionDir().c_str());
+	m_solution_selector->value(m_options_manager->GetOption("LastSolutionDir").c_str());
 	m_solution_file_selector_button = new Fl_Button(selector_spacing + 355, y, 500 - (selector_spacing + 355) - 5, h, "...");
 	m_solution_file_selector_button->callback(ButtonCallback, this);
 	m_solution_file_selector_button->clear_visible_focus();
@@ -162,14 +162,14 @@ void Gui::Initialize()
 	m_problem_browser = new Fl_Hold_Browser(510, y, 0, 0);
 	for (unsigned i = 0; i < m_problem_list.size(); i++)
 		m_problem_browser->add(std::string(std::to_string(m_problem_list[i].m_id) + ": " + m_problem_list[i].m_name).c_str());
-	m_problem_browser->value(m_options_manager->LastProblem());
+	m_problem_browser->value(std::stoi(m_options_manager->GetOption("LastProblem")));
 
 	y += h + 10;
 
 	m_first_test_selector = new Fl_Round_Button(5, y, 150, h, "Use only first test");
 	m_first_test_selector->callback(ButtonCallback, this);
 	m_first_test_selector->clear_visible_focus();
-	if (m_options_manager->UseOnlyOneTest())
+	if (m_options_manager->GetOption("UseOnlyOneTest") == "1")
 		m_first_test_selector->set();
 	
 	y += h + 10;
@@ -177,7 +177,7 @@ void Gui::Initialize()
 	m_all_test_selector = new Fl_Round_Button(5, y, 150, h, "Use all tests");
 	m_all_test_selector->callback(ButtonCallback, this);
 	m_all_test_selector->clear_visible_focus();
-	if(m_options_manager->UseMultipleTests())
+	if(m_options_manager->GetOption("UseMultipleTests") == "1")
 		m_all_test_selector->set();
 
 	y += h + 10;
@@ -208,7 +208,7 @@ void Gui::Initialize()
 
 	m_problem_browser->size(180, y - 20);
 	m_main_window->size(700, y);
-	m_main_window->position((int)m_options_manager->WindowPosX(), (int)m_options_manager->WindowPosY());
+	m_main_window->position(std::stoi(m_options_manager->GetOption("WindowPosX")), std::stoi(m_options_manager->GetOption("WindowPosY")));
 
 	m_main_window->end();
 
@@ -269,7 +269,7 @@ int Gui::Run()
 
 		if (m_settings_window->IsProblemBrowserUpdateNeeded())
 		{
-			m_problem_manager->ChangeDir(m_options_manager->ProblemDir());
+			m_problem_manager->ChangeDir(m_options_manager->GetOption("ProblemDir"));
 			m_problem_manager->SearchForProblems();
 			m_problem_list = m_problem_manager->GetProblemList();
 

@@ -11,7 +11,7 @@ void Instance::Initialize(const char* file_location_)
 	m_options_manager->AppPath() = m_current_dir;
 
 	m_error_manager =	new ErrorManager(m_options_manager);
-	m_problem_manager = new ProblemManager(m_options_manager->ProblemDir(), m_error_manager);
+	m_problem_manager = new ProblemManager(m_options_manager->GetOption("ProblemDir"), m_error_manager);
 	m_test_manager =	new TestManager(m_options_manager, m_problem_manager, m_error_manager);
 	m_gui_ptr =			new Gui(m_options_manager, m_problem_manager, m_test_manager, m_error_manager);
 }
