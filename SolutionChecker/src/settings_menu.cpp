@@ -89,6 +89,15 @@ void SettingsWindow::Initialize()
 	m_java_compiler_dir_selector_button->clear_visible_focus();
 
 	y += h + 10;
+
+	m_java_vm_dir_selector = new Fl_Input(compiler_selector_spacing, y, 400, h, "Java VM:");
+	m_java_vm_dir_selector->value(m_options_manager->GetOption("JavaVMPath").c_str());
+
+	m_java_vm_dir_selector_button = new Fl_Button(compiler_selector_spacing + 403, y, w - compiler_selector_spacing - 400 - 10, h, "Java VM...");
+	m_java_vm_dir_selector_button->callback(ButtonCallback, this);
+	m_java_vm_dir_selector_button->clear_visible_focus();
+
+	y += h + 10;
 	y += h + 10;
 
 	m_cpp_default_arg_selector = new Fl_Input(compiler_default_arg_spacing, y, w - compiler_default_arg_spacing - 7, h, "Cpp default args:");
@@ -268,6 +277,7 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 		m_options_manager->SetOption("CCompilerDir", m_c_compiler_dir_selector->value());
 		m_options_manager->SetOption("PascalCompilerDir", m_pascal_compiler_dir_selector->value());
 		m_options_manager->SetOption("JavaCompilerDir", m_java_compiler_dir_selector->value());
+		m_options_manager->SetOption("JavaVMPath", m_java_vm_dir_selector->value());
 
 		m_options_manager->SetOption("CppDefaultArgs", m_cpp_default_arg_selector->value());
 		m_options_manager->SetOption("CDefaultArgs", m_c_default_arg_selector->value());
@@ -332,6 +342,12 @@ void SettingsWindow::ButtonClick(Fl_Widget* w)
 		m_java_compiler_dir_selector->value(SelectFile().c_str());
 		return;
 	}
+
+	if (button_label == "Java VM...")
+	{
+		m_java_vm_dir_selector->value(SelectFile().c_str());
+		return;
+	}
 }
 
 void SettingsWindow::UpdateWidgetInfo()
@@ -344,6 +360,7 @@ void SettingsWindow::UpdateWidgetInfo()
 	m_c_compiler_dir_selector->value(m_options_manager->GetOption("CCompilerDir").c_str());
 	m_pascal_compiler_dir_selector->value(m_options_manager->GetOption("PascalCompilerDir").c_str());
 	m_java_compiler_dir_selector->value(m_options_manager->GetOption("JavaCompilerDir").c_str());
+	m_java_vm_dir_selector->value(m_options_manager->GetOption("JavaVMPath").c_str());
 
 	m_theme_choice->value(m_options_manager->GetThemeId());
 }

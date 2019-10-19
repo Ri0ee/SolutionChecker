@@ -59,6 +59,7 @@ private:
 	Fl_Input* m_cpp_compiler_dir_selector;
 	Fl_Input* m_c_compiler_dir_selector;
 	Fl_Input* m_java_compiler_dir_selector;
+	Fl_Input* m_java_vm_dir_selector;
 	Fl_Input* m_c_default_arg_selector;
 	Fl_Input* m_cpp_default_arg_selector;
 	Fl_Input* m_pascal_default_arg_selector;
@@ -72,6 +73,7 @@ private:
 	Fl_Button* m_cpp_compiler_dir_selector_button;
 	Fl_Button* m_c_compiler_dir_selector_button;
 	Fl_Button* m_java_compiler_dir_selector_button;
+	Fl_Button* m_java_vm_dir_selector_button;
 	Fl_Button* m_reset_settings_button;
 	Fl_Button* m_apply_settings_button;
 	Fl_Button* m_import_problem_button;
