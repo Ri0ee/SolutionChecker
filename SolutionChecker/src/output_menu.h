@@ -79,6 +79,7 @@ private:
 	OptionsManager* m_options_manager;
 
 	Fl_Double_Window* m_window;
+	Fl_Box* m_summary_box;
 
 	int* m_created_file_count = nullptr;
 	int m_width = 0, m_height = 0;

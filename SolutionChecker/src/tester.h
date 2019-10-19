@@ -38,6 +38,8 @@ struct Test
 	std::string m_input_data;
 	std::string m_output_data;
 	std::string m_destination_data;
+	int m_points = 0;
+	int m_problem_bonus_points = 0;
 };
 
 class TestManager

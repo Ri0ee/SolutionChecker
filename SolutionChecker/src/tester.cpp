@@ -157,7 +157,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 	for (int current_test = 0; current_test < problem_.m_test_count; current_test++)
 	{
 		m_testing_stage.store(current_test); // Update testing stage
-		Test test = { 0, 0, (DWORD)-1, 0, current_test, "", "", "" };
+		Test test = { 0, 0, (DWORD)-1, 0, current_test, "", "", "", problem_.m_tests[current_test].points, problem_.m_bonus_points };
 
 		// If executable file does not exist
 		if (!std::filesystem::exists(new_executable_dir))

@@ -160,7 +160,24 @@ void OutputWindow::Show()
 
 void OutputWindow::ResetResultList(std::vector<Test>& test_result_list_)
 {
+	int success = 0, points = 0;
+	for (auto& test : test_result_list_)
+		if (test.m_status & TEST_STATUS_OK) 
+		{
+			success++;
+			points += test.m_points;
+		}
+
+	if (success == test_result_list_.size())
+		points += test_result_list_[0].m_problem_bonus_points;
+
 	m_height = 10;
+	std::string summary_text = std::to_string(success) + " of " + std::to_string(test_result_list_.size()) + " tests were successful, points: " + std::to_string(points);
+	int width = fl_width(summary_text.c_str());
+	m_summary_box = new Fl_Box(20, m_height, width, 20, "");
+	m_summary_box->copy_label(summary_text.c_str());
+	m_summary_box->labelfont(FL_HELVETICA_BOLD);
+	m_height += 30;
 
 	for (auto test : test_result_list_)
 	{
