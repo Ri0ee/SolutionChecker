@@ -23,14 +23,13 @@ class ProblemCreatorWindow
 public:
 	ProblemCreatorWindow(std::shared_ptr<ProblemManager> problem_manager_, std::shared_ptr<OptionsManager> options_manager_) :
 		m_problem_manager(problem_manager_), m_options_manager(options_manager_) { Initialize(); }
-	~ProblemCreatorWindow() { Shutdown(); }
+	~ProblemCreatorWindow() { m_window->hide(); }
 
 	void Show();
 	void Hide();
 
 private:
 	void Initialize();
-	void Shutdown();
 
 	void ButtonClick(Fl_Widget* w);
 	static void ButtonCallback(Fl_Widget* w, void* f) { ((ProblemCreatorWindow*)f)->ButtonClick(w); }

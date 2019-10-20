@@ -6,7 +6,7 @@ void SettingsWindow::Initialize()
 {
 	m_problem_browser_update_needed = false;
 
-	m_problem_creator_window = new ProblemCreatorWindow(m_problem_manager, m_options_manager);
+	m_problem_creator_window = std::make_shared<ProblemCreatorWindow>(m_problem_manager, m_options_manager);
 
 	int y = 10, h = 20;
 	int w = 700;
@@ -154,15 +154,6 @@ void SettingsWindow::Initialize()
 	m_window->size(w, y);
 	m_window->hide();
 	m_window->end();
-}
-
-void SettingsWindow::Shutdown()
-{
-	if (m_problem_creator_window)
-	{
-		m_problem_creator_window->Hide();
-		delete m_problem_creator_window;
-	}
 }
 
 void SettingsWindow::Show()

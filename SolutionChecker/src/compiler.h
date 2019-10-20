@@ -20,8 +20,7 @@ class Compiler
 public:
 	Compiler(std::shared_ptr<OptionsManager> options_manager_, std::shared_ptr<ErrorManager> error_manager_) :
 		m_options_manager(options_manager_), m_error_manager(error_manager_) {}
-	~Compiler() {}
-	
+
 	std::string Compile(const std::string& file_name_, CompilerLanguage compiler_language_);
 
 private:

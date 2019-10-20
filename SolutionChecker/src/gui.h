@@ -34,17 +34,14 @@ class Gui
 {
 public:
 	Gui(std::shared_ptr<OptionsManager> options_manager_, std::shared_ptr<ProblemManager> problem_manager_, 
-		std::shared_ptr<TestManager> test_manager_, 
-		std::shared_ptr<ErrorManager> error_manager_) :
+		std::shared_ptr<TestManager> test_manager_, std::shared_ptr<ErrorManager> error_manager_) :
 		m_options_manager(options_manager_), m_problem_manager(problem_manager_), 
 		m_test_manager(test_manager_), m_error_manager(error_manager_) { Initialize(); }
-	~Gui() { Shutdown(); }
 
 	int Run();
 	
 private:
 	void Initialize();
-	void Shutdown();
 
 	static void ButtonCallback(Fl_Widget* w, void* f) { ((Gui*)f)->ButtonClick(w); }
 	static void WindowCallback(Fl_Widget* w, void* f) { ((Gui*)f)->WindowAction(); }
@@ -71,7 +68,7 @@ private:
 	Fl_Progress*		m_testing_progress;
 	Fl_Hold_Browser*	m_problem_browser;
 
-	std::vector<Problem>		m_problem_list;
-	std::vector<OutputWindow*>	m_output_windows;
+	std::vector<Problem> m_problem_list;
+	std::vector<std::shared_ptr<OutputWindow>> m_output_windows;
 	int m_output_window_created_file_count = 0;
 };

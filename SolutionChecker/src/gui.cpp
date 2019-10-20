@@ -234,28 +234,19 @@ int Gui::Run()
 				std::vector<Test> temp_result_data;
 				m_test_manager->GetResultData(temp_result_data);
 
-				OutputWindow* output_window_ptr = new OutputWindow(temp_result_data, m_options_manager, &m_output_window_created_file_count);
+				std::shared_ptr<OutputWindow> output_window_ptr = std::make_shared<OutputWindow>(temp_result_data, m_options_manager, &m_output_window_created_file_count);
 				output_window_ptr->Show();
 
 				bool f = false;
-				for (unsigned int i = 0; i < m_output_windows.size(); i++)
-				{
-					if (m_output_windows[i] == nullptr)
+				for (auto& output_window : m_output_windows) 
+					if (!output_window->IsVisible())
 					{
-						m_output_windows[i] = output_window_ptr;
+						output_window.reset();
+						output_window = output_window_ptr;
 						f = true;
 						break;
 					}
-					else if (!m_output_windows[i]->IsVisible())
-					{
-						delete m_output_windows[i];
-						m_output_windows[i] = output_window_ptr;
-						f = true;
-						break;
-					}
-				}
-
-				if (f == false) m_output_windows.push_back(output_window_ptr);
+				if (!f) m_output_windows.push_back(output_window_ptr);
 
 				m_problem_browser->activate();
 				m_start_test_button->activate();
@@ -282,14 +273,4 @@ int Gui::Run()
 	}
 
 	return 0;
-}
-
-void Gui::Shutdown()
-{
-	for (auto output_window : m_output_windows)
-		if (output_window != nullptr)
-		{
-			delete output_window;
-			output_window = nullptr;
-		}
 }

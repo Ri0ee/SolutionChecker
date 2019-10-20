@@ -1,14 +1,6 @@
 #include "error_manager.h"
 
-void ErrorManager::Initialize()
-{
 
-}
-
-void ErrorManager::Shutdown()
-{
-
-}
 
 void ErrorManager::SaveToFile()
 {

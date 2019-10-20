@@ -26,10 +26,7 @@ class OutputWindow
 		}
 		~ListElement() { Shutdown(); }
 
-		int width()
-		{
-			return m_width;
-		}
+		int width() { return m_width; }
 
 	private:
 		void Initialize();
@@ -63,7 +60,7 @@ public:
 		m_test_result_list(test_result_list_), m_options_manager(options_manager_), m_created_file_count(created_file_count_) { 
 		Initialize(); 
 	}
-	~OutputWindow() { Shutdown(); }
+	~OutputWindow() { m_window->hide(); }
 
 	void Show();
 	void Hide();

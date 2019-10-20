@@ -184,11 +184,6 @@ void ProblemCreatorWindow::Initialize()
 	m_window->hide();
 }
 
-void ProblemCreatorWindow::Shutdown()
-{
-
-}
-
 void ProblemCreatorWindow::ButtonClick(Fl_Widget* w)
 {
 	std::string button_label(w->label());

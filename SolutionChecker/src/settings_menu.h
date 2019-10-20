@@ -23,7 +23,6 @@ class SettingsWindow
 public:
 	SettingsWindow(std::shared_ptr<OptionsManager> options_manager_, std::shared_ptr<ProblemManager> problem_manager_) :
 		m_options_manager(options_manager_), m_problem_manager(problem_manager_) { Initialize(); }
-	~SettingsWindow() { Shutdown(); }
 
 	void Show();
 	void Hide();
@@ -34,7 +33,6 @@ public:
 
 private:
 	void Initialize();
-	void Shutdown();
 
 	void ButtonClick(Fl_Widget* w);
 	static void ButtonCallback(Fl_Widget* w, void* f) { ((SettingsWindow*)f)->ButtonClick(w); }
@@ -46,7 +44,7 @@ private:
 	std::shared_ptr<OptionsManager> m_options_manager;
 	std::shared_ptr<ProblemManager> m_problem_manager;
 
-	ProblemCreatorWindow* m_problem_creator_window = nullptr;
+	std::shared_ptr<ProblemCreatorWindow> m_problem_creator_window;
 
 	Fl_Double_Window* m_window;
 
