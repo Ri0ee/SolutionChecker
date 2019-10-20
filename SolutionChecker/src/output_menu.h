@@ -20,7 +20,7 @@ class OutputWindow
 {
 	struct ListElement
 	{
-		ListElement(int x_, int y_, OptionsManager* options_manager_, const Test& test_, int* created_file_count_) :
+		ListElement(int x_, int y_, std::shared_ptr<OptionsManager> options_manager_, const Test& test_, int* created_file_count_) :
 			m_x(x_), m_y(y_), m_options_manager(options_manager_), m_test(test_), m_created_file_count(created_file_count_) {
 			Initialize();
 		}
@@ -38,7 +38,7 @@ class OutputWindow
 		static void ButtonCallback(Fl_Widget* w, void* f) { ((OutputWindow::ListElement*)f)->ButtonClick(w); }
 		void ButtonClick(Fl_Widget* w);
 
-		OptionsManager* m_options_manager;
+		std::shared_ptr<OptionsManager> m_options_manager;
 
 		Fl_Box*		m_header_display;
 		Fl_Box*		m_info_display;
@@ -59,7 +59,7 @@ class OutputWindow
 	};
 
 public:
-	OutputWindow(std::vector<Test>& test_result_list_, OptionsManager* options_manager_, int* created_file_count_) : 
+	OutputWindow(std::vector<Test>& test_result_list_, std::shared_ptr<OptionsManager> options_manager_, int* created_file_count_) :
 		m_test_result_list(test_result_list_), m_options_manager(options_manager_), m_created_file_count(created_file_count_) { 
 		Initialize(); 
 	}
@@ -75,7 +75,7 @@ private:
 	void Shutdown();
 	void ResetResultList(std::vector<Test>& test_result_list_);
 
-	OptionsManager* m_options_manager;
+	std::shared_ptr<OptionsManager> m_options_manager;
 
 	Fl_Double_Window* m_window;
 	Fl_Box* m_summary_box;

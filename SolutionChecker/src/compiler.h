@@ -18,7 +18,7 @@ enum class CompilerLanguage{
 class Compiler
 {
 public:
-	Compiler(OptionsManager* options_manager_, ErrorManager* error_manager_) : 
+	Compiler(std::shared_ptr<OptionsManager> options_manager_, std::shared_ptr<ErrorManager> error_manager_) :
 		m_options_manager(options_manager_), m_error_manager(error_manager_) {}
 	~Compiler() {}
 	
@@ -30,6 +30,6 @@ private:
 	std::string CompileJava(const std::string& file_name_);
 	std::string CompileC(const std::string& file_name_);
 
-	OptionsManager* m_options_manager = nullptr;
-	ErrorManager* m_error_manager = nullptr;
+	std::shared_ptr<OptionsManager> m_options_manager;
+	std::shared_ptr<ErrorManager> m_error_manager;
 };

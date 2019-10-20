@@ -21,7 +21,7 @@
 class ProblemCreatorWindow
 {
 public:
-	ProblemCreatorWindow(ProblemManager* problem_manager_, OptionsManager* options_manager_) :
+	ProblemCreatorWindow(std::shared_ptr<ProblemManager> problem_manager_, std::shared_ptr<OptionsManager> options_manager_) :
 		m_problem_manager(problem_manager_), m_options_manager(options_manager_) { Initialize(); }
 	~ProblemCreatorWindow() { Shutdown(); }
 
@@ -38,8 +38,8 @@ private:
 	std::vector<std::string> SelectMultipleFiles(const std::string& initial_dir_);
 	std::string SelectDirectory();
 
-	ProblemManager* m_problem_manager = nullptr;
-	OptionsManager* m_options_manager = nullptr;
+	std::shared_ptr<ProblemManager> m_problem_manager;
+	std::shared_ptr<OptionsManager> m_options_manager;
 
 	Fl_Double_Window* m_window;
 

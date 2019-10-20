@@ -45,7 +45,7 @@ struct Test
 class TestManager
 {
 public:
-	TestManager(OptionsManager* options_manager_, ProblemManager* problem_manager_, ErrorManager* error_manager_) :
+	TestManager(std::shared_ptr<OptionsManager> options_manager_, std::shared_ptr<ProblemManager> problem_manager_, std::shared_ptr<ErrorManager> error_manager_) :
 		m_options_manager(options_manager_), m_problem_manager(problem_manager_), m_error_manager(error_manager_) {}
 	TestManager() {}
 	~TestManager() { Shutdown(); }
@@ -65,9 +65,9 @@ private:
 	std::string SelectCompilerAndCompile(const std::string& solution_location_);
 	long long GetExecutionTime(PROCESS_INFORMATION& pi_);
 
-	OptionsManager* m_options_manager = nullptr;
-	ProblemManager* m_problem_manager = nullptr;
-	ErrorManager*	m_error_manager = nullptr;
+	std::shared_ptr<OptionsManager> m_options_manager;
+	std::shared_ptr<ProblemManager> m_problem_manager;
+	std::shared_ptr<ErrorManager> m_error_manager;
 
 	std::thread* m_testing_thread = nullptr;
 

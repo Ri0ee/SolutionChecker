@@ -28,7 +28,7 @@ public:
 		Severity severity;
 	};
 
-	ErrorManager(OptionsManager* options_manager_) : m_options_manager(options_manager_) { Initialize(); }
+	ErrorManager(std::shared_ptr<OptionsManager> options_manager_) : m_options_manager(options_manager_) { Initialize(); }
 	~ErrorManager() { Shutdown(); }
 
 	void PushError(Error error_) { m_error_deque.push_back(error_); };
@@ -41,7 +41,7 @@ private:
 	void Initialize();
 	void Shutdown();
 
-	OptionsManager* m_options_manager;
+	std::shared_ptr<OptionsManager> m_options_manager;
 
 	std::deque<Error> m_error_deque;
 };

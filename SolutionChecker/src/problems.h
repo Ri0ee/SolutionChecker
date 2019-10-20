@@ -7,6 +7,7 @@
 #include <Windows.h>
 #include <tinyxml2.h>
 #include <filesystem>
+#include <memory>
 
 #include "utils.h"
 #include "error_manager.h"
@@ -62,12 +63,10 @@ struct Problem
 class ProblemManager
 {
 public:
-	ProblemManager(const std::string& path_to_problems_folder_, ErrorManager* error_manager_) : 
-		m_path(path_to_problems_folder_), m_error_manager(error_manager_) { 
+	ProblemManager(std::shared_ptr<OptionsManager> options_manager_, std::shared_ptr<ErrorManager> error_manager_) : 
+		m_options_manager(options_manager_), m_error_manager(error_manager_) { 
 		Initialize(); 
 	}
-	ProblemManager() {}
-	~ProblemManager() {}
 
 	void SearchForProblems();
 	void ShowTaskDescription(int problem_id_);
@@ -88,7 +87,8 @@ public:
 private:
 	void Initialize();
 
-	ErrorManager* m_error_manager = nullptr;
+	std::shared_ptr<ErrorManager> m_error_manager;
+	std::shared_ptr<OptionsManager> m_options_manager;
 
 	std::filesystem::path m_path;
 	std::vector<Problem> m_problem_list;

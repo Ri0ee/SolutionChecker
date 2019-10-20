@@ -212,7 +212,7 @@ void Gui::Initialize()
 
 	m_main_window->end();
 
-	m_settings_window = new SettingsWindow(m_options_manager, m_problem_manager);
+	m_settings_window = std::make_shared<SettingsWindow>(m_options_manager, m_problem_manager);
 }
 
 int Gui::Run()
@@ -286,12 +286,6 @@ int Gui::Run()
 
 void Gui::Shutdown()
 {
-	if (m_settings_window != nullptr)
-	{
-		delete m_settings_window;
-		m_settings_window = nullptr;
-	}
-
 	for (auto output_window : m_output_windows)
 		if (output_window != nullptr)
 		{

@@ -4,6 +4,7 @@
 
 void ProblemManager::Initialize()
 {
+	m_path = m_options_manager->GetOption("ProblemDir");
 	if(!m_path.empty()) SearchForProblems();
 }
 

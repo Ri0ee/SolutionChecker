@@ -33,7 +33,9 @@
 class Gui
 {
 public:
-	Gui(OptionsManager* options_manager_, ProblemManager* problem_manager_, TestManager* test_manager_, ErrorManager* error_manager_) :
+	Gui(std::shared_ptr<OptionsManager> options_manager_, std::shared_ptr<ProblemManager> problem_manager_, 
+		std::shared_ptr<TestManager> test_manager_, 
+		std::shared_ptr<ErrorManager> error_manager_) :
 		m_options_manager(options_manager_), m_problem_manager(problem_manager_), 
 		m_test_manager(test_manager_), m_error_manager(error_manager_) { Initialize(); }
 	~Gui() { Shutdown(); }
@@ -51,11 +53,11 @@ private:
 	void WindowAction();
 	std::string SelectFile(const std::string& initial_dir_);
 
-	OptionsManager* m_options_manager = nullptr;
-	ProblemManager* m_problem_manager = nullptr;
-	TestManager*	m_test_manager = nullptr;
-	SettingsWindow* m_settings_window = nullptr;
-	ErrorManager*	m_error_manager = nullptr;
+	std::shared_ptr<OptionsManager> m_options_manager;
+	std::shared_ptr<ProblemManager> m_problem_manager;
+	std::shared_ptr<TestManager> m_test_manager;
+	std::shared_ptr<SettingsWindow> m_settings_window;
+	std::shared_ptr<ErrorManager> m_error_manager;
 
 	Fl_Double_Window*	m_main_window;
 	Fl_Button*			m_start_test_button;

@@ -21,7 +21,7 @@
 class SettingsWindow
 {
 public:
-	SettingsWindow(OptionsManager* options_manager_, ProblemManager* problem_manager_) : 
+	SettingsWindow(std::shared_ptr<OptionsManager> options_manager_, std::shared_ptr<ProblemManager> problem_manager_) :
 		m_options_manager(options_manager_), m_problem_manager(problem_manager_) { Initialize(); }
 	~SettingsWindow() { Shutdown(); }
 
@@ -43,8 +43,8 @@ private:
 	std::string SelectDirectory();
 	std::string SelectFile();
 
-	OptionsManager* m_options_manager = nullptr;
-	ProblemManager* m_problem_manager = nullptr;
+	std::shared_ptr<OptionsManager> m_options_manager;
+	std::shared_ptr<ProblemManager> m_problem_manager;
 
 	ProblemCreatorWindow* m_problem_creator_window = nullptr;
 
