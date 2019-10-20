@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Input_.H 10807 2015-07-21 13:55:13Z AlbrechtS $"
+// "$Id$"
 //
 // Input base class header file for the Fast Light Tool Kit (FLTK).
 //
@@ -359,6 +359,9 @@ public:
   */
   int insert(const char* t, int l=0){return replace(position_, mark_, t, l);}
 
+  /* Append text at the end. */
+  int append(const char* t, int l=0, char keep_selection=0);
+
   /* Put the current selection into the clipboard. */
   int copy(int clipboard);
 
@@ -495,5 +498,5 @@ public:
 #endif 
 
 //
-// End of "$Id: Fl_Input_.H 10807 2015-07-21 13:55:13Z AlbrechtS $".
+// End of "$Id$".
 //

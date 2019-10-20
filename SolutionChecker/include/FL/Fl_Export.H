@@ -1,9 +1,9 @@
 /*
- * "$Id: Fl_Export.H 10236 2014-08-21 12:29:48Z cand $"
+ * "$Id$"
  *
- * WIN32 DLL export .
+ * Windows DLL export .
  *
- * Copyright 1998-2010 by Bill Spitzak and others.
+ * Copyright 1998-2018 by Bill Spitzak and others.
  *
  * This library is free software. Distribution and use rights are outlined in
  * the file "COPYING" which should have been included with this file.  If this
@@ -20,7 +20,7 @@
 #  define Fl_Export_H
 
 /*
- * The following is only used when building DLLs under WIN32...
+ * The following is only used when building DLLs under Windows...
  */
 
 #  if defined(FL_DLL)
@@ -38,5 +38,5 @@
 #endif /* !Fl_Export_H */
 
 /*
- * End of "$Id: Fl_Export.H 10236 2014-08-21 12:29:48Z cand $".
+ * End of "$Id$".
  */

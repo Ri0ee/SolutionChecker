@@ -236,7 +236,7 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 
 			JOBOBJECT_EXTENDED_LIMIT_INFORMATION jeli = { 0 };
 			QueryInformationJobObject(job_handle, JobObjectExtendedLimitInformation, &jeli, sizeof(jeli), NULL);
-			test.m_peak_memory_used = jeli.PeakProcessMemoryUsed;
+			test.m_peak_memory_used = (int)jeli.PeakProcessMemoryUsed;
 
 			CloseHandle(job_port_handle);
 			CloseHandle(job_handle);

@@ -173,7 +173,7 @@ void OutputWindow::ResetResultList(std::vector<Test>& test_result_list_)
 
 	m_height = 10;
 	std::string summary_text = std::to_string(success) + " of " + std::to_string(test_result_list_.size()) + " tests were successful, points: " + std::to_string(points);
-	int width = fl_width(summary_text.c_str());
+	int width = (int)fl_width(summary_text.c_str());
 	m_summary_box = new Fl_Box(20, m_height, width, 20, "");
 	m_summary_box->copy_label(summary_text.c_str());
 	m_summary_box->labelfont(FL_HELVETICA_BOLD);

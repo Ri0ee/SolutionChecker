@@ -17,6 +17,7 @@ namespace SG
 
 		struct Option {
 			std::string value;
+			bool valid = true;
 		};
 
 		void Push(std::string key_, const std::string& value_) {
@@ -25,6 +26,7 @@ namespace SG
 		}
 
 		Option Pull(std::string key_) {
+			if (option_map.find(key_) == option_map.end()) return { "", false };
 			return option_map[key_];
 		}
 

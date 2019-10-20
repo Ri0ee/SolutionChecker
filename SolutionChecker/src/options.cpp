@@ -20,8 +20,9 @@ void OptionsManager::SetDefaults()
 	m_options_manager.Update("TempDir", "");
 	m_options_manager.Update("LastSolutionDir", "");
 
-	m_options_manager.Update("LastProblem", "");
+	m_options_manager.Update("LastProblem", "0");
 	m_options_manager.Update("UseOnlyOneTest", "0");
+	m_options_manager.Update("UseMultipleTests", "1");
 	m_options_manager.Update("Theme", "none");
 	m_options_manager.Update("TestMemoryLimit", "512");
 

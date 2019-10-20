@@ -1,5 +1,5 @@
 //
-// "$Id: Fl_Tiled_Image.H 10598 2015-03-01 20:16:56Z AlbrechtS $"
+// "$Id$"
 //
 // Tiled image header file for the Fast Light Tool Kit (FLTK).
 //
@@ -43,10 +43,10 @@ class FL_EXPORT Fl_Tiled_Image : public Fl_Image {
   virtual ~Fl_Tiled_Image();
 
   virtual Fl_Image *copy(int W, int H);
-  Fl_Image *copy() { return copy(w(), h()); }
+  Fl_Image *copy() { return Fl_Image::copy(); }
   virtual void color_average(Fl_Color c, float i);
   virtual void desaturate();
-  virtual void draw(int X, int Y, int W, int H, int cx, int cy);
+  virtual void draw(int X, int Y, int W, int H, int cx = 0, int cy = 0);
   void draw(int X, int Y) { draw(X, Y, w(), h(), 0, 0); }
   /** Gets The image that is tiled */
   Fl_Image *image() { return image_; }
@@ -55,5 +55,5 @@ class FL_EXPORT Fl_Tiled_Image : public Fl_Image {
 #endif // !Fl_Tiled_Image_H
 
 //
-// End of "$Id: Fl_Tiled_Image.H 10598 2015-03-01 20:16:56Z AlbrechtS $"
+// End of "$Id$"
 //
