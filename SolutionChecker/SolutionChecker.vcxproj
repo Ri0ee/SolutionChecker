@@ -140,6 +140,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\include\tinyxml2.cpp" />
+    <ClCompile Include="..\include\util.cpp" />
     <ClCompile Include="src\compiler.cpp" />
     <ClCompile Include="src\error_manager.cpp" />
     <ClCompile Include="src\gui.cpp" />
@@ -148,11 +149,11 @@
     <ClCompile Include="src\options.cpp" />
     <ClCompile Include="src\problems.cpp" />
     <ClCompile Include="src\tester.cpp" />
-    <ClCompile Include="src\utils.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\setting_guru.h" />
     <ClInclude Include="..\include\tinyxml2.h" />
+    <ClInclude Include="..\include\util.h" />
     <ClInclude Include="src\compiler.h" />
     <ClInclude Include="src\error_manager.h" />
     <ClInclude Include="src\gui.h" />
@@ -160,7 +161,6 @@
     <ClInclude Include="src\options.h" />
     <ClInclude Include="src\problems.h" />
     <ClInclude Include="src\tester.h" />
-    <ClInclude Include="src\utils.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

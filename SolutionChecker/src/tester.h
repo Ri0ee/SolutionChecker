@@ -10,7 +10,7 @@
 
 #include "options.h"
 #include "problems.h"
-#include "utils.h"
+#include "util.h"
 #include "compiler.h"
 #include "error_manager.h"
 

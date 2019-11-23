@@ -32,10 +32,10 @@
     <ClCompile Include="src\problems.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
-    <ClCompile Include="src\util.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
     <ClCompile Include="..\include\tinyxml2.cpp">
+      <Filter>Include</Filter>
+    </ClCompile>
+    <ClCompile Include="..\include\util.cpp">
       <Filter>Include</Filter>
     </ClCompile>
   </ItemGroup>
@@ -55,13 +55,13 @@
     <ClInclude Include="src\problems.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
-    <ClInclude Include="src\util.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
     <ClInclude Include="..\include\tinyxml2.h">
       <Filter>Include</Filter>
     </ClInclude>
     <ClInclude Include="..\include\setting_guru.h">
+      <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="..\include\util.h">
       <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>

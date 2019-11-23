@@ -20,23 +20,23 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\include\tinyxml2.cpp" />
+    <ClCompile Include="..\include\util.cpp" />
     <ClCompile Include="src\error_manager.cpp" />
     <ClCompile Include="src\gui.cpp" />
     <ClCompile Include="src\instance.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\options.cpp" />
     <ClCompile Include="src\problems.cpp" />
-    <ClCompile Include="src\util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\include\setting_guru.h" />
     <ClInclude Include="..\include\tinyxml2.h" />
+    <ClInclude Include="..\include\util.h" />
     <ClInclude Include="src\error_manager.h" />
     <ClInclude Include="src\gui.h" />
     <ClInclude Include="src\instance.h" />
     <ClInclude Include="src\options.h" />
     <ClInclude Include="src\problems.h" />
-    <ClInclude Include="src\util.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
