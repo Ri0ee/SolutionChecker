@@ -65,15 +65,17 @@ struct Problem
 class ProblemManager
 {
 public:
-	ProblemManager(std::shared_ptr<OptionsManager> options_manager_, std::shared_ptr<ErrorManager> error_manager_) : 
-		m_options_manager(options_manager_), m_error_manager(error_manager_) { 
-		Initialize(); 
-	}
+	ProblemManager(	std::shared_ptr<OptionsManager> options_manager_, 
+					std::shared_ptr<ErrorManager> error_manager_) : 
+					m_options_manager(options_manager_), 
+					m_error_manager(error_manager_) 
+					{ 
+						if (m_options_manager->GetOption("ProblemDir") != "")
+							SearchForProblems();
+					}
 
 	void SearchForProblems();
 	void ShowTaskDescription(int problem_id_);
-	void ChangeDir(const std::string& path_to_problems_folder_) { m_path = path_to_problems_folder_; }
-
 	bool ReadProblem(Problem& problem_, const std::string& problem_layout_file_path_);
 	int GetFreeID();
 
@@ -83,14 +85,9 @@ public:
 		return m_problem_list[problem_id_]; 
 	}
 
-	std::string GetPath() { return m_path.string(); }
-
 private:
-	void Initialize();
-
 	std::shared_ptr<ErrorManager> m_error_manager;
 	std::shared_ptr<OptionsManager> m_options_manager;
 
-	std::filesystem::path m_path;
 	std::vector<Problem> m_problem_list;
 };

@@ -45,9 +45,12 @@ struct Test
 class TestManager
 {
 public:
-	TestManager(std::shared_ptr<OptionsManager> options_manager_, std::shared_ptr<ProblemManager> problem_manager_, std::shared_ptr<ErrorManager> error_manager_) :
-		m_options_manager(options_manager_), m_problem_manager(problem_manager_), m_error_manager(error_manager_) {}
-	TestManager() {}
+	TestManager(std::shared_ptr<OptionsManager> options_manager_, 
+				std::shared_ptr<ProblemManager> problem_manager_, 
+				std::shared_ptr<ErrorManager> error_manager_) :
+				m_options_manager(options_manager_), 
+				m_problem_manager(problem_manager_), 
+				m_error_manager(error_manager_) {}
 	~TestManager() { Shutdown(); }
 
 	void StartTesting(int problem_id_, const std::string& solution_location_, bool all_tests_);

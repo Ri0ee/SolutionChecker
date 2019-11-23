@@ -2,17 +2,12 @@
 
 
 
-void ProblemManager::Initialize()
-{
-	m_path = m_options_manager->GetOption("ProblemDir");
-	if(!m_path.empty()) SearchForProblems();
-}
-
 void ProblemManager::SearchForProblems()
 {
+	if (m_options_manager->GetOption("ProblemDir").empty()) return;
 	m_problem_list.clear();
 
-	for (auto& dir : std::filesystem::directory_iterator(m_path))
+	for (auto& dir : std::filesystem::directory_iterator(m_options_manager->GetOption("ProblemDir")))
 	{
 		if (!dir.is_directory())
 			continue;
@@ -103,16 +98,11 @@ int ProblemManager::GetFreeID()
 	if (m_problem_list.empty()) 
 		SearchForProblems();
 
-	int last_id = 0;
-	for (auto& problem : m_problem_list)
-	{
-		int cid = problem.m_internal_id;
+	int id = 0;
+	for (auto& it : m_problem_list)
+		if (it.m_internal_id - id > 1)
+			return it.m_internal_id - 1;
+		else id = it.m_internal_id;
 
-		if (cid - last_id > 1) 
-			return last_id + 1;
-
-		last_id = cid;
-	}
-
-	return m_problem_list.size() + 1;
+	return id + 1;
 }
