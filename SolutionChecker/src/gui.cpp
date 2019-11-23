@@ -80,15 +80,6 @@ void Gui::ButtonClick(Fl_Widget* w)
 		return;
 	}
 
-	if (button_label == "Settings")
-	{
-		if (m_settings_window->IsVisible())
-			m_settings_window->Hide();
-		else
-			m_settings_window->Show();
-		return;
-	}
-
 	if (button_label == "...")
 	{
 		std::string temp_string = SelectFile(m_options_manager->GetOption("LastSolutionDir"));
@@ -106,7 +97,7 @@ void Gui::ButtonClick(Fl_Widget* w)
 
 		int id = m_problem_browser->value() - 1;
 		std::string message_buffer = "name: " + m_problem_list[id].m_name + "\n" +
-			"id: " + std::to_string(m_problem_list[id].m_id) + "\n" +
+			"gid: " + m_problem_list[id].m_id + "\n" +
 			"path: " + m_problem_list[id].m_path + "\n" +
 			"input file name: " + m_problem_list[id].m_input_file + "\n" +
 			"output file name: " + m_problem_list[id].m_output_file + "\n" +
@@ -127,9 +118,6 @@ void Gui::ButtonClick(Fl_Widget* w)
 
 void Gui::WindowAction() // Close button pressed
 {
-	if (m_settings_window != nullptr)
-		m_settings_window->Hide();
-
 	for (auto output_window : m_output_windows)
 		if(output_window != nullptr)
 			output_window->Hide();
@@ -161,7 +149,7 @@ void Gui::Initialize()
 
 	m_problem_browser = new Fl_Hold_Browser(510, y, 0, 0);
 	for (unsigned i = 0; i < m_problem_list.size(); i++)
-		m_problem_browser->add(std::string(std::to_string(m_problem_list[i].m_id) + ": " + m_problem_list[i].m_name).c_str());
+		m_problem_browser->add(std::string(std::to_string(m_problem_list[i].m_internal_id) + ": " + m_problem_list[i].m_name).c_str());
 	m_problem_browser->value(std::stoi(m_options_manager->GetOption("LastProblem")));
 
 	y += h + 10;
@@ -186,10 +174,6 @@ void Gui::Initialize()
 	m_start_test_button->callback(ButtonCallback, this);
 	m_start_test_button->clear_visible_focus();
 
-	m_settings_button = new Fl_Button(110, y, 100, h, "Settings");
-	m_settings_button->callback(ButtonCallback, this);
-	m_settings_button->clear_visible_focus();
-
 	m_show_problem_info_button = new Fl_Button(215, y, 100, h, "Show info");
 	m_show_problem_info_button->callback(ButtonCallback, this);
 	m_show_problem_info_button->clear_visible_focus();
@@ -211,8 +195,6 @@ void Gui::Initialize()
 	m_main_window->position(std::stoi(m_options_manager->GetOption("WindowPosX")), std::stoi(m_options_manager->GetOption("WindowPosY")));
 
 	m_main_window->end();
-
-	m_settings_window = std::make_shared<SettingsWindow>(m_options_manager, m_problem_manager);
 }
 
 int Gui::Run()
@@ -238,7 +220,7 @@ int Gui::Run()
 				output_window_ptr->Show();
 
 				bool f = false;
-				for (auto& output_window : m_output_windows) 
+				for (auto& output_window : m_output_windows)
 					if (!output_window->IsVisible())
 					{
 						output_window.reset();
@@ -256,19 +238,6 @@ int Gui::Run()
 				m_testing_progress->deactivate();
 				m_testing_progress->value(0);
 			}
-		}
-
-		if (m_settings_window->IsProblemBrowserUpdateNeeded())
-		{
-			m_problem_manager->ChangeDir(m_options_manager->GetOption("ProblemDir"));
-			m_problem_manager->SearchForProblems();
-			m_problem_list = m_problem_manager->GetProblemList();
-
-			m_problem_browser->clear();
-			for (auto problem : m_problem_list)
-				m_problem_browser->add(std::string(std::to_string(problem.m_id) + ": " + problem.m_name).c_str());
-
-			m_settings_window->SetProblemBrowserUpdateNeeded(false);
 		}
 	}
 

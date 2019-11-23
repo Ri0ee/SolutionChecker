@@ -48,11 +48,23 @@ void OutputWindow::ListElement::Initialize()
 	}
 
 	int header_width = (int)fl_width(m_header.c_str());
-	int info_width = (int)fl_width(m_info.c_str());
+	int info_width = (int)fl_width(m_info.c_str()) + 60;
 	m_width = header_width + info_width + 360;
 
-	m_header_display = new Fl_Box(m_x, m_y, header_width, 20);
-	m_info_display = new Fl_Box(m_x + header_width + 10, m_y, info_width, 20);
+	m_show_input_data_button = new Fl_Button(m_x, m_y, 100, 20, "Input");
+	m_show_input_data_button->clear_visible_focus();
+	m_show_input_data_button->callback(ButtonCallback, this);
+
+	m_show_output_data_button = new Fl_Button(m_x + 120, m_y, 100, 20, "Output");
+	m_show_output_data_button->clear_visible_focus();
+	m_show_output_data_button->callback(ButtonCallback, this);
+
+	m_show_destination_data_button = new Fl_Button(m_x + 240, m_y, 100, 20, "Answer");
+	m_show_destination_data_button->clear_visible_focus();
+	m_show_destination_data_button->callback(ButtonCallback, this);
+
+	m_header_display = new Fl_Box(m_x + 360, m_y, header_width, 20);
+	m_info_display = new Fl_Box(m_x + header_width + 370, m_y, info_width, 20);
 
 	m_header_display->box(FL_BORDER_FRAME);
 	m_info_display->box(FL_BORDER_BOX);
@@ -65,18 +77,6 @@ void OutputWindow::ListElement::Initialize()
 
 	m_header_display->labelfont(FL_HELVETICA_BOLD);
 	m_info_display->labelfont(FL_HELVETICA_BOLD);
-
-	m_show_input_data_button = new Fl_Button(m_x + header_width + info_width + 20, m_y, 100, 20, "Input");
-	m_show_input_data_button->clear_visible_focus();
-	m_show_input_data_button->callback(ButtonCallback, this);
-
-	m_show_output_data_button = new Fl_Button(m_x + header_width + info_width + 130, m_y, 100, 20, "Output");
-	m_show_output_data_button->clear_visible_focus();
-	m_show_output_data_button->callback(ButtonCallback, this);
-
-	m_show_destination_data_button = new Fl_Button(m_x + header_width + info_width + 240, m_y, 100, 20, "Answer");
-	m_show_destination_data_button->clear_visible_focus();
-	m_show_destination_data_button->callback(ButtonCallback, this);
 }
 
 void OutputWindow::ListElement::ButtonClick(Fl_Widget* w) 
@@ -139,11 +139,14 @@ void OutputWindow::ListElement::Shutdown()
 
 void OutputWindow::Initialize()
 {
-	m_window = new Fl_Double_Window(500, 520, "Test results");
+	m_window = new Fl_Double_Window(900, 600, "Test results");
 
+	m_scrolling_group = new Fl_Scroll(10, 10, 880, 580);
+
+	m_scrolling_group->begin();
 	ResetResultList(m_test_result_list);
+	m_scrolling_group->end();
 
-	m_window->size(m_width, m_height);
 	m_window->hide();
 	m_window->end();
 }

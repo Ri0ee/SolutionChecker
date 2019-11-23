@@ -24,7 +24,6 @@
 #include "tester.h"
 #include "problems.h"
 #include "compiler.h"
-#include "settings_menu.h"
 #include "output_menu.h"
 #include "error_manager.h"
 
@@ -53,12 +52,10 @@ private:
 	std::shared_ptr<OptionsManager> m_options_manager;
 	std::shared_ptr<ProblemManager> m_problem_manager;
 	std::shared_ptr<TestManager> m_test_manager;
-	std::shared_ptr<SettingsWindow> m_settings_window;
 	std::shared_ptr<ErrorManager> m_error_manager;
 
 	Fl_Double_Window*	m_main_window;
 	Fl_Button*			m_start_test_button;
-	Fl_Button*			m_settings_button;
 	Fl_Button*			m_show_problem_info_button;
 	Fl_Button*			m_show_problem_description_button;
 	Fl_Button*			m_solution_file_selector_button;

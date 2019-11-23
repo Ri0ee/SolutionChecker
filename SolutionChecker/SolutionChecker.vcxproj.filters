@@ -7,11 +7,11 @@
     <Filter Include="Tester">
       <UniqueIdentifier>{ac86c6f1-b375-4ca1-b620-d8fe3cb759f3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include">
-      <UniqueIdentifier>{12eac0eb-1a61-41d6-bc61-1e51d040c440}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Other">
       <UniqueIdentifier>{73c80d02-e86a-41c3-a7fb-bc0113867b65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include">
+      <UniqueIdentifier>{518d4f1d-706b-49d8-8d1a-fe335ceed863}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -51,7 +51,7 @@
     <ClCompile Include="src\problem_importer_menu.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
-    <ClCompile Include="include\tinyxml2.cpp">
+    <ClCompile Include="..\include\tinyxml2.cpp">
       <Filter>Include</Filter>
     </ClCompile>
   </ItemGroup>
@@ -89,10 +89,10 @@
     <ClInclude Include="src\problem_importer_menu.h">
       <Filter>GUI</Filter>
     </ClInclude>
-    <ClInclude Include="include\tinyxml2.h">
+    <ClInclude Include="..\include\setting_guru.h">
       <Filter>Include</Filter>
     </ClInclude>
-    <ClInclude Include="src\setting_guru.h">
+    <ClInclude Include="..\include\tinyxml2.h">
       <Filter>Include</Filter>
     </ClInclude>
   </ItemGroup>

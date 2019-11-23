@@ -63,4 +63,5 @@ private:
 	Fl_Button* m_input_file_selector_button;
 	Fl_Button* m_answer_file_selector_button;
 	Fl_Button* m_base_dir_selector_button;
+	Fl_Button* m_import_all_from_foler_button;	
 };

@@ -5,6 +5,7 @@
 #include "FL/fl_draw.H"
 #include "FL/Fl_Box.H"
 #include "FL/Fl_Button.H"
+#include "FL/Fl_Scroll.H"
 
 #include <string>
 #include <vector>
@@ -75,6 +76,7 @@ private:
 	std::shared_ptr<OptionsManager> m_options_manager;
 
 	Fl_Double_Window* m_window;
+	Fl_Scroll* m_scrolling_group;
 	Fl_Box* m_summary_box;
 
 	int* m_created_file_count = nullptr;

@@ -179,6 +179,12 @@ void ProblemCreatorWindow::Initialize()
 
 	y += h + 10;
 
+	m_import_all_from_foler_button = new Fl_Button(100, y, 100, h, "Import All");
+	m_import_all_from_foler_button->callback(ButtonCallback, this);
+	m_import_all_from_foler_button->clear_visible_focus();
+
+	y += h + 10;
+
 	m_window->end();
 	m_window->size(620, y);
 	m_window->hide();
@@ -249,66 +255,6 @@ void ProblemCreatorWindow::ButtonClick(Fl_Widget* w)
 			file_str += file + " ";
 
 		m_input_files_input->value(file_str.c_str());
-		return;
-	}
-
-	if (button_label == "Create")
-	{
-		std::stringstream sst;
-
-		Problem problem;
-		try 
-		{
-			sst << m_bonus_points_input->value();
-			sst >> problem.m_bonus_points;
-			sst.clear();
-
-			sst << m_id_input->value();
-			sst >> problem.m_id;
-			sst.clear();
-
-			sst << m_memory_limit_input->value();
-			sst >> problem.m_memory_limit;
-			sst.clear();
-
-			sst << m_time_limit_input->value();
-			sst >> problem.m_time_limit;
-			sst.clear();
-
-			sst << m_test_count_input->value();
-			sst >> problem.m_test_count;
-		}
-		catch (const std::exception& e)
-		{
-			fl_alert(e.what());
-			return;
-		}
-		
-		problem.m_description_file = m_description_input->value();
-		problem.m_input_file = m_input_file_input->value();
-		problem.m_output_file = m_output_file_input->value();
-		problem.m_name = m_name_input->value();
-		problem.m_base_path = m_base_dir_input->value();
-
-		std::string answer_files = m_answer_files_input->value();
-		std::string input_files = m_input_files_input->value();
-		std::string points = m_points_input->value();
-
-		while (!answer_files.empty()) {
-			Problem::Test test;
-			test.m_answer_file = answer_files.substr(0, answer_files.find_first_of(" "));
-			test.m_input_file = input_files.substr(0, input_files.find_first_of(" "));
-			test.points = std::stoi(points.substr(0, points.find_first_of(" ")));
-
-			answer_files.erase(0, answer_files.find_first_of(" ") + 1);
-			input_files.erase(0, input_files.find_first_of(" ") + 1);
-			points.erase(0, points.find_first_of(" ") + 1);
-
-			problem.m_tests.push_back(test);
-		}
-
-		m_problem_manager->CreateProblem(problem, "ProblemLayout.xml");
-		fl_alert("Problem created successfully");
 		return;
 	}
 }

@@ -19,7 +19,8 @@ struct Problem
 	Problem() { Clear(); }
 	void Clear()
 	{
-		m_id = 0;
+		m_internal_id = 0;
+		m_id = "";
 		m_test_count = 0;
 		m_bonus_points = 0;
 		m_memory_limit = 0;
@@ -44,11 +45,12 @@ struct Problem
 	std::string m_path;
 	std::string m_base_path;
 
-	int m_id;
+	int m_internal_id;
 	int m_test_count;
 	int m_bonus_points;
 	int m_memory_limit;
 	double m_time_limit;
+	std::string m_id;
 	std::string m_name;
 	std::string m_input_file;
 	std::string m_output_file;
@@ -72,7 +74,6 @@ public:
 	void ShowTaskDescription(int problem_id_);
 	void ChangeDir(const std::string& path_to_problems_folder_) { m_path = path_to_problems_folder_; }
 
-	void CreateProblem(Problem& problem_, const std::string& problem_layout_file_);
 	bool ReadProblem(Problem& problem_, const std::string& problem_layout_file_path_);
 	int GetFreeID();
 
