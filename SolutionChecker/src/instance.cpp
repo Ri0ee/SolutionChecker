@@ -13,10 +13,10 @@ void Instance::Initialize(const char* file_location_)
 	m_error_manager = std::make_shared<ErrorManager>(m_options_manager);
 	m_problem_manager = std::make_shared<ProblemManager>(m_options_manager, m_error_manager);
 	m_test_manager = std::make_shared<TestManager>(m_options_manager, m_problem_manager, m_error_manager);
-	m_gui_ptr = std::make_shared<Gui>(m_options_manager, m_problem_manager, m_test_manager, m_error_manager);
+	m_gui_manager = std::make_shared<GuiManager>(m_options_manager, m_problem_manager, m_test_manager, m_error_manager);
 }
 
 int Instance::Run()
 {
-	return m_gui_ptr->Run();
+	return m_gui_manager->Run();
 }

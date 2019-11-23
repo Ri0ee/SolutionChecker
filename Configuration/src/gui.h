@@ -28,7 +28,7 @@ namespace GUI {
 		};
 
 	protected:
-		Fl_Button* button;
+		Fl_Button* button = nullptr;
 		std::function<void()> action;
 	};
 
@@ -51,7 +51,7 @@ namespace GUI {
 		}
 
 	protected:
-		Fl_Input* input;
+		Fl_Input* input = nullptr;
 	};
 	
 	class GuiManager {

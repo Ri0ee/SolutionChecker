@@ -15,9 +15,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\output_menu.cpp">
-      <Filter>GUI</Filter>
-    </ClCompile>
     <ClCompile Include="src\gui.cpp">
       <Filter>GUI</Filter>
     </ClCompile>
@@ -50,9 +47,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\output_menu.h">
-      <Filter>GUI</Filter>
-    </ClInclude>
     <ClInclude Include="src\gui.h">
       <Filter>GUI</Filter>
     </ClInclude>

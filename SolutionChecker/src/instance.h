@@ -24,7 +24,7 @@ private:
 	std::shared_ptr<ProblemManager> m_problem_manager;
 	std::shared_ptr<TestManager> m_test_manager;
 	std::shared_ptr<ErrorManager> m_error_manager;
-	std::shared_ptr<Gui> m_gui_ptr;
+	std::shared_ptr<GuiManager> m_gui_manager;
 
 	std::string m_current_dir;
 };
