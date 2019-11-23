@@ -12,12 +12,12 @@
     <Filter Include="Include">
       <UniqueIdentifier>{a9f0ee36-b6de-4e48-b1e2-f70af4c651ad}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GUI">
+      <UniqueIdentifier>{59ffd75e-cab4-44c4-9c55-f75b5ee7b9bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\error_manager.cpp">
-      <Filter>Исходные файлы</Filter>
-    </ClCompile>
-    <ClCompile Include="src\gui.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
     <ClCompile Include="src\instance.cpp">
@@ -38,12 +38,12 @@
     <ClCompile Include="..\include\util.cpp">
       <Filter>Include</Filter>
     </ClCompile>
+    <ClCompile Include="src\gui.cpp">
+      <Filter>GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\error_manager.h">
-      <Filter>Файлы заголовков</Filter>
-    </ClInclude>
-    <ClInclude Include="src\gui.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
     <ClInclude Include="src\instance.h">
@@ -63,6 +63,9 @@
     </ClInclude>
     <ClInclude Include="..\include\util.h">
       <Filter>Include</Filter>
+    </ClInclude>
+    <ClInclude Include="src\gui.h">
+      <Filter>GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
