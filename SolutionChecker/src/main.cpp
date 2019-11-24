@@ -3,8 +3,7 @@
 
 
 
-int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
+int main() {
 	char file_location[_MAX_PATH + 1];
 	GetModuleFileName(NULL, file_location, _MAX_PATH);
 
