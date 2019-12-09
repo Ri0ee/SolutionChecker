@@ -84,33 +84,22 @@ bool TestManager::CreateJob(HANDLE& job_handle_, HANDLE& job_port_handle_, long 
 	return true;
 }
 
-std::string TestManager::SelectCompilerAndCompile(const std::string& solution_location_) 
+std::optional<std::string> TestManager::SelectCompilerAndCompile(const std::string& solution_location_) 
 {
 	std::error_code err_c;
 	std::string solution_file_type = solution_location_.substr(solution_location_.find_last_of(".") + 1);
-	std::string new_source_file_dir = m_options_manager->GetOption("TempDir") + "\\" + "solution_source." + solution_file_type;
-	std::string solution_file_dir = "";
+	std::string new_source_file_dir = m_options_manager->GetOption("TempDir") + "\\" + "ss." + solution_file_type;
 
 	std::filesystem::remove(new_source_file_dir, err_c);
 	std::filesystem::copy(solution_location_, new_source_file_dir, err_c);
 	m_created_file_list.push_back(new_source_file_dir);
-	Compiler compiler(m_options_manager, m_error_manager);
 
-	if (solution_file_type == "pas")
-		solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Pascal);
-	else if (solution_file_type == "cpp")
-		solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::Cpp);
-	else if (solution_file_type == "c")
-		solution_file_dir = compiler.Compile(new_source_file_dir, CompilerLanguage::C);
-	else
-		m_error_manager->PushError({ "Unknown file type", "Testing", 0, 0, Severity::Fatal });
+	Compiler compiler(m_options_manager, m_error_manager);
+	auto solution_file_dir = compiler.Compile(new_source_file_dir);
 
 	// Failed to compile for some reason
-	if (solution_file_dir.empty())
+	if (!solution_file_dir.has_value())
 		m_error_manager->PushError({ "Compilation failed", "Testing", 0, 0, Severity::Fatal });
-
-	// Remove created temporary source file
-	std::filesystem::remove(new_source_file_dir);
 
 	return solution_file_dir;
 }
@@ -120,20 +109,21 @@ long long TestManager::GetExecutionTime(PROCESS_INFORMATION& pi_)
 	FILETIME start_time = { 0 }, end_time = { 0 }, kernel_time = { 0 }, user_time = { 0 };
 	GetProcessTimes(pi_.hProcess, &start_time, &end_time, &kernel_time, &user_time);
 
-	SYSTEMTIME s_start_time, s_end_time;
+	SYSTEMTIME s_start_time, s_end_time, s_user_time;
 	FileTimeToSystemTime(&start_time, &s_start_time);
 	FileTimeToSystemTime(&end_time, &s_end_time);
+	FileTimeToSystemTime(&user_time, &s_user_time);
 
-	long long int diff_time = (s_end_time.wSecond * (long long int)1000 + s_end_time.wMilliseconds) - (s_start_time.wSecond * (long long int)1000 + s_start_time.wMilliseconds);
+	//long long int diff_time = (s_end_time.wSecond * (long long int)1000 + s_end_time.wMilliseconds) - (s_start_time.wSecond * (long long int)1000 + s_start_time.wMilliseconds);
+	long long int time = 1000 * s_user_time.wSecond + s_user_time.wMilliseconds;
 
-	return diff_time;
+	return time;
 }
 
 void TestManager::TestingSequence(Problem problem_, const std::string& solution_location_, bool all_tests_)
 {
 	std::error_code err_c;
 
-	std::string temp_solution_file_dir;
 	std::string solution_file_type = solution_location_.substr(solution_location_.find_last_of(".") + 1);
 	std::string solution_file_name = solution_location_.substr(solution_location_.find_last_of("\\") + 1);
 	bool is_java = (solution_file_type == "java");
@@ -143,16 +133,20 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 	std::string new_input_file_dir = working_dir + problem_.m_input_file;
 	std::string new_output_file_dir = working_dir + problem_.m_output_file;
 
-	if (solution_file_type != "exe" && !is_java) temp_solution_file_dir = SelectCompilerAndCompile(solution_location_);
-	else temp_solution_file_dir = solution_location_;
+	auto temp_solution_file_dir = SelectCompilerAndCompile(solution_location_);
+	if (!temp_solution_file_dir.has_value())
+	{
+		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "Compilation routine", 0, 0, Severity::Fatal });
+		return;
+	}
 
 	// Copy solution file to working directory
-	std::filesystem::copy(temp_solution_file_dir, new_executable_dir, err_c);
+	std::filesystem::copy(temp_solution_file_dir.value(), new_executable_dir, err_c);
 	m_created_file_list.push_back(new_executable_dir);
 	
 	// Remove executable file if it was created as a temporary file
-	if (temp_solution_file_dir != solution_location_) 
-		std::filesystem::remove(temp_solution_file_dir);
+	if (temp_solution_file_dir.value() != solution_location_) 
+		std::filesystem::remove(temp_solution_file_dir.value());
 
 	for (int current_test = 0; current_test < problem_.m_test_count; current_test++)
 	{
@@ -204,13 +198,15 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 							&sui, 
 							&pi))
 		{
-			AssignProcessToJobObject(job_handle, pi.hProcess);
+			if (!AssignProcessToJobObject(job_handle, pi.hProcess))
+				m_error_manager->PushError({ GetErrorMessage(GetLastError()), "AssignProcessToJobObject function", 0, 0, Severity::Fatal });
 
 			// Wait until process terminates itself
-			WaitForSingleObject(pi.hProcess, (DWORD)(500 + problem_.m_time_limit * 1000));
+			WaitForSingleObject(pi.hProcess, (DWORD)(problem_.m_time_limit * 1000) + 200);
 
 			// Initialize process termination
-			TerminateProcess(pi.hProcess, 0);
+			if (!TerminateProcess(pi.hProcess, 0))
+				m_error_manager->PushError({ GetErrorMessage(GetLastError()), "TerminateProcess function", 0, 0, Severity::Fatal });
 
 			// Wait for process to terminate, if not terminated already
 			WaitForSingleObject(pi.hProcess, INFINITE);
@@ -228,14 +224,15 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 					m_error_manager->PushError({ GetErrorMessage(GetLastError()), "GetQueuedCompletionStatus function", 0, 0, Severity::Fatal });
 
 				if (completion_code == JOB_OBJECT_MSG_PROCESS_MEMORY_LIMIT)
-					test.m_status |= TEST_STATUS_MEMORY_LIMIT;
+					test.m_status |= TEST_STATUS_MEMORY_LIMIT | TEST_STATUS_FAIL;
 
 				if (completion_code == JOB_OBJECT_MSG_NEW_PROCESS)
 					flag = false;
 			}
 
 			JOBOBJECT_EXTENDED_LIMIT_INFORMATION jeli = { 0 };
-			QueryInformationJobObject(job_handle, JobObjectExtendedLimitInformation, &jeli, sizeof(jeli), NULL);
+			if(!QueryInformationJobObject(job_handle, JobObjectExtendedLimitInformation, &jeli, sizeof(jeli), NULL))
+				m_error_manager->PushError({ GetErrorMessage(GetLastError()), "QueryInformationJobObject function", 0, 0, Severity::Fatal });
 			test.m_peak_memory_used = (int)jeli.PeakProcessMemoryUsed;
 
 			CloseHandle(job_port_handle);
@@ -243,11 +240,12 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 
 			GetExitCodeProcess(pi.hProcess, &test.m_exit_code);
 			if (test.m_exit_code != 0 && !(test.m_status & TEST_STATUS_MEMORY_LIMIT))
-				test.m_status |= TEST_STATUS_RUNTIME_ERROR;
+				test.m_status |= TEST_STATUS_RUNTIME_ERROR | TEST_STATUS_FAIL;
 
 			test.m_run_time = GetExecutionTime(pi);
+
 			if (test.m_run_time > problem_.m_time_limit * 1000)
-				test.m_status |= TEST_STATUS_TIME_LIMIT;
+				test.m_status |= TEST_STATUS_TIME_LIMIT | TEST_STATUS_FAIL;
 
 			CloseHandle(pi.hProcess);
 			CloseHandle(pi.hThread);
@@ -274,12 +272,28 @@ void TestManager::TestingSequence(Problem problem_, const std::string& solution_
 		{
 			test.m_output_data = std::string((std::istreambuf_iterator<char>(result_output_file)), std::istreambuf_iterator<char>());
 			test.m_destination_data = std::string((std::istreambuf_iterator<char>(correct_output_file)), std::istreambuf_iterator<char>());
-
-			if (test.m_output_data == test.m_destination_data) test.m_status |= TEST_STATUS_OK;
-			else test.m_status |= TEST_STATUS_FAIL;
-
 			result_output_file.close();
 			correct_output_file.close();
+
+			std::stringstream sst_ans(test.m_output_data), sst_out(test.m_destination_data);
+			std::string answer_data_piece;
+
+			bool correctness_flag = true;
+			while (sst_ans >> answer_data_piece) {
+				std::string output_data_piece;
+				sst_out >> output_data_piece;
+
+				if (answer_data_piece != output_data_piece)
+				{
+					correctness_flag = false;
+					break;
+				}
+			}
+
+			if(correctness_flag == true && !(test.m_status & TEST_STATUS_FAIL))
+				test.m_status |= TEST_STATUS_OK;
+			else 
+				test.m_status |= TEST_STATUS_FAIL;
 		} 
 		else // Unable to open result file or correct output file
 			m_error_manager->PushError({ "Unable to open result files", "Result checking", 0, 0, Severity::Fatal });

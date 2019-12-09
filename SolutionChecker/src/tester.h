@@ -65,7 +65,7 @@ private:
 	void Shutdown();
 	void ShutdownTestingSequence();
 	bool CreateJob(HANDLE& job_handle_, HANDLE& job_port_handle_, long int memory_limit_);
-	std::string SelectCompilerAndCompile(const std::string& solution_location_);
+	std::optional<std::string> SelectCompilerAndCompile(const std::string& solution_location_);
 	long long GetExecutionTime(PROCESS_INFORMATION& pi_);
 
 	std::shared_ptr<OptionsManager> m_options_manager;

@@ -267,6 +267,8 @@ void GuiManager::MainWindow::OutputWindow::ListElement::Initialize()
 		info_text_color = FL_DARK_YELLOW;
 	}
 
+	info_text.append("  Time: " + std::to_string(test.m_run_time) + "ms");
+
 	double info_text_width = fl_width(info_text.c_str());
 	info = std::make_shared<InfoTextBox>(x + 390, y, info_text_width + 30, 20, info_text);
 	info->SetColor(info_text_color);

@@ -29,6 +29,11 @@ public:
 	};
 
 	ErrorManager(std::shared_ptr<OptionsManager> options_manager_) : m_options_manager(options_manager_) {}
+	~ErrorManager() 
+	{
+		if (!m_error_deque.empty())
+			SaveToFile();
+	}
 
 	void PushError(Error error_) { m_error_deque.push_back(error_); };
 	Error GetError();

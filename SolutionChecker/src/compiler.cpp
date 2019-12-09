@@ -2,24 +2,22 @@
 
 
 
-std::string Compiler::Compile(const std::string& file_name_, CompilerLanguage compiler_language_)
+std::optional<std::string> Compiler::Compile(const std::string& file_name_)
 {
-	switch (compiler_language_)
-	{
-	case CompilerLanguage::Pascal:	return CompilePascal(file_name_);
-	case CompilerLanguage::Cpp:		return CompileCpp(file_name_);
-	case CompilerLanguage::C:		return CompileC(file_name_);
-	case CompilerLanguage::Java:	return CompileJava(file_name_);
-	default:
-		return std::string();
-	}
+	std::string solution_file_type = file_name_.substr(file_name_.find_last_of(".") + 1);
 
-	return std::string();
+	if (solution_file_type == "java" || solution_file_type == "exe") return file_name_;
+	if (solution_file_type == "pas") return CompilePascal(file_name_);
+	if (solution_file_type == "cpp") return CompileCpp(file_name_);
+	if (solution_file_type == "c") return CompileC(file_name_);
+
+	m_error_manager->PushError({ "Unknown file type", "Testing", 0, 0, Severity::Fatal });
+	return std::nullopt;
 }
 
-std::string Compiler::CompilePascal(const std::string& file_name_)
+std::optional<std::string> Compiler::CompilePascal(const std::string& file_name_)
 {
-	if (file_name_.empty()) return std::string();
+	if (file_name_.empty()) return std::nullopt;
 
 	std::string compiler_path = m_options_manager->GetOption("PascalCompilerDir");
 	std::string compiler_dir = compiler_path.substr(0, compiler_path.find_last_of("\\"));
@@ -57,24 +55,27 @@ std::string Compiler::CompilePascal(const std::string& file_name_)
 	else
 	{
 		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateProcess (Compilation)", 0, 0, Severity::Fatal });
-		return std::string();
+		return std::nullopt;
 	}
 
 	// Delete object file {file_name}.o
 	std::filesystem::remove(result_object_path); 
 
+	// Remove temporary source code file
+	std::filesystem::remove(file_name_);
+
 	if (!std::filesystem::exists(result_executable_path))
 	{
 		m_error_manager->PushError({ "Result file does not exist", "Compilation", 0, 0, Severity::Fatal });
-		return std::string();
+		return std::nullopt;
 	}
 		
 	return result_executable_path;
 }
 
-std::string Compiler::CompileCpp(const std::string& file_name_)
+std::optional<std::string> Compiler::CompileCpp(const std::string& file_name_)
 {
-	if (file_name_.empty()) return std::string();
+	if (file_name_.empty()) return std::nullopt;
 
 	std::string compiler_path = m_options_manager->GetOption("CppCompilerDir");
 	std::string compiler_dir = m_options_manager->GetOption("TempDir");
@@ -113,21 +114,24 @@ std::string Compiler::CompileCpp(const std::string& file_name_)
 	else
 	{
 		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateProcess (Compilation)", 0, 0, Severity::Fatal });
-		return std::string();
+		return std::nullopt;
 	}
+
+	// Remove temporary source code file
+	std::filesystem::remove(file_name_);
 
 	if (!std::filesystem::exists(result_executable_path))
 	{
 		m_error_manager->PushError({ "Result file does not exist", "Compilation", 0, 0, Severity::Fatal });
-		return std::string();
+		return std::nullopt;
 	}
 
 	return result_executable_path;
 }
 
-std::string Compiler::CompileC(const std::string& file_name_)
+std::optional<std::string> Compiler::CompileC(const std::string& file_name_)
 {
-	if (file_name_.empty()) return std::string();
+	if (file_name_.empty()) return std::nullopt;
 
 	std::string compiler_path = m_options_manager->GetOption("CCompilerDir");
 	std::string compiler_dir = m_options_manager->GetOption("TempDir");
@@ -166,21 +170,24 @@ std::string Compiler::CompileC(const std::string& file_name_)
 	else
 	{
 		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateProcess (Compilation)", 0, 0, Severity::Fatal });
-		return std::string();
+		return std::nullopt;
 	}
+
+	// Remove temporary source code file
+	std::filesystem::remove(file_name_);
 
 	if (!std::filesystem::exists(result_executable_path))
 	{
 		m_error_manager->PushError({ "Result file does not exist", "Compilation", 0, 0, Severity::Fatal });
-		return std::string();
+		return std::nullopt;
 	}
 
 	return result_executable_path;
 }
 
-std::string Compiler::CompileJava(const std::string& file_name_)
+std::optional<std::string> Compiler::CompileJava(const std::string& file_name_)
 {
-	if (file_name_.empty()) return std::string();
+	if (file_name_.empty()) return std::nullopt;
 
 	std::string compiler_path = m_options_manager->GetOption("JavaCompilerDir");
 	std::string compiler_dir = m_options_manager->GetOption("TempDir");
@@ -221,13 +228,16 @@ std::string Compiler::CompileJava(const std::string& file_name_)
 	else
 	{
 		m_error_manager->PushError({ GetErrorMessage(GetLastError()), "CreateProcess (Compilation)", 0, 0, Severity::Fatal });
-		return std::string();
+		return std::nullopt;
 	}
+
+	// Remove temporary source code file
+	std::filesystem::remove(file_name_);
 
 	if (!std::filesystem::exists(result_executable_path))
 	{
 		m_error_manager->PushError({ "Result file does not exist", "Compilation", 0, 0, Severity::Fatal });
-		return std::string();
+		return std::nullopt;
 	}
 
 	return result_executable_path;
